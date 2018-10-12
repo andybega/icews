@@ -1,0 +1,38 @@
+---
+output:
+  md_document:
+    variant: markdown_github
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+
+# icews
+
+Get the ICEWS event data from the Dataverse repo at https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/28075. 
+
+## Example
+
+To download the current data files from Dataverse:
+
+```{r example, eval = FALSE}
+library("icews")
+
+Sys.setenv(ICEWS_DATA_DIR = "~/Dropbox/Work/VForecast/Data/icews_data")
+
+download_icews()
+events <- read_icews()
+```
+
+```{r}
+data("cameo_codes")
+head(cameo_codes)
+```
+

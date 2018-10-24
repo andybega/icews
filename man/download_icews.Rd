@@ -4,13 +4,16 @@
 \alias{download_icews}
 \title{Download ICEWS data files}
 \usage{
-download_icews(path = Sys.getenv("ICEWS_DATA_DIR"), overwrite = FALSE)
+download_icews(path = NULL, overwrite = FALSE, dryrun = FALSE)
 }
 \arguments{
 \item{path}{Path to directory where data files will be downloaded to.}
 
 \item{overwrite}{Should duplicate files that are already at path be
 re-downloaded?}
+
+\item{dryrun}{Conducts a dry run listing proposed changes, without actually
+downloading or deleting anything.}
 }
 \description{
 Download the ICEWS event data from Dataverse

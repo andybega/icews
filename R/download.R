@@ -193,3 +193,20 @@ get_dvn_manifest <- function() {
   )
 }
 
+#' Purge file downloads
+#'
+#' Removes the downloaded raw event TSV files
+#'
+#' @param raw_file_dir Directory containing the raw event TSV files.
+#'
+#' @export
+purge_data_files <- function(raw_file_dir = NULL) {
+  if (is.null(raw_file_dir)) {
+    raw_file_dir <- file.path(Sys.getenv("ICEWS_DATA_DIR"), "raw")
+  }
+
+  data_files <- dir(raw_file_dir, pattern = "events[\\.0-9]+.tab", full.names = TRUE)
+  unlink(data_files)
+  invisible(NULL)
+}
+

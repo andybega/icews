@@ -37,7 +37,12 @@ To download the current data files from Dataverse, use `download_icews`. It acce
 ```{r example, eval = FALSE}
 library("icews")
 
-Sys.setenv(ICEWS_DATA_DIR = "~/Dropbox/Work/VForecast/Data/icews_data")
+Sys.setenv("ICEWS_DATA_DIR" = "~/Dropbox/Work/VForecast/Data/icews_data")
+Sys.setenv("ICEWS_USE_DB" = TRUE)
+
+# Alternatively, set to .Renviron file
+# library("usethis")
+# edit_r_environ()
 
 download_icews()
 ```

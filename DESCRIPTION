@@ -7,6 +7,20 @@ Authors@R: person("Andreas", "Beger", role = c("cre", "aut"), email =
 Maintainer: Andreas Beger <adbeger@gmail.com>
 Description: Download utilities and other helpers for getting the ICEWS event
   data from Dataverse. 
+Depends:
+  R (>= 2.10)
+Imports:
+  dataverse,
+  dbplyr,
+  DBI,
+  RSQLite,
+  dplyr,
+  purrr,
+  readr,
+  rlang,
+  tibble
+Suggests:
+  usethis
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

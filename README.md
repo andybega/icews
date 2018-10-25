@@ -118,15 +118,6 @@ When done, it is good etiquette to close to the database connection:
 DBI::dbDisconnect(con)
 ```
 
-*Note: the syncing part does not work yet, but this will re-build a correct, current event instance:*
-
-``` r
-# Purge the event table in the database
-purge_db()
-# Downloads the correct files and re-ingests all events to DB. 
-sync_db()
-```
-
 ### Bonus: CAMEO codes
 
 Also included is a dictionary of the CAMEO code for event types.

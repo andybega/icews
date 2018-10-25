@@ -172,6 +172,8 @@ sync_db <- function(db_path = NULL, raw_file_dir = NULL) {
   cat("Checking whether files need to be ingested to DB")
   Sys.sleep(.5)
 
+  # Workaround until proper sync
+  purge_db(db_path)
   sync_db_with_files(db_path, raw_file_dir)
 
 }

@@ -4,6 +4,6 @@ This is the initial package version with minimal functionality for what *I* need
 
 * Added a `NEWS.md` file to track changes to the package.
 * Added download functinality that will keep a local copy of the ICEWS event TSV files synchronized with dataverse, including updating outdated files.
-* Added basic database functionality that will create a database containing downloaded events; however, this does not correctly sync/update events yet, and also cannot work without keeping copies of the raw data files. 
+* Added basic database functionality that will create a database containing downloaded events; will synchronize events so that they always reflect the latest version on DVN; however still relies on local copies of the raw files. 
 
 

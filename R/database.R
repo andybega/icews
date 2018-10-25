@@ -132,6 +132,8 @@ ingest_raw_data_file <- function(raw_file_path, db_path) {
                               Latitude = col_double(),
                               Longitude = col_double()
                             ))
+  # SQLite does not have date data type, use ISO text instead
+  events$`Event Date` <- as.character(events$`Event Date`)
   events$source_file <- basename(raw_file_path)
   DBI::dbWriteTable(con, "events", events, append = TRUE)
   invisible(TRUE)
@@ -173,7 +175,11 @@ sync_db <- function(db_path = NULL, raw_file_dir = NULL) {
   Sys.sleep(.5)
 
   # Workaround until proper sync
-  purge_db(db_path)
+  con <- connect_to_db()
+  if ("events" %in% DBI::dbListTables(con)) {
+    purge_db(db_path)
+  }
+  DBI::dbDisconnect(con)
   sync_db_with_files(db_path, raw_file_dir)
 
 }

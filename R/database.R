@@ -105,6 +105,22 @@ sync_db_with_files <- function(db_path = NULL, raw_file_dir = NULL,
     ingest_raw_data_file(raw_file_path, db_path)
   }
 
+  # DB maintenance
+  con <- connect_to_db(db_path)
+  on.exit(DBI::dbDisconnect(con))
+
+  # Create/update indices
+  DBI::dbSendQuery(con, "CREATE INDEX IF NOT EXISTS event_id_idx    ON events(`Event ID`);")
+  DBI::dbSendQuery(con, "CREATE INDEX IF NOT EXISTS source_file_idx ON events(source_file);")
+  DBI::dbSendQuery(con, "CREATE INDEX IF NOT EXISTS cameo_code_idx  ON events(`CAMEO Code`);")
+  DBI::dbSendQuery(con, "CREATE INDEX IF NOT EXISTS country_idx     ON events(Country);")
+  DBI::dbSendQuery(con, "CREATE INDEX IF NOT EXISTS year_idx        ON events(year);")
+  DBI::dbSendQuery(con, "CREATE INDEX IF NOT EXISTS yearmonth_idx   ON events(yearmonth);")
+
+  # Housekeeping
+  DBI::dbSendQuery(con, "VACUUM;")
+  DBI::dbSendQuery(con, "PRAGMA optimize;")
+
   invisible(NULL)
 }
 
@@ -132,6 +148,9 @@ ingest_raw_data_file <- function(raw_file_path, db_path) {
                               Latitude = col_double(),
                               Longitude = col_double()
                             ))
+  # Add year and yearmonth since these will be useful for getting counts over time
+  events$year      <- as.integer(format(events$`Event Date`, "%Y"))
+  events$yearmonth <- as.integer(format(events$`Event Date`, "%Y%m"))
   # SQLite does not have date data type, use ISO text instead
   events$`Event Date` <- as.character(events$`Event Date`)
   events$source_file <- basename(raw_file_path)

@@ -110,14 +110,22 @@ sync_db_with_files <- function(db_path = NULL, raw_file_dir = NULL,
   on.exit(DBI::dbDisconnect(con))
 
   # Create/update indices
-  DBI::dbSendQuery(con, "CREATE INDEX IF NOT EXISTS event_id_idx    ON events(`Event ID`);")
-  DBI::dbSendQuery(con, "CREATE INDEX IF NOT EXISTS source_file_idx ON events(source_file);")
-  DBI::dbSendQuery(con, "CREATE INDEX IF NOT EXISTS cameo_code_idx  ON events(`CAMEO Code`);")
-  DBI::dbSendQuery(con, "CREATE INDEX IF NOT EXISTS country_idx     ON events(Country);")
-  DBI::dbSendQuery(con, "CREATE INDEX IF NOT EXISTS year_idx        ON events(year);")
-  DBI::dbSendQuery(con, "CREATE INDEX IF NOT EXISTS yearmonth_idx   ON events(yearmonth);")
+  idx_columns <- c("Event ID", "source_file", "CAMEO Code", "Country", "year", "yearmonth")
+  idx_names   <- paste0(gsub(" ", "_", tolower(idx_columns)), "_idx")
+  existing_indices <- query("PRAGMA index_list(events);")$name
+  need_cols   <- idx_columns[!idx_names %in% existing_indices]
+  if (length(need_cols) > 0) {
+    cat("Building indices\n")
+    need_names <- idx_names[!idx_names %in% existing_indices]
+    for (i in 1:length(need_cols)) {
+      cat(sprintf("Creating index for '%s'\n", need_cols[i]))
+      sql <- sprintf("CREATE INDEX IF NOT EXISTS %s ON events(`%s`);", need_names[i], need_cols[i])
+      res <- DBI::dbSendQuery(con, sql)
+    }
+  }
 
   # Housekeeping
+  cat("Cleaning and optimizing database\n")
   DBI::dbSendQuery(con, "VACUUM;")
   DBI::dbSendQuery(con, "PRAGMA optimize;")
 
@@ -166,9 +174,10 @@ ingest_raw_data_file <- function(raw_file_path, db_path) {
 #'
 #' @param db_path Path to SQLite database
 #' @param raw_file_dir Directory containing the raw event TSV files.
+#' @param dryrun Just list changes that would be made, without making them.
 #'
 #' @export
-sync_db <- function(db_path = NULL, raw_file_dir = NULL) {
+sync_db <- function(db_path = NULL, raw_file_dir = NULL, dryrun = FALSE) {
 
   if (is.null(raw_file_dir)) {
     raw_file_dir <- file.path(Sys.getenv("ICEWS_DATA_DIR"), "raw")
@@ -180,17 +189,21 @@ sync_db <- function(db_path = NULL, raw_file_dir = NULL) {
   cat("Checking whether files need to be downloaded/updated\n\n")
   Sys.sleep(.5)
 
-  download_icews(raw_file_dir)
+  download_icews(raw_file_dir, overwrite = FALSE, dryrun)
+
+  if (isTRUE(dryrun)) {
+    return(invisible(NULL))
+  }
 
   cat("Checking whether DB is set up\n\n")
   Sys.sleep(.5)
 
   if (!file.exists(db_path)) {
-    cat("Creating DB")
+    cat("Creating DB\n")
     create_db(db_path)
   }
 
-  cat("Checking whether files need to be ingested to DB")
+  cat("Checking whether files need to be ingested to DB\n")
   Sys.sleep(.5)
 
   # Workaround until proper sync
@@ -201,6 +214,7 @@ sync_db <- function(db_path = NULL, raw_file_dir = NULL) {
   DBI::dbDisconnect(con)
   sync_db_with_files(db_path, raw_file_dir)
 
+  invisible(NULL)
 }
 
 

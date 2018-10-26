@@ -31,13 +31,15 @@ download_icews <- function(path = NULL, overwrite = FALSE,
 
   if (isTRUE(dryrun)) {
     actions <- table(state$files$action)
-    cat(sprintf("Found %s local data file(s)\n", sum(actions)))
+    cat(sprintf("Found %s local data file(s)\n", sum(actions[["none"]], actions[["remove"]])))
     if (actions[["download"]] > 0) {
+      Sys.sleep(1)
       suffix <- ifelse(isTRUE(overwrite), ", because overwrite was set to TRUE", "")
       msg <- sprintf("Downloading %s new file(s)%s\n", sum(actions[["download"]]), suffix)
       cat(msg)
     }
     if (actions[["remove"]] > 0) {
+      Sys.sleep(1)
       cat(sprintf("Removing %s old local file(s)\n", sum(actions[["remove"]])))
     }
     if (actions[["remove"]] + actions[["download"]] > 0) {
@@ -50,11 +52,12 @@ download_icews <- function(path = NULL, overwrite = FALSE,
           data.frame(sprintf("%-9s'%s'\n", action, file), stringsAsFactors = FALSE)
         }) %>%
         `[[`(1)
+      Sys.sleep(1)
       cat("\nPlan:\n", msgs, sep = "")
     } else {
       cat(nothing_to_do_msg)
     }
-    return(invisible(TRUE))
+    return(invisible(state))
   }
 
   need_action <- state$files[state$files$action!="none", ]
@@ -66,6 +69,7 @@ download_icews <- function(path = NULL, overwrite = FALSE,
   }
 
   # Otherwise, proceed through the action items
+  cat(sprintf("Downloading to '%s'", path))
   for (i in 1:nrow(need_action)) {
     task <- need_action[i, ]
 

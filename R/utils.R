@@ -8,7 +8,7 @@
 #' @param r_environ If TRUE, this will write config parameters to a .Renviron file.
 #'
 #' @export
-setup_icews <- function(data_dir, use_db, r_environ = FALSE) {
+setup_icews <- function(data_dir, use_db = "TRUE", r_environ = TRUE) {
   if (!dir.exists(data_dir)) {
     stop("Data directory does not exist.")
   }
@@ -20,7 +20,7 @@ setup_icews <- function(data_dir, use_db, r_environ = FALSE) {
 
   if(isTRUE(r_environ)) {
     if (!requireNamespace("usethis", quietly = TRUE)) {
-      stop("Package \"usethis\" needed for this function to work. Please install it.",
+      stop("Package \"usethis\" needed for this function to work. Please install it (recommended) or set 'r_environ = FALSE'.",
            call. = FALSE)
     }
     cat("Add these lines to the .Renviron file:\n\n")
@@ -29,6 +29,7 @@ setup_icews <- function(data_dir, use_db, r_environ = FALSE) {
     cat("\n")
     usethis::edit_r_environ()
   }
+  cat("Environment variables are set.\nac")
   invisible(NULL)
 }
 

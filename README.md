@@ -19,7 +19,7 @@ install_github("andybega/icews")
 Usage
 -----
 
-**tl;dr**: Get a SQLite database with the current events on DVN; otherwise read below for more details.
+**tl;dr**: get a SQLite database with the current events on DVN with this code; otherwise read below for more details.
 
 ``` r
 library("icews")
@@ -27,13 +27,15 @@ library("DBI")
 library("dplyr")
 library("usethis")
 
-setup_icews(data_dir = "/where/shoud/data/be", use_db = "TRUE", r_environ = TRUE)
+setup_icews(data_dir = "/where/should/data/be", use_db = "TRUE", r_environ = TRUE)
 
 sync_db()
-# Wait until all is done
+# Wait until all is done; like 45 minutes or more the first time around
 
 con <- connect_to_db()
-dbGetQuery(con, "SELECT count(*) FROM events;")
+DBI::dbGetQuery(con, "SELECT count(*) FROM events;")
+# or
+query("SELECT count(*) FROM events;")
 # or
 tbl(con, "events") %>% summarize(n = n())
 ```
@@ -79,7 +81,7 @@ Beyond this basic usage, the goal is to abstract as many little pains away as po
 The package can keep track of the data location via an environment variable. The easiest way is to add these to an ".Renviron" file so that they are available each time R starts up.
 
 ``` r
-setup_icews(data_dir = "/where/shoud/data/be", use_db = "TRUE", r_environ = TRUE)
+setup_icews(data_dir = "/where/should/data/be", use_db = "TRUE", r_environ = TRUE)
 ```
 
 This will open the ".Renviron" file and tell you what to add to it (requires [usethis](https://cran.r-project.org/package=usethis) to be installed). From now on the package knows where your data lives, and most of the functions can be called without specifying any directory or path arguments.

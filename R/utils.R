@@ -116,15 +116,6 @@ dr_icews <- function(db_path = NULL, raw_file_dir = NULL) {
 #' @export
 burn_it_down <- function(db_path = find_db(), raw_file_dir = find_raw()) {
 
-  stop("needs to be checked after refactor")
-
-  if (is.null(raw_file_dir)) {
-    raw_file_dir <- file.path(Sys.getenv("ICEWS_DATA_DIR"), "raw")
-  }
-  if (is.null(db_path)) {
-    db_path <- file.path(Sys.getenv("ICEWS_DATA_DIR"), "db/icews.sqlite3")
-  }
-
   a <- menu(title = "Are you crazy?", choices = c("Yes", "Trust me, I know what I'm doing"))
   if (a!=2) {
     cat("I can't let you do this, bye.\n")
@@ -137,48 +128,27 @@ burn_it_down <- function(db_path = find_db(), raw_file_dir = find_raw()) {
     return(invisible(NULL))
   }
 
-  cat("Puring database\n")
-  purge_db(db_path)
   cat("Deleting database\n")
   unlink(db_path)
+  unlink(dirname(db_path), recursive = TRUE)
   cat("Purging raw data files\n")
   purge_data_files(raw_file_dir)
-  cat("Unsetting environment variables\n")
-  Sys.unsetenv("ICEWS_DATA_DIR")
-  Sys.unsetenv("ICEWS_DATA_DIR")
-  cat("If you added them to .Renviron, remove there as well\n")
+  unlink(raw_file_dir, recursive = TRUE)
+  cat("Unsetting option variables\n")
+  options(icews.data_dir   = NULL)
+  options(icews.use_db     = NULL)
+  options(icews.keep_files = NULL)
+  cat("If you added them to .Rprofile, remove there as well\n")
 
   if (!requireNamespace("usethis", quietly = TRUE)) {
     stop("Package \"usethis\" needed for this function to work. Please install it.",
          call. = FALSE)
   } else {
-    cat("Remove ICEWS_DATA_DIR and ICEWS_USE_DB if they are there.\n")
-    usethis::edit_r_environ()
+    cat("Remove all \"icews.\" options if they are there.\n")
+    usethis::edit_r_profile()
   }
 
   cat("It is done\n")
 }
 
 
-#' Normalize paths
-#'
-#' This takes care of finding paths when the environment variable is set and
-#' paths are at the default NULL values.
-#'
-#' @param db_path Location of database SQLite file
-#' @param raw_file_dir Directory for raw data files
-#'
-normalize_paths <- function(db_path, raw_file_dir) {
-  # Check that both are NULL or not, but not a mix
-  if (xor(is.null(db_path), is.null(raw_file_dir))) {
-
-  }
-  # Use user-supplied paths
-  if (!is.null(db_path) & !is.null(raw_file_dir)) {
-
-  }
-  # Use environment settings
-  if (is.null(db_path) & is.null(raw_file_dir)) {
-
-  }
-}

@@ -7,9 +7,75 @@
 \title{Get ICEWS Event Data}
 \description{
 Download utilities and other helpers for getting the ICEWS event
+data from Dataverse.
+}
+\details{
+The package is meant to be used in a semi-automated fashion to
+maintain an updated version of the ICEWS event data in a local database. The
+workflow for using it like this would be to first add relevant options to
+your \code{.Rprofile} file, and then synchronizing with DVN. The code to do so
+looks like this:\preformatted{library("icews")
+library("usethis")
+setup_icews("/path/to/icews_data", use_db = TRUE, keep_files = FALSE,
+            r_profile = TRUE)
+update()
+
+con <- connect()
+DBI::dbGetQuery(con, "SELECT count(*) AS n FROM events;")
+# or
+query("SELECT count(*) AS n FROM events;")
+# or
+tbl(con, "events") \%>\% summarize(n = n())
+}
+
+This will initialize a database and download the ICEWS events from dataverse.
+The data will be stored at \code{/path/to/icews_data}, with the following
+organization (as needed):
+\itemize{
+\item \code{db}: contains the database file, named \code{icews.sqlite3}
+\item \code{raw}: contains raw TSV data files (unzipped if neccessary)
+\item \code{docs}: contains copies of the ICEWS documentation (not implemented yet)
+}
+
+Use the \code{dryrun = TRUE} argument to only list proposed change, without
+taking any actual actions. The other two top-level sync functions discussed
+below also have this argument.
+
+A more minimalistic workflow that doesn't require any options to be set would
+be to only download the current set of data files. This can be done with:\preformatted{download_data(to_dir = "~/Downloads/icews_data/raw", update = FALSE)
+
+# ro read the data files
+events <- read_icews(raw_file_dir = "~/Downloads/icews_data/raw")
+}
+
+This only downloads the current data files from DVN, thus obviating the need
+to have to interact with dataverse. Optionally it will also update any
+outdated local data files in the same directory when the "update" argument
+is set to TRUE:\preformatted{download_data(to_dir = "~/Downloads/icews_data/raw", update = TRUE)
+}
+
+Lastly, to sync a database with local data files, without downloading any
+new files, use this function:\preformatted{sync_db_with_files(raw_file_dir = "~/Downloads/icews_data/raw",
+                   db_path = "~/Downloads/icews_data/db/icews.sqlite3")
+}
+
+See \url{https://github.com/andybega/icews} for
+more information.
 }
 \references{
 Boschee, Elizabeth; Lautenschlager, Jennifer; O'Brien, Sean;
-      Shellman, Steve; Starz, James; Ward, Michael, 2015, ``ICEWS Coded
-      Event Data'', \url{https://doi.org/10.7910/DVN/28075}, Harvard Dataverse.
+Shellman, Steve; Starz, James; Ward, Michael, 2015, ``ICEWS Coded
+Event Data'', \url{https://doi.org/10.7910/DVN/28075}, Harvard Dataverse.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/andybega/icews}
+  \item Report bugs at \url{https://github.com/andybega/icews/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Andreas Beger \email{adbeger@gmail.com} (0000-0003-1883-3169)
+
 }

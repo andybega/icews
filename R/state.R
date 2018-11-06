@@ -117,7 +117,7 @@ plan_file_changes <- function(raw_file_dir) {
     dplyr::arrange(data_set, file)
 
   # Determine any actions that need to be performed
-  file_state <- file_state %>%
+  full_plan <- file_state %>%
     dplyr::mutate(
       action = dplyr::case_when(
         in_local==FALSE ~ "download",
@@ -126,12 +126,13 @@ plan_file_changes <- function(raw_file_dir) {
       action = factor(action, levels =  c("none", "download", "remove")))
 
   # Clean up file state so it is easier to read
-  file_state <- file_state %>%
-    arrange(data_set, action) %>%
-    select(file, action, where, data_set, on_dvn, in_local, dvn_label)
+  lvls <- c("none", "download", "delete", "ingest_from_file",
+            "ingest_from_memory", "remove")
+  full_plan$action = factor(full_plan$action, levels = lvls)
+  full_plan <- full_plan[order(full_plan$data_set, full_plan$action), ]
 
-  #class(file_state) <- "plan"
-  return(file_state)
+  #class(full_plan) <- "plan"
+  return(full_plan)
 }
 
 
@@ -173,13 +174,10 @@ plan_database_sync <- function(db_path      = find_db(),
     dplyr::ungroup()
 
   # Clean up file state so it is easier to read
-  full_plan <- full_plan %>%
-    dplyr::mutate(
-      action = factor(action, levels = c(
-        "none", "download", "delete", "ingest_from_file", "ingest_from_memory",
-        "remove")
-      )) %>%
-    dplyr::arrange(data_set, action)
+  lvls <- c("none", "download", "delete", "ingest_from_file",
+            "ingest_from_memory", "remove")
+  full_plan$action = factor(full_plan$action, levels = lvls)
+  full_plan <- full_plan[order(full_plan$data_set, full_plan$action), ]
 
   #class(full_plan) <- "plan"
   full_plan
@@ -239,13 +237,15 @@ plan_database_changes <- function(db_path      = find_db(),
       select(file, action, data_set, everything())
   }
 
+  # adjust for discard files option
+  if (!keep_files) {
+    # Never download so that all ingests are from memory
+    full_plan$action[full_plan$where=="file system" & full_plan$action=="download"] <- "none"
+    # remove all local files
+    full_plan$action[full_plan$where=="file system" & full_plan$in_local==TRUE] <- "remove"
+  }
+
   # Determine DB actions that need to be performed;
-  # right now these are NA for action, need to fill that in
-  # dvn_version: by implication file exists on DVN
-  # local version: by implication file is locally available; however, it may
-  #  also be schedule for download
-  # db_version: by implication file is in DB
-  #
   full_plan <- full_plan %>%
     dplyr::group_by(data_set) %>%
     dplyr::mutate(
@@ -259,13 +259,10 @@ plan_database_changes <- function(db_path      = find_db(),
     dplyr::ungroup()
 
   # Clean up file state so it is easier to read
-  full_plan <- full_plan %>%
-    dplyr::mutate(
-      action = factor(action, levels = c(
-        "none", "download", "delete", "ingest_from_file", "ingest_from_memory",
-        "remove")
-        )) %>%
-    dplyr::arrange(data_set, action)
+  lvls <- c("none", "download", "delete", "ingest_from_file",
+            "ingest_from_memory", "remove")
+  full_plan$action = factor(full_plan$action, levels = lvls)
+  full_plan <- full_plan[order(full_plan$data_set, full_plan$action), ]
 
   #class(full_plan) <- "plan"
   full_plan

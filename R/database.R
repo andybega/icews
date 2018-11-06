@@ -115,6 +115,7 @@ check_db_exists <- function(db_path) {
   }
   create_db(db_path)
   create_event_table(db_path)
+  invisible(TRUE)
 }
 
 
@@ -231,6 +232,7 @@ sync_db_with_files <- function(raw_file_dir = find_raw(), db_path = find_db(),
     return(invisible(plan))
   }
 
+  check_db_exists(db_path)
   execute_plan(plan, raw_file_dir = to_dir, db_path = db_path)
 
   cat("File and/or database update done\n")
@@ -256,9 +258,33 @@ update <- function(dryrun = FALSE,
                    keep_files = getOption("icews.keep_files"),
                    db_path = find_db(), raw_file_dir = find_raw()) {
 
+  # Check input
+  # dryrun
+  if (!is.logical(dryrun) | is.na(dryrun)) {
+    stop("dryrun argument should be TRUE or FALSE")
+  }
+
+  # use_db
+  if (!is.logical(use_db) | is.na(use_db)) {
+    stop("use_db argument should be TRUE or FALSE")
+  }
+  if (use_db=="") {
+    stop("Option \"icews.use_db\" is not set, consider running `setup_icews()`\n?setup_icews")
+  }
+
+  # keep_files
+  if (!is.logical(keep_files) | is.na(keep_files)) {
+    stop("keep_files argument should be TRUE or FALSE")
+  }
+  if (keep_files=="") {
+    stop("Option \"icews.keep_files\" is not set, consider running `setup_icews()`\n?setup_icews")
+  }
+
+  # Determine action plan based on DB and file options
   if (!use_db) {
     plan <- plan_file_changes(raw_file_dir)
   } else {
+    # use a database
     check_db_exists(db_path)
     plan <- plan_database_changes(db_path, raw_file_dir, keep_files, use_local = TRUE)
   }

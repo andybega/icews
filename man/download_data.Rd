@@ -2,9 +2,12 @@
 % Please edit documentation in R/download.R
 \name{download_data}
 \alias{download_data}
+\alias{download_icews}
 \title{Download ICEWS data files}
 \usage{
 download_data(to_dir = find_raw(), update = TRUE, dryrun = FALSE)
+
+download_icews(to_dir = find_raw(), update = TRUE, dryrun = FALSE)
 }
 \arguments{
 \item{to_dir}{Path to directory where data files will be downloaded to.}

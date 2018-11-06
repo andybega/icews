@@ -21,6 +21,14 @@ setup_icews <- function(data_dir, use_db = TRUE, keep_files = FALSE, r_profile =
   options(icews.use_db     = use_db)
   options(icews.keep_files = keep_files)
 
+  # Create folders as neccessary
+  if (use_db & !dir.exists(find_db())) {
+    dir.create(find_db())
+  }
+  if ((!use_db | keep_files) & !dir.exists(find_raw())) {
+    dir.create(find_raw())
+  }
+
   if(isTRUE(r_profile)) {
     if (!requireNamespace("usethis", quietly = TRUE)) {
       stop("Package \"usethis\" needed for this function to work. Please install it (recommended) or set 'r_environ = FALSE'.",
@@ -92,34 +100,7 @@ dr_icews <- function(db_path = NULL, raw_file_dir = NULL) {
   invisible(TRUE)
 }
 
-#' Read and combine raw data files
-#'
-#' Read the entire ICEWS event data into memory. This takes up several (2-3 in 2018) GB.
-#'
-#' @param raw_file_dir Directory containing the raw event TSV files.
-#'
-#' @export
-#' @import dplyr
-#' @importFrom readr read_tsv
-#' @importFrom purrr map
-read_icews <- function(raw_file_dir = find_raw()) {
 
-  data_files <- dir(raw_file_dir, pattern = ".tab", full.names = TRUE)
-  col_fmt <- readr::cols(
-    .default = col_character(),
-    `Event ID` = col_integer(),
-    `Event Date` = col_date(format = ""),
-    Intensity = col_double(),
-    `Story ID` = col_integer(),
-    `Sentence Number` = col_integer(),
-    Latitude = col_double(),
-    Longitude = col_double()
-  )
-  events <- data_files %>%
-    purrr::map(readr::read_tsv, col_types = col_fmt) %>%
-    dplyr::bind_rows()
-  events
-}
 
 
 

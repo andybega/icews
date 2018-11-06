@@ -102,3 +102,33 @@ purge_data_files <- function(raw_file_dir = find_raw()) {
   invisible(NULL)
 }
 
+
+#' Read and combine raw data files
+#'
+#' Read the entire ICEWS event data into memory. This takes up several (2-3 in 2018) GB.
+#'
+#' @param raw_file_dir Directory containing the raw event TSV files.
+#'
+#' @export
+#' @import dplyr
+#' @importFrom readr read_tsv
+#' @importFrom purrr map
+read_icews <- function(raw_file_dir = find_raw()) {
+
+  data_files <- dir(raw_file_dir, pattern = ".tab", full.names = TRUE)
+  col_fmt <- readr::cols(
+    .default = col_character(),
+    `Event ID` = col_integer(),
+    `Event Date` = col_date(format = ""),
+    Intensity = col_double(),
+    `Story ID` = col_integer(),
+    `Sentence Number` = col_integer(),
+    Latitude = col_double(),
+    Longitude = col_double()
+  )
+  events <- data_files %>%
+    purrr::map(readr::read_tsv, col_types = col_fmt) %>%
+    dplyr::bind_rows()
+  events
+}
+

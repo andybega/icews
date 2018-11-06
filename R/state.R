@@ -356,19 +356,19 @@ execute_plan <- function(plan, raw_file_dir, db_path) {
 
     if (task$action=="delete") {
       cat(sprintf("Deleting DB records from '%s'\n", task$file))
-      delete_events(task$file)
+      delete_events(task$file, db_path)
       next
     }
 
     if (task$action=="ingest_from_file") {
       cat(sprintf("Ingesting records from '%s'\n", task$file))
-      ingest_from_file(file.path(raw_file_dir, task$file))
+      ingest_from_file(file.path(raw_file_dir, task$file), db_path)
       next
     }
 
     if (task$action=="ingest_from_memory") {
       cat(sprintf("Ingesting records from '%s'\n", task$file))
-      ingest_from_memory(task$file)
+      ingest_from_memory(task$file, db_path)
       next
     }
 

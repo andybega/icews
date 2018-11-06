@@ -62,7 +62,6 @@ download_data <- function(to_dir = find_raw(), update = TRUE, dryrun = FALSE) {
 
 
   plan <- plan_file_changes(to_dir)
-  path  <- to_dir
 
   if (!isTRUE(update)) {
     state$action <- ifelse(plan$action=="remove", "none", plan$action)

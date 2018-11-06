@@ -4,12 +4,12 @@
 \alias{ingest_from_memory}
 \title{Ingest a file without retaining}
 \usage{
-ingest_from_memory(file, con = connect())
+ingest_from_memory(file, db_path)
 }
 \arguments{
 \item{file}{The normalized filename, e.g. "events.1995.[...].tab"}
 
-\item{con}{Connection to the ICEWS database}
+\item{db_path}{Path to SQLite database file}
 }
 \description{
 The "in memory" part is not working because I haven't figured out how to

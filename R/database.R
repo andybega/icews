@@ -175,10 +175,10 @@ ingest_from_file <- function(raw_file_path = find_raw(), db_path = find_db()) {
 #' unzip a raw vector in memory.
 #'
 #' @param file The normalized filename, e.g. "events.1995.[...].tab"
-#' @param con Connection to the ICEWS database
-ingest_from_memory <- function(file, con = connect()) {
+#' @param db_path Path to SQLite database file
+ingest_from_memory <- function(file, db_path) {
   file <- download_file(file, to_dir = tempdir())
-  ingest_from_file(file, con = con)
+  ingest_from_file(file, db_path)
   invisible(TRUE)
 }
 
@@ -187,8 +187,9 @@ ingest_from_memory <- function(file, con = connect()) {
 #' Delete events associated with a file
 #'
 #' @param file The normalized filename, e.g. "events.1995.[...].tab"
-#' @param con Connection to the ICEWS database
-delete_events <- function(file, con = connect()) {
+#' @param db_path Path to SQLite database file
+delete_events <- function(file, db_path) {
+  con <- connect(db_path)
   on.exit(DBI::dbDisconnect(con))
   sql <- sprintf("DELETE FROM events WHERE source_file=='%s';", file)
   res <- DBI::dbSendQuery(con, sql)
@@ -206,7 +207,7 @@ delete_events <- function(file, con = connect()) {
 #'
 #' @export
 purge_db <- function(db_path = NULL) {
-  con <- connect_to_db(db_path)
+  con <- connect(db_path)
   on.exit(DBI::dbDisconnect(con))
 
   res <- DBI::dbSendQuery(con, "DROP TABLE events;")
@@ -233,7 +234,7 @@ sync_db_with_files <- function(raw_file_dir = find_raw(), db_path = find_db(),
   }
 
   check_db_exists(db_path)
-  execute_plan(plan, raw_file_dir = to_dir, db_path = db_path)
+  execute_plan(plan, raw_file_dir = raw_file_dir, db_path = db_path)
 
   cat("File and/or database update done\n")
   invisible(TRUE)
@@ -268,7 +269,7 @@ update <- function(dryrun = FALSE,
   if (!is.logical(use_db) | is.na(use_db)) {
     stop("use_db argument should be TRUE or FALSE")
   }
-  if (use_db=="") {
+  if (is.null(use_db)) {
     stop("Option \"icews.use_db\" is not set, consider running `setup_icews()`\n?setup_icews")
   }
 
@@ -276,9 +277,15 @@ update <- function(dryrun = FALSE,
   if (!is.logical(keep_files) | is.na(keep_files)) {
     stop("keep_files argument should be TRUE or FALSE")
   }
-  if (keep_files=="") {
+  if (is.null(keep_files)) {
     stop("Option \"icews.keep_files\" is not set, consider running `setup_icews()`\n?setup_icews")
   }
+
+  # Check if "/raw" should/does exist
+  if (!dir.exists(raw_file_dir) & (keep_files | !use_db)) {
+    dir.create(raw_file_dir)
+  }
+
 
   # Determine action plan based on DB and file options
   if (!use_db) {
@@ -294,7 +301,7 @@ update <- function(dryrun = FALSE,
     return(invisible(plan))
   }
 
-  execute_plan(plan, raw_file_dir = to_dir, db_path = db_path)
+  execute_plan(plan, raw_file_dir = raw_file_dir, db_path = db_path)
 
   cat("File and/or database update done\n")
   invisible(TRUE)

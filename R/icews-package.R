@@ -75,6 +75,10 @@
 #' @md
 "_PACKAGE"
 globalVariables(c("cameo_codes", "goldstein_mappings"))
+globalVariables(c("action", "data_set", "db_data_set", "db_version",
+                  "dvn_data_set", "dvn_file", "dvn_label", "dvn_version",
+                  "in_db", "in_local", "is_data", "local_data_set",
+                  "local_file", "local_version", "on_dvn", "where"))
 
 
 

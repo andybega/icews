@@ -9,13 +9,9 @@
 #'
 #' @export
 #' @import dplyr
-create_db <- function(db_path = NULL) {
-  if (is.null(db_path)) {
-    db_dir <- file.path(Sys.getenv("ICEWS_DATA_DIR"), "db")
-    if (!dir.exists(db_dir)) {
-      dir.create(db_dir)
-    }
-    db_path <- file.path(db_dir, "icews.sqlite3")
+create_db <- function(db_path = find_db()) {
+  if (!dir.exists(dirname(db_path))) {
+    dir.create(dirname(db_path))
   }
 
   dplyr::src_sqlite(db_path, create = TRUE)
@@ -26,23 +22,180 @@ create_db <- function(db_path = NULL) {
 #'
 #' Create a DB connection for the local ICEWS database.
 #'
-#' @param db_path Path to SQLite database
+#' @param db_path Path to SQLite database file
 #'
 #' @export
 #' @importFrom DBI dbConnect
 #' @importFrom RSQLite SQLite
-connect_to_db <- function(db_path = NULL) {
-  if (is.null(db_path)) {
-    db_dir <- file.path(Sys.getenv("ICEWS_DATA_DIR"), "db")
-    if (!dir.exists(db_dir)) {
-      dir.create(db_dir)
-    }
-    db_path <- file.path(db_dir, "icews.sqlite3")
+connect <- function(db_path = find_db()) {
+  if (!file.exists(db_path)) {
+    stop(sprintf("Could not find database file at '%s'", db_path))
   }
 
   con <- DBI::dbConnect(RSQLite::SQLite(), dbname = db_path)
   con
 }
+
+#' Query
+#'
+#' Get results from a query to the database
+#'
+#' @param query SQL query string
+#' @param db_path Path to SQLite database file
+#'
+#' @export
+query <- function(query, db_path = find_db()) {
+  con <- connect(db_path)
+  on.exit(DBI::dbDisconnect(con))
+  res <- DBI::dbGetQuery(con, query)
+  res
+}
+
+#' Create event table and indices
+#'
+#' @param db_path Path to SQLite database file
+create_event_table <- function(db_path = find_db()) {
+  con <- connect(db_path)
+  on.exit(DBI::dbDisconnect(con))
+
+  sql <- "CREATE TABLE IF NOT EXISTS `events` (
+    `Event ID` INTEGER,
+    `Event Date` TEXT,
+    `Source Name` TEXT,
+    `Source Sectors` TEXT,
+    `Source Country` TEXT,
+    `Event Text` TEXT,
+    `CAMEO Code` TEXT,
+    `Intensity` REAL,
+    `Target Name` TEXT,
+    `Target Sectors` TEXT,
+    `Target Country` TEXT,
+    `Story ID` INTEGER,
+    `Sentence Number` INTEGER,
+    `Publisher` TEXT,
+    `City` TEXT,
+    `District` TEXT,
+    `Province` TEXT,
+    `Country` TEXT,
+    `Latitude` REAL,
+    `Longitude` REAL,
+    `year` INTEGER,
+    `yearmonth` INTEGER,
+    `source_file` TEXT
+  );"
+  res <- DBI::dbSendQuery(con, sql)
+  DBI::dbClearResult(res)
+
+  # Create indices
+  idx_columns <- c("Event ID", "source_file", "CAMEO Code", "Country", "year",
+                   "yearmonth")
+  idx_names <- paste0(gsub(" ", "_", tolower(idx_columns)), "_idx")
+  existing_indices <- DBI::dbGetQuery(con, "PRAGMA index_list(events);")$name
+  need_cols <- idx_columns[!idx_names %in% existing_indices]
+  if (length(need_cols) > 0) {
+    #cat("Building indices\n")
+    need_names <- idx_names[!idx_names %in% existing_indices]
+    for (i in 1:length(need_cols)) {
+      #cat(sprintf("Creating index for '%s'\n", need_cols[i]))
+      sql <- sprintf("CREATE INDEX IF NOT EXISTS %s ON events(`%s`);", need_names[i], need_cols[i])
+      res <- DBI::dbSendQuery(con, sql)
+      DBI::dbClearResult(res)
+    }
+  }
+  invisible(NULL)
+}
+
+
+#' Check and if needed setup database
+#'
+#' @param db_path Path to SQLite database file
+check_db_exists <- function(db_path) {
+  if (file.exists(db_path)) {
+    return(TRUE)
+  }
+  create_db(db_path)
+  create_event_table(db_path)
+}
+
+
+#' Augment and write events to DB
+#'
+#' Adds some columns to events before writing to DB.
+#'
+#' @param events data.frame containing ICEWS events
+#' @param file Name of the TSV source file from which events came
+#' @param db_path Path to SQLite database file
+write_data_to_db <- function(events, file, db_path = find_db()) {
+  con = connect(db_path)
+  on.exit(DBI::dbDisconnect(con))
+
+  # Add year and yearmonth since these will be useful for getting counts over time
+  events$year      <- as.integer(format(events$`Event Date`, "%Y"))
+  events$yearmonth <- as.integer(format(events$`Event Date`, "%Y%m"))
+  # SQLite does not have date data type, use ISO text instead
+  events$`Event Date` <- as.character(events$`Event Date`)
+  events$source_file  <- file
+
+  DBI::dbWriteTable(con, "events", events, append = TRUE)
+  invisible(TRUE)
+}
+
+
+#' Ingest a raw events file
+#'
+#' Ingest a raw data file into the database
+#'
+#' @param raw_file_path Directory containing the raw event TSV files.
+#' @param db_path Path to SQLite database
+#'
+#' @import readr
+#' @importFrom DBI dbDisconnect
+ingest_from_file <- function(raw_file_path = find_raw(), db_path = find_db()) {
+  events <- readr::read_tsv(raw_file_path,
+                            col_types = cols(
+                              .default = col_character(),
+                              `Event ID` = col_integer(),
+                              `Event Date` = col_date(format = ""),
+                              Intensity = col_double(),
+                              `Story ID` = col_integer(),
+                              `Sentence Number` = col_integer(),
+                              Latitude = col_double(),
+                              Longitude = col_double()
+                            ))
+
+  write_data_to_db(events, basename(raw_file_path), db_path)
+  invisible(TRUE)
+}
+
+
+#' Ingest a file without retaining
+#'
+#' The "in memory" part is not working because I haven't figured out how to
+#' unzip a raw vector in memory.
+#'
+#' @param file The normalized filename, e.g. "events.1995.[...].tab"
+#' @param con Connection to the ICEWS database
+ingest_from_memory <- function(file, con = connect()) {
+  file <- download_file(file, to_dir = tempdir())
+  ingest_from_file(file, con = con)
+  invisible(TRUE)
+}
+
+
+
+#' Delete events associated with a file
+#'
+#' @param file The normalized filename, e.g. "events.1995.[...].tab"
+#' @param con Connection to the ICEWS database
+delete_events <- function(file, con = connect()) {
+  on.exit(DBI::dbDisconnect(con))
+  sql <- sprintf("DELETE FROM events WHERE source_file=='%s';", file)
+  res <- DBI::dbSendQuery(con, sql)
+  DBI::dbClearResult(res)
+  invisible(TRUE)
+}
+
+
 
 #' Purge ICEWS database
 #'
@@ -61,160 +214,91 @@ purge_db <- function(db_path = NULL) {
   DBI::dbClearResult(res)
 }
 
-#' Sync database and raw files
+#' Synchronize DB with raw files
 #'
-#' Synchronize database contents with local raw data files.
+#' Synchronize DB with any local files found, without downloading new files.
 #'
-#' @param db_path Path to SQLite database
+#' @param db_path Path to SQLite database file
 #' @param raw_file_dir Directory containing the raw event TSV files.
-#' @param dryrun List file changes to be performed without taking any action.
-#'
-#' @export
-#' @importFrom DBI dbGetQuery dbListTables
-sync_db_with_files <- function(db_path = NULL, raw_file_dir = NULL,
+#' @param dryrun List changes to be performed without taking any action.
+sync_db_with_files <- function(raw_file_dir = find_raw(), db_path = find_db(),
                                dryrun = FALSE) {
 
-  if (is.null(raw_file_dir)) {
-    raw_file_dir <- file.path(Sys.getenv("ICEWS_DATA_DIR"), "raw")
-  }
-  if (is.null(db_path)) {
-    db_path <- file.path(Sys.getenv("ICEWS_DATA_DIR"), "db/icews.sqlite3")
-  }
-
-  con <- connect_to_db(db_path)
-  events_exists <- ("events") %in% DBI::dbListTables(con)
-  if (events_exists) {
-    query <- "SELECT DISTINCT(source_file) FROM events;"
-    ingested_files <- DBI::dbGetQuery(con, query)$source_file
-  } else {
-    ingested_files <- vector("character", 0L)
-  }
-  dbDisconnect(con)
-
-  local_files <- dir(raw_file_dir, pattern = "events[0-9\\.]+.tab")
-  need_to_ingest <- local_files[!local_files %in% ingested_files]
+  plan <- plan_database_sync(db_path, raw_file_dir)
 
   if (isTRUE(dryrun)) {
-    cat(sprintf("Need to ingest %s files\n", length(need_to_ingest)))
-    return(invisible(NULL))
+    print_plan(plan)
+    return(invisible(plan))
   }
 
-  for (file_name in need_to_ingest) {
-    cat(sprintf("Ingesting %s\n", file_name))
-    raw_file_path <- file.path(raw_file_dir, file_name)
-    ingest_raw_data_file(raw_file_path, db_path)
-  }
+  execute_plan(plan, raw_file_dir = to_dir, db_path = db_path)
 
-  # DB maintenance
-  con <- connect_to_db(db_path)
-  on.exit(DBI::dbDisconnect(con))
-
-  # Create/update indices
-  idx_columns <- c("Event ID", "source_file", "CAMEO Code", "Country", "year", "yearmonth")
-  idx_names   <- paste0(gsub(" ", "_", tolower(idx_columns)), "_idx")
-  existing_indices <- query("PRAGMA index_list(events);")$name
-  need_cols   <- idx_columns[!idx_names %in% existing_indices]
-  if (length(need_cols) > 0) {
-    cat("Building indices\n")
-    need_names <- idx_names[!idx_names %in% existing_indices]
-    for (i in 1:length(need_cols)) {
-      cat(sprintf("Creating index for '%s'\n", need_cols[i]))
-      sql <- sprintf("CREATE INDEX IF NOT EXISTS %s ON events(`%s`);", need_names[i], need_cols[i])
-      res <- DBI::dbSendQuery(con, sql)
-    }
-  }
-
-  # Housekeeping
-  cat("Cleaning and optimizing database\n")
-  DBI::dbSendQuery(con, "VACUUM;")
-  DBI::dbSendQuery(con, "PRAGMA optimize;")
-
-  invisible(NULL)
-}
-
-#' Ingest a raw events file
-#'
-#' Ingest a raw data file into the database
-#'
-#' @param raw_file_path Directory containing the raw event TSV files.
-#' @param db_path Path to SQLite database
-#'
-#' @import readr
-#' @importFrom DBI dbDisconnect
-ingest_raw_data_file <- function(raw_file_path, db_path) {
-  con <- connect_to_db(db_path)
-  on.exit(DBI::dbDisconnect(con))
-
-  events <- readr::read_tsv(raw_file_path,
-                            col_types = cols(
-                              .default = col_character(),
-                              `Event ID` = col_integer(),
-                              `Event Date` = col_date(format = ""),
-                              Intensity = col_double(),
-                              `Story ID` = col_integer(),
-                              `Sentence Number` = col_integer(),
-                              Latitude = col_double(),
-                              Longitude = col_double()
-                            ))
-  # Add year and yearmonth since these will be useful for getting counts over time
-  events$year      <- as.integer(format(events$`Event Date`, "%Y"))
-  events$yearmonth <- as.integer(format(events$`Event Date`, "%Y%m"))
-  # SQLite does not have date data type, use ISO text instead
-  events$`Event Date` <- as.character(events$`Event Date`)
-  events$source_file <- basename(raw_file_path)
-  DBI::dbWriteTable(con, "events", events, append = TRUE)
+  cat("File and/or database update done\n")
   invisible(TRUE)
 }
 
-#' Synchronize/update local ICEWS database
+
+#' Update database and files
 #'
 #' Maintain a current set of ICEWS events in the local database that match
 #' the latest versions on DVN. If needed, create the database and download data
 #' files.
 #'
-#' @param db_path Path to SQLite database
-#' @param raw_file_dir Directory containing the raw event TSV files.
 #' @param dryrun Just list changes that would be made, without making them.
+#' @param use_db Store events in a SQLite database?
+#' @param keep_files If using a database, retain raw data TSV files?
+#' @param db_path Path to SQLite database file
+#' @param raw_file_dir Directory containing the raw event TSV files.
 #'
 #' @export
-sync_db <- function(db_path = NULL, raw_file_dir = NULL, dryrun = FALSE) {
+update <- function(dryrun = FALSE,
+                   use_db     = getOption("icews.use_db"),
+                   keep_files = getOption("icews.keep_files"),
+                   db_path = find_db(), raw_file_dir = find_raw()) {
 
-  if (is.null(raw_file_dir)) {
-    raw_file_dir <- file.path(Sys.getenv("ICEWS_DATA_DIR"), "raw")
+  if (!use_db) {
+    plan <- plan_file_changes(raw_file_dir)
+  } else {
+    check_db_exists(db_path)
+    plan <- plan_database_changes(db_path, raw_file_dir, keep_files, use_local = TRUE)
   }
-  if (is.null(db_path)) {
-    db_path <- file.path(Sys.getenv("ICEWS_DATA_DIR"), "db/icews.sqlite3")
-  }
-
-  cat("Checking whether files need to be downloaded/updated\n\n")
-  Sys.sleep(.5)
-
-  download_icews(raw_file_dir, overwrite = FALSE, dryrun)
 
   if (isTRUE(dryrun)) {
-    return(invisible(NULL))
+    print_plan(plan)
+    return(invisible(plan))
   }
 
-  cat("Checking whether DB is set up\n\n")
-  Sys.sleep(.5)
+  execute_plan(plan, raw_file_dir = to_dir, db_path = db_path)
 
-  if (!file.exists(db_path)) {
-    cat("Creating DB\n")
-    create_db(db_path)
-  }
+  cat("File and/or database update done\n")
+  invisible(TRUE)
+}
 
-  cat("Checking whether files need to be ingested to DB\n")
-  Sys.sleep(.5)
+#' DB housekeeping
+#'
+#' @param db_path Path to database file
+db_housekeeping <- function(db_path) {
+  con <- connect(db_path)
 
-  # Workaround until proper sync
-  con <- connect_to_db()
-  if ("events" %in% DBI::dbListTables(con)) {
-    purge_db(db_path)
-  }
-  DBI::dbDisconnect(con)
-  sync_db_with_files(db_path, raw_file_dir)
-
-  invisible(NULL)
+  # Housekeeping
+  res <- DBI::dbSendQuery(con, "VACUUM;")
+  DBI::dbClearResult(res)
+  res <- DBI::dbSendQuery(con, "PRAGMA optimize;")
+  DBI::dbClearResult(res)
 }
 
 
+#' List of ingested source files
+#'
+#' List the source files from which events have been ingested to the DB already.
+#'
+#' @param db_path Path to SQLite database file
+#'
+#' @return A character vector of source file names.
+#'
+#' @export
+list_source_files <- function(db_path = find_db()) {
+  con <- connect(db_path)
+  source_files <- DBI::dbGetQuery(con, "SELECT DISTINCT(source_file) FROM events;")
+  source_files$source_file
+}

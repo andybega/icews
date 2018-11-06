@@ -4,14 +4,17 @@
 \alias{setup_icews}
 \title{Setup ICEWS environment variables}
 \usage{
-setup_icews(data_dir, use_db, r_environ = FALSE)
+setup_icews(data_dir, use_db = TRUE, keep_files = FALSE,
+  r_profile = TRUE)
 }
 \arguments{
 \item{data_dir}{Where should the raw TSV data be kept?}
 
-\item{use_db}{Use a SQLite database to store and work with the data?}
+\item{use_db}{Store events in a SQLite database?}
 
-\item{r_environ}{If TRUE, this will write config parameters to a .Renviron file.}
+\item{keep_files}{keep_files If using a database, retain raw data TSV files?}
+
+\item{r_profile}{If TRUE, this will write config parameters to a .Renviron file.}
 }
 \description{
 Checks for and creates several ICEWS environment variables.

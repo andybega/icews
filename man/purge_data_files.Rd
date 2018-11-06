@@ -4,10 +4,10 @@
 \alias{purge_data_files}
 \title{Purge file downloads}
 \usage{
-purge_data_files(raw_file_dir = NULL)
+purge_data_files(raw_file_dir = find_raw())
 }
 \arguments{
-\item{raw_file_dir}{Directory containing the raw event TSV files.}
+\item{raw_file_dir}{Directory containing the raw event TSV files}
 }
 \description{
 Removes the downloaded raw event TSV files

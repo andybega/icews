@@ -2,18 +2,18 @@
 % Please edit documentation in R/database.R
 \name{sync_db_with_files}
 \alias{sync_db_with_files}
-\title{Sync database and raw files}
+\title{Synchronize DB with raw files}
 \usage{
-sync_db_with_files(db_path = NULL, raw_file_dir = NULL,
+sync_db_with_files(raw_file_dir = find_raw(), db_path = find_db(),
   dryrun = FALSE)
 }
 \arguments{
-\item{db_path}{Path to SQLite database}
-
 \item{raw_file_dir}{Directory containing the raw event TSV files.}
 
-\item{dryrun}{List file changes to be performed without taking any action.}
+\item{db_path}{Path to SQLite database file}
+
+\item{dryrun}{List changes to be performed without taking any action.}
 }
 \description{
-Synchronize database contents with local raw data files.
+Synchronize DB with any local files found, without downloading new files.
 }

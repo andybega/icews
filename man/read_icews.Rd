@@ -4,7 +4,7 @@
 \alias{read_icews}
 \title{Read and combine raw data files}
 \usage{
-read_icews(raw_file_dir = NULL)
+read_icews(raw_file_dir = find_raw())
 }
 \arguments{
 \item{raw_file_dir}{Directory containing the raw event TSV files.}

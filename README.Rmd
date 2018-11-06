@@ -40,15 +40,16 @@ library("DBI")
 library("dplyr")
 library("usethis")
 
-setup_icews(data_dir = "/where/should/data/be", use_db = "TRUE", r_environ = TRUE)
+setup_icews(data_dir = "/where/should/data/be", use_db = TRUE, keep_files = TRUE,
+            r_profile = TRUE)
 
-sync_db()
+update()
 # Wait until all is done; like 45 minutes or more the first time around
 
-con <- connect_to_db()
-DBI::dbGetQuery(con, "SELECT count(*) FROM events;")
+con <- connect()
+DBI::dbGetQuery(con, "SELECT count(*) AS n FROM events;")
 # or
-query("SELECT count(*) FROM events;")
+query("SELECT count(*) AS n FROM events;")
 # or
 tbl(con, "events") %>% summarize(n = n())
 ```
@@ -59,7 +60,7 @@ In the most simple use case, you can use the package to download the ICEWS event
 
 ```{r, eval = FALSE}
 dir.create("~/Downloads/icews")
-download_icews("~/Downloads/icews")
+download_data("~/Downloads/icews")
 ```
 
 This will conventiently also re-use and update any files already in the same directory. E.g. the monthly data updates currently come in a file with the pattern "events.2018.yyyymmddhhmmss.tab", where the "yyyymmddhhmmss" part changes. The downloader can identify this and will replace the old with the new file. 
@@ -67,7 +68,7 @@ This will conventiently also re-use and update any files already in the same dir
 Just in case, you can do a dry run that will not actually make any changes:
 
 ```{r, eval = FALSE}
-download_icews("~/Downloads/icews", dryrun = TRUE)
+download_data("~/Downloads/icews", dryrun = TRUE)
 ```
 
 ```bash

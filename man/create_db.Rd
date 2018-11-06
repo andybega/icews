@@ -4,7 +4,7 @@
 \alias{create_db}
 \title{Create a local ICEWS database}
 \usage{
-create_db(db_path = NULL)
+create_db(db_path = find_db())
 }
 \arguments{
 \item{db_path}{If NULL and the ICEWS_DATA_DIR environment variable is set,

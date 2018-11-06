@@ -1,7 +1,7 @@
 Package: icews
 Type: Package
 Title: Get ICEWS Event Data
-Version: 0.1.0
+Version: 0.1.0.9000
 Authors@R: person("Andreas", "Beger", role = c("cre", "aut"), email =
     "adbeger@gmail.com", comment = c(ORCID = "0000-0003-1883-3169"))
 Maintainer: Andreas Beger <adbeger@gmail.com>
@@ -20,7 +20,8 @@ Imports:
   rlang,
   tibble
 Suggests:
-  usethis
+    usethis,
+    testthat
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

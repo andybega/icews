@@ -4,32 +4,37 @@
 #' Checks for and creates several ICEWS environment variables.
 #'
 #' @param data_dir Where should the raw TSV data be kept?
-#' @param use_db Use a SQLite database to store and work with the data?
-#' @param r_environ If TRUE, this will write config parameters to a .Renviron file.
+#' @param use_db Store events in a SQLite database?
+#' @param keep_files keep_files If using a database, retain raw data TSV files?
+#' @param r_profile If TRUE, this will write config parameters to a .Renviron file.
 #'
 #' @export
-setup_icews <- function(data_dir, use_db = "TRUE", r_environ = TRUE) {
+setup_icews <- function(data_dir, use_db = TRUE, keep_files = FALSE, r_profile = TRUE) {
   if (!dir.exists(data_dir)) {
     stop("Data directory does not exist.")
   }
   if (!use_db %in% c(TRUE, FALSE)) {
     stop("use_db should be TRUE or FALSE")
   }
-  Sys.setenv("ICEWS_DATA_DIR" = data_dir)
-  Sys.setenv("ICEWS_USE_DB" = use_db)
 
-  if(isTRUE(r_environ)) {
+  options(icews.data_dir   = data_dir)
+  options(icews.use_db     = use_db)
+  options(icews.keep_files = keep_files)
+
+  if(isTRUE(r_profile)) {
     if (!requireNamespace("usethis", quietly = TRUE)) {
       stop("Package \"usethis\" needed for this function to work. Please install it (recommended) or set 'r_environ = FALSE'.",
            call. = FALSE)
     }
-    cat("Add these lines to the .Renviron file:\n\n")
-    cat(sprintf("ICEWS_DATA_DIR=\"%s\"\n", data_dir))
-    cat(sprintf("ICEWS_USE_DB=%s\n", use_db))
+    cat("Add these lines to the .Rprofile file:\n\n")
+    cat("# ICEWS data location and options\n")
+    cat(sprintf("options(icews.data_dir   = \"%s\")\n", data_dir))
+    cat(sprintf("options(icews.use_db     = %s)\n", use_db))
+    cat(sprintf("options(icews.keep_files = %s)\n", keep_files))
     cat("\n")
-    usethis::edit_r_environ()
+    usethis::edit_r_profile()
   }
-  cat("Environment variables are set.\nac")
+  cat("Path options are set\n")
   invisible(NULL)
 }
 
@@ -43,31 +48,31 @@ setup_icews <- function(data_dir, use_db = "TRUE", r_environ = TRUE) {
 #' @export
 dr_icews <- function(db_path = NULL, raw_file_dir = NULL) {
 
-  env_is_set <- !is.null(Sys.getenv("ICEWS_DATA_DIR"))
+  opts_are_set <- !is.null(getOption("icews.data_dir"))
 
   # Make sure there are enough inputs
-  if (!env_is_set & is.null(db_path) & is.null(raw_file_dir)) {
-    stop("Environment variables are not set, nor were paths passed. The doctor is **not** in.")
-  } else if (!env_is_set & any(is.null(db_path), is.null(raw_file_dir))) {
-    stop("Environment variables are not set, but one of the paths was not specified. The doctor is **not** in.")
-  } else if (env_is_set & any(!is.null(db_path), !is.null(raw_file_dir))) {
-    cat("Found environment variables; disregarding path arguments\n")
+  if (!opts_are_set & is.null(db_path) & is.null(raw_file_dir)) {
+    stop("Path variables are not set, nor were paths passed. The doctor is **not** in.")
+  } else if (!opts_are_set & any(is.null(db_path), is.null(raw_file_dir))) {
+    stop("Path variables are not set, but one of the paths was not specified. The doctor is **not** in.")
+  } else if (opts_are_set & any(!is.null(db_path), !is.null(raw_file_dir))) {
+    cat("Found path variables in options; disregarding path arguments\n")
   }
 
   # Check if environment vars are set up
-  if (!env_is_set) {
-    cat("Did not find ICEWS environment variables, consider running \"?setup_icews\"\n")
+  if (!opts_are_set) {
+    cat("Did not find ICEWS path variables, consider running \"?setup_icews\"\n")
     cat(sprintf("Looking for data at:\n  db:  %s\n  raw: %s\n",
                 db_path, raw_file_dir))
   } else {
-    cat(sprintf("Environment variables are set; looking for data at:\n  db:  %s\n  raw: %s\n",
-                file.path(Sys.getenv("ICEWS_DATA_DIR"), "db/icews.sqlite3"),
-                file.path(Sys.getenv("ICEWS_DATA_DIR"), "raw")))
+    cat(sprintf("Path variables are set; looking for data at:\n  db:  %s\n  raw: %s\n",
+                file.path(find_db()),
+                file.path(find_raw())))
   }
 
-  if (env_is_set) {
-    raw_file_dir <- file.path(Sys.getenv("ICEWS_DATA_DIR"), "raw")
-    db_path      <- file.path(Sys.getenv("ICEWS_DATA_DIR"), "db/icews.sqlite3")
+  if (opts_are_set) {
+    raw_file_dir <- find_raw()
+    db_path      <- find_db()
   }
 
   Sys.sleep(0.5)
@@ -77,13 +82,11 @@ dr_icews <- function(db_path = NULL, raw_file_dir = NULL) {
   db_exists <- file.exists(db_path)
   if (!db_exists) {
     Sys.sleep(0.5)
-    cat("Did not find database file; consider running \"sync_db()\" to set up and sync database.\n")
+    cat("Did not find database file; consider running \"update()\" to set up and sync database.\n")
   } else {
     Sys.sleep(0.5)
     cat("Checking database\n")
-    con <- connect_to_db(db_path)
-    res <- DBI::dbGetQuery(con, "SELECT COUNT(*) FROM events;")
-    DBI::dbDisconnect(con)
+    res <- query("SELECT COUNT(*) FROM events;")
     cat(sprintf("Found %s events", formatC(res[[1]], format="d", big.mark=",")))
   }
   invisible(TRUE)
@@ -99,10 +102,7 @@ dr_icews <- function(db_path = NULL, raw_file_dir = NULL) {
 #' @import dplyr
 #' @importFrom readr read_tsv
 #' @importFrom purrr map
-read_icews <- function(raw_file_dir = NULL) {
-  if (is.null(raw_file_dir)) {
-    raw_file_dir <- file.path(Sys.getenv("ICEWS_DATA_DIR"), "raw")
-  }
+read_icews <- function(raw_file_dir = find_raw()) {
 
   data_files <- dir(raw_file_dir, pattern = ".tab", full.names = TRUE)
   col_fmt <- readr::cols(
@@ -122,19 +122,7 @@ read_icews <- function(raw_file_dir = NULL) {
 }
 
 
-#' Query
-#'
-#' Get results from a query to the database
-#'
-#' @param query SQL query string
-#'
-#' @export
-query <- function(query) {
-  con <- connect_to_db()
-  on.exit(DBI::dbDisconnect(con))
-  res <- DBI::dbGetQuery(con, query)
-  res
-}
+
 
 #' Remove all data
 #'
@@ -143,8 +131,11 @@ query <- function(query) {
 #' @param db_path Path to SQLite database
 #' @param raw_file_dir Directory containing the raw event TSV files.
 #'
+#' @importFrom utils menu
 #' @export
-burn_it_down <- function(db_path = NULL, raw_file_dir = NULL) {
+burn_it_down <- function(db_path = find_db(), raw_file_dir = find_raw()) {
+
+  stop("needs to be checked after refactor")
 
   if (is.null(raw_file_dir)) {
     raw_file_dir <- file.path(Sys.getenv("ICEWS_DATA_DIR"), "raw")
@@ -185,4 +176,28 @@ burn_it_down <- function(db_path = NULL, raw_file_dir = NULL) {
   }
 
   cat("It is done\n")
+}
+
+
+#' Normalize paths
+#'
+#' This takes care of finding paths when the environment variable is set and
+#' paths are at the default NULL values.
+#'
+#' @param db_path Location of database SQLite file
+#' @param raw_file_dir Directory for raw data files
+#'
+normalize_paths <- function(db_path, raw_file_dir) {
+  # Check that both are NULL or not, but not a mix
+  if (xor(is.null(db_path), is.null(raw_file_dir))) {
+
+  }
+  # Use user-supplied paths
+  if (!is.null(db_path) & !is.null(raw_file_dir)) {
+
+  }
+  # Use environment settings
+  if (is.null(db_path) & is.null(raw_file_dir)) {
+
+  }
 }

@@ -338,6 +338,13 @@ execute_plan <- function(plan, raw_file_dir, db_path) {
     return(invisible(TRUE))
   }
 
+  # Createa raw directory if needed
+  if (any(need_action$action=="download")) {
+    if (!dir.exists(raw_file_dir)) {
+      dir.create(raw_file_dir)
+    }
+  }
+
   # Otherwise, proceed through the action items
   for (i in 1:nrow(need_action)) {
     task <- need_action[i, ]
@@ -373,6 +380,19 @@ execute_plan <- function(plan, raw_file_dir, db_path) {
     }
 
     stop(sprintf("Unknown action '%s', I should not be here", task$action))
+  }
+
+  # Optimize database if any changes were made
+  optimize <- vacuum <- FALSE
+  if (any(need_action$action!="none" & need_action$where=="in database")) {
+    optimize <- TRUE
+  }
+  if (any(need_action$action=="delete")) {
+    vacuum <- TRUE
+  }
+  if (any(vacuum, optimize)) {
+    cat("Cleaning up and optimizing database, this might take a while\n")
+    optimize_db(db_path, vacuum = vacuum, optimize = optimize)
   }
 
   cat("\nComplete\n")

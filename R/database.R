@@ -10,12 +10,16 @@
 #' @export
 #' @import dplyr
 create_db <- function(db_path = find_db()) {
+  # Make sure we are not overwriting existing database
+  if (file.exists(db_path)) {
+    stop(sprintf("Database already exists at '%s'", db_path))
+  }
+
   if (!dir.exists(dirname(db_path))) {
     dir.create(dirname(db_path))
   }
-
-  dplyr::src_sqlite(db_path, create = TRUE)
-  invisible(TRUE)
+  con <- dplyr::src_sqlite(db_path, create = TRUE)
+  invisible(con)
 }
 
 #' Connect to local ICEWS database
@@ -47,6 +51,7 @@ connect <- function(db_path = find_db()) {
 query <- function(query, db_path = find_db()) {
   con <- connect(db_path)
   on.exit(DBI::dbDisconnect(con))
+
   res <- DBI::dbGetQuery(con, query)
   res
 }
@@ -90,7 +95,7 @@ create_event_table <- function(db_path = find_db()) {
   idx_columns <- c("Event ID", "source_file", "CAMEO Code", "Country", "year",
                    "yearmonth")
   idx_names <- paste0(gsub(" ", "_", tolower(idx_columns)), "_idx")
-  existing_indices <- DBI::dbGetQuery(con, "PRAGMA index_list(events);")$name
+  existing_indices <- list_indices(db_path)$name
   need_cols <- idx_columns[!idx_names %in% existing_indices]
   if (length(need_cols) > 0) {
     #cat("Building indices\n")
@@ -307,17 +312,27 @@ update <- function(dryrun = FALSE,
   invisible(TRUE)
 }
 
-#' DB housekeeping
+#' Optimize database
+#'
+#' Call SQLite's database optimizer and vacuum
 #'
 #' @param db_path Path to database file
-db_housekeeping <- function(db_path) {
+#' @param vaccum Call "VACUUM" command?
+#' @param optimize Call "PRAGMA optimize"?
+optimize_db <- function(db_path, vacuum = TRUE, optimize = TRUE) {
   con <- connect(db_path)
+  on.exit(DBI::dbDisconnect(con))
 
   # Housekeeping
-  res <- DBI::dbSendQuery(con, "VACUUM;")
-  DBI::dbClearResult(res)
-  res <- DBI::dbSendQuery(con, "PRAGMA optimize;")
-  DBI::dbClearResult(res)
+  if (vacuum) {
+    res <- DBI::dbSendQuery(con, "VACUUM;")
+    DBI::dbClearResult(res)
+  }
+  if (optimize) {
+    res <- DBI::dbSendQuery(con, "PRAGMA optimize;")
+    DBI::dbClearResult(res)
+  }
+  invisible(NULL)
 }
 
 
@@ -332,6 +347,19 @@ db_housekeeping <- function(db_path) {
 #' @export
 list_source_files <- function(db_path = find_db()) {
   con <- connect(db_path)
+  on.exit(DBI::dbDisconnect(con))
   source_files <- DBI::dbGetQuery(con, "SELECT DISTINCT(source_file) FROM events;")
   source_files$source_file
 }
+
+#' List indices in database
+#'
+#' List the indices currently in the "event" table in the database.
+#'
+#' @param db_path Path to SQLite database file
+list_indices <- function(db_path = find_db()) {
+  con <- connect(db_path)
+  on.exit(DBI::dbDisconnect(con))
+  DBI::dbGetQuery(con, "PRAGMA index_list(events);")
+}
+

@@ -10,5 +10,9 @@ purge_db(db_path = NULL)
 \item{db_path}{Path to SQLite database}
 }
 \description{
-Delete the events table
+Delete the events table. For a complete rebuild it is quicker to delete
+the whole database file.
+}
+\seealso{
+[remove_db()]
 }

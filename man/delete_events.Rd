@@ -7,7 +7,8 @@
 delete_events(file, db_path)
 }
 \arguments{
-\item{file}{The normalized filename, e.g. "events.1995.[...].tab"}
+\item{file}{The normalized filename, e.g. "events.1995.[...].tab", without
+".zip" ending.}
 
 \item{db_path}{Path to SQLite database file}
 }

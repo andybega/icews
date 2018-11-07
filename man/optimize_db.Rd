@@ -9,9 +9,9 @@ optimize_db(db_path, vacuum = TRUE, optimize = TRUE)
 \arguments{
 \item{db_path}{Path to database file}
 
-\item{optimize}{Call "PRAGMA optimize"?}
+\item{vacuum}{Call "VACUUM" command?}
 
-\item{vaccum}{Call "VACUUM" command?}
+\item{optimize}{Call "PRAGMA optimize"?}
 }
 \description{
 Call SQLite's database optimizer and vacuum

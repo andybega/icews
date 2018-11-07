@@ -129,8 +129,7 @@ burn_it_down <- function(db_path = find_db(), raw_file_dir = find_raw()) {
   }
 
   cat("Deleting database\n")
-  unlink(db_path)
-  unlink(dirname(db_path), recursive = TRUE)
+  remove_db(db_path)
   cat("Purging raw data files\n")
   purge_data_files(raw_file_dir)
   unlink(raw_file_dir, recursive = TRUE)

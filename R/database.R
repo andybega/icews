@@ -214,6 +214,27 @@ purge_db <- function(db_path = NULL) {
 }
 
 
+#' Remove database file
+#'
+#' Removes the SQLite database file. This is quicker than deleting the events
+#' table.
+#'
+#' @param db_path Path to SQLite database file.
+#' @param directory Should the directory be removed also? This will delete any
+#' other files that are in it.
+#'
+#' @seealso [purge_db()]
+#'
+#' @export
+remove_db <- function(db_path, directory = FALSE) {
+  unlink(db_path)
+  if (directory) {
+    unlink(dirname(db_path), recursive = TRUE)
+  }
+  invisible(NULL)
+}
+
+
 #' Synchronize DB with raw files
 #'
 #' Synchronize DB with any local files found, without downloading new files.

@@ -101,20 +101,18 @@ purge_data_files <- function(raw_file_dir = find_raw()) {
   invisible(NULL)
 }
 
-
-#' Read and combine raw data files
+#' Read events TSV
 #'
-#' Read the entire ICEWS event data into memory. This takes up several (2-3 in 2018) GB.
+#' Wrapper around [readr::read_tsv()] to read in the raw events tab-delimited
+#' files. It provides the correct column type specification and disables the
+#' default quote escape option, as the files already have escaped quotes.
 #'
-#' @param raw_file_dir Directory containing the raw event TSV files.
+#' @param file Path to a raw events tab-delimited file (".tab").
+#' @param ... Other options passed to [readr::read_tsv()].
 #'
 #' @export
-#' @import dplyr
-#' @importFrom readr read_tsv
-#' @importFrom purrr map
-read_icews <- function(raw_file_dir = find_raw()) {
-
-  data_files <- dir(raw_file_dir, pattern = ".tab", full.names = TRUE)
+#' @importFrom readr read_tsv cols col_character col_integer col_date col_double
+read_events_tsv <- function(file, ...) {
   col_fmt <- readr::cols(
     .default = col_character(),
     `Event ID` = col_integer(),
@@ -125,8 +123,38 @@ read_icews <- function(raw_file_dir = find_raw()) {
     Latitude = col_double(),
     Longitude = col_double()
   )
+  readr::read_tsv(file, col_types = col_fmt, quote = "", ...)
+}
+
+
+#' List the raw data file paths
+#'
+#' Get a list of the paths for any local raw data ".tab" files.
+#'
+#' @param raw_file_dir Directory containing the raw event TSV files
+#' @param full_names Return the full path or only file name?
+#'
+#' @export
+list_raw_files <- function(raw_file_dir = find_raw(), full_names = TRUE) {
+  dir(raw_file_dir, pattern = ".tab", full.names = full_names)
+}
+
+
+#' Read and combine raw data files
+#'
+#' Read the entire ICEWS event data into memory. This takes up several (2-3 in 2018) GB.
+#'
+#' @param raw_file_dir Directory containing the raw event TSV files.
+#'
+#' @seealso [read_events_tsv()]
+#'
+#' @export
+#' @import dplyr
+#' @importFrom purrr map
+read_icews <- function(raw_file_dir = find_raw()) {
+  data_files <- list_raw_files()
   events <- data_files %>%
-    purrr::map(readr::read_tsv, col_types = col_fmt) %>%
+    purrr::map(read_events_tsv) %>%
     dplyr::bind_rows()
   events
 }

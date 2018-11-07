@@ -56,8 +56,8 @@ tic(); foo = dbGetQuery(con, "select distinct(source_file) from events;"); toc()
 ################
 
 # Before syncing to Github
-devtools::load_all()
 devtools::document()
+devtools::load_all()
 devtools::test()
 devtools::check()
 pkgdown::build_site()
@@ -65,8 +65,38 @@ pkgdown::build_site()
 
 
 "
-db_path Path to SQLite database file
-raw_file_dir Directory containing the raw event TSV files
+db_path Path to SQLite database file.
+raw_file_dir Directory containing the raw event TSV files.
 use_db Store events in a SQLite database?
 keep_files If using a database, retain raw data TSV files?
 "
+
+
+#
+#   Make sure all TSV files are correctly parsed
+#   _____________________________________________
+
+tsv_files <- dir(find_raw(), full.names = TRUE)
+for (f in tsv_files) {
+  events <- readr::read_tsv(
+    f,
+    col_types = cols(
+      .default = col_character(),
+      `Event ID` = col_integer(),
+      `Event Date` = col_date(format = ""),
+      Intensity = col_double(),
+      `Story ID` = col_integer(),
+      `Sentence Number` = col_integer(),
+      Latitude = col_double(),
+      Longitude = col_double()
+    ),
+    # quotes are already escaped, so don't try to escape again
+    quote = "")
+  str <- read_lines(f)
+  if (nrow(events)!=(length(str)-1)) {
+    cat(basename(f), "\n")
+  }
+}
+
+# quotes are already escaped, so don't try to escape again
+quote = ""

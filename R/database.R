@@ -154,21 +154,9 @@ write_data_to_db <- function(events, file, db_path = find_db()) {
 #' @param raw_file_path Directory containing the raw event TSV files.
 #' @param db_path Path to SQLite database
 #'
-#' @import readr
 #' @importFrom DBI dbDisconnect
 ingest_from_file <- function(raw_file_path = find_raw(), db_path = find_db()) {
-  events <- readr::read_tsv(raw_file_path,
-                            col_types = cols(
-                              .default = col_character(),
-                              `Event ID` = col_integer(),
-                              `Event Date` = col_date(format = ""),
-                              Intensity = col_double(),
-                              `Story ID` = col_integer(),
-                              `Sentence Number` = col_integer(),
-                              Latitude = col_double(),
-                              Longitude = col_double()
-                            ))
-
+  events <- read_events_tsv(raw_file_path)
   write_data_to_db(events, basename(raw_file_path), db_path)
   invisible(TRUE)
 }
@@ -191,7 +179,8 @@ ingest_from_memory <- function(file, db_path) {
 
 #' Delete events associated with a file
 #'
-#' @param file The normalized filename, e.g. "events.1995.[...].tab"
+#' @param file The normalized filename, e.g. "events.1995.[...].tab", without
+#' ".zip" ending.
 #' @param db_path Path to SQLite database file
 delete_events <- function(file, db_path) {
   con <- connect(db_path)
@@ -206,9 +195,12 @@ delete_events <- function(file, db_path) {
 
 #' Purge ICEWS database
 #'
-#' Delete the events table
+#' Delete the events table. For a complete rebuild it is quicker to delete
+#' the whole database file.
 #'
 #' @param db_path Path to SQLite database
+#'
+#' @seealso [remove_db()]
 #'
 #' @export
 purge_db <- function(db_path = NULL) {
@@ -220,6 +212,7 @@ purge_db <- function(db_path = NULL) {
   res <- DBI::dbSendQuery(con, "VACUUM;")
   DBI::dbClearResult(res)
 }
+
 
 #' Synchronize DB with raw files
 #'
@@ -317,7 +310,7 @@ update <- function(dryrun = FALSE,
 #' Call SQLite's database optimizer and vacuum
 #'
 #' @param db_path Path to database file
-#' @param vaccum Call "VACUUM" command?
+#' @param vacuum Call "VACUUM" command?
 #' @param optimize Call "PRAGMA optimize"?
 optimize_db <- function(db_path, vacuum = TRUE, optimize = TRUE) {
   con <- connect(db_path)
@@ -351,6 +344,7 @@ list_source_files <- function(db_path = find_db()) {
   source_files <- DBI::dbGetQuery(con, "SELECT DISTINCT(source_file) FROM events;")
   source_files$source_file
 }
+
 
 #' List indices in database
 #'

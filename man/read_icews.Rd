@@ -12,3 +12,6 @@ read_icews(raw_file_dir = find_raw())
 \description{
 Read the entire ICEWS event data into memory. This takes up several (2-3 in 2018) GB.
 }
+\seealso{
+[read_events_tsv()]
+}

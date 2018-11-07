@@ -98,5 +98,16 @@ for (f in tsv_files) {
   }
 }
 
-# quotes are already escaped, so don't try to escape again
-quote = ""
+
+#
+#   Check records in DB
+#   ___________________
+
+events_by_ym <- query("select yearmonth, count(*) as n from events group by yearmonth;")
+events_by_ym %>%
+  mutate(date = as.Date(paste0(yearmonth, "01"), "%Y%m%d")) %>%
+  ggplot(aes(x = date, y = n)) +
+  geom_line() +
+  labs(x = "Date", y = "Events") +
+  ggtitle("ICEWS events per month") +
+  theme_minimal()

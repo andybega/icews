@@ -48,7 +48,7 @@ connect <- function(db_path = find_db()) {
 #' @param db_path Path to SQLite database file
 #'
 #' @export
-query <- function(query, db_path = find_db()) {
+query_icews <- function(query, db_path = find_db()) {
   con <- connect(db_path)
   on.exit(DBI::dbDisconnect(con))
 

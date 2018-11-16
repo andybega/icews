@@ -6,6 +6,7 @@ Major rewrite of the download and synchronization code, with some **breaking cha
 * Rename `download_icews` to `download_data`; the old version is still around but will be taken out at some point.
 * Rename `query` to `query_icews` to avoid ambiguity. 
 * Replace `sync_db` with `update` for general purpose use, and `sync_db_with_files()` for synchronizing the database with local data files without downloading any new ones. The `update()` function is setup to work with the path and other options. 
+* Column names in the database are always, and with raw files by default, normalized by lower-casing and replacing all spaces with underscores, e.g. "Event ID" to "event_id". This is to make working in R and SQL with the events data easier, i.e. no need to backquote names. 
 
 * Change `read_icews` to also work if a database backend is used, previously only for reading from files. 
 

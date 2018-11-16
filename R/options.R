@@ -50,11 +50,13 @@ setup_icews <- function(data_dir, use_db = TRUE, keep_files = FALSE, r_profile =
 
 #' Get ICEWS options
 get_icews_opts <- function() {
-  list(
+  out <- list(
     data_dir = getOption("icews.data_dir"),
     use_db   = getOption("icews.use_db"),
     keep_files = getOption("icews.keep_files")
   )
+  class(out) <- "icews_opts"
+  out
 }
 
 #' Format setup use case
@@ -71,16 +73,24 @@ opts_string <- function(opts) {
   str
 }
 
-#' Print current ICEWS options
-print_icews_opts <- function() {
+#' Format ICEWS opts
+#'
+#' @export
+format.icews_opts <- function(x, ...) {
   opts <- get_icews_opts()
   str  <- list()
   for (i in seq_along(opts)) {
     str[i] <- paste0(names(opts)[i], ": ", opts[i])
   }
-  str <- paste0(str, collapse = "\n")
-  cat(opts_string(opts), "\n")
-  cat(str)
+  #str <- paste0(str, collapse = "\n")
+  smry <- opts_string(opts)
+  unlist(c(smry, str))
+}
+
+#' Print current ICEWS options
+print.icews_opts <- function(x, ...) {
+   str <- format(x)
+   cat(paste0(str, collapse = "\n"))
 }
 
 

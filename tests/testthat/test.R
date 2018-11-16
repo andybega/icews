@@ -15,3 +15,8 @@ test_that("column names are normalized", {
 test_that("dr_icews works", {
   expect_error(dr_icews(db_path = "", raw_file_dir = ""), NA)
 })
+
+
+test_that("print options works when options are not set", {
+
+})

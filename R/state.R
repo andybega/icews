@@ -1,3 +1,7 @@
+#
+#   Functions related to determining the local vs DVN state
+#
+
 #' Parse a data file label
 #'
 #' Parse the DVN file label to identify whether it contains data and if so which

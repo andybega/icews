@@ -1,4 +1,6 @@
 
+context("State")
+
 test_that("Labels are correctly parsed", {
   labels <- c("changes.txt", "events.1995.20150313082510.tab.zip")
 

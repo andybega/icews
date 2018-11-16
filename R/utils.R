@@ -1,50 +1,9 @@
 
-#' Setup ICEWS environment variables
-#'
-#' Checks for and creates several ICEWS environment variables.
-#'
-#' @param data_dir Where should the raw TSV data be kept?
-#' @param use_db Store events in a SQLite database?
-#' @param keep_files keep_files If using a database, retain raw data TSV files?
-#' @param r_profile If TRUE, this will write config parameters to a .Renviron file.
-#'
-#' @export
-setup_icews <- function(data_dir, use_db = TRUE, keep_files = FALSE, r_profile = TRUE) {
-  if (!dir.exists(data_dir)) {
-    stop("Data directory does not exist.")
-  }
-  if (!use_db %in% c(TRUE, FALSE)) {
-    stop("use_db should be TRUE or FALSE")
-  }
-
-  options(icews.data_dir   = data_dir)
-  options(icews.use_db     = use_db)
-  options(icews.keep_files = keep_files)
-
-  # Create folders as neccessary
-  if (use_db & !dir.exists(find_db())) {
-    dir.create(find_db())
-  }
-  if ((!use_db | keep_files) & !dir.exists(find_raw())) {
-    dir.create(find_raw())
-  }
-
-  if(isTRUE(r_profile)) {
-    if (!requireNamespace("usethis", quietly = TRUE)) {
-      stop("Package \"usethis\" needed for this function to work. Please install it (recommended) or set 'r_environ = FALSE'.",
-           call. = FALSE)
-    }
-    cat("Add these lines to the .Rprofile file:\n\n")
-    cat("# ICEWS data location and options\n")
-    cat(sprintf("options(icews.data_dir   = \"%s\")\n", data_dir))
-    cat(sprintf("options(icews.use_db     = %s)\n", use_db))
-    cat(sprintf("options(icews.keep_files = %s)\n", keep_files))
-    cat("\n")
-    usethis::edit_r_profile()
-  }
-  cat("Path options are set\n")
-  invisible(NULL)
+#' Contains the DVN DOI for ICEWS
+get_doi <- function() {
+  "doi:10.7910/DVN/28075"
 }
+
 
 #' What's the current state of things?
 #'
@@ -67,15 +26,25 @@ dr_icews <- function(db_path = NULL, raw_file_dir = NULL) {
     cat("Found path variables in options; disregarding path arguments\n")
   }
 
-  # Check if environment vars are set up
+  # Check if option vars are set up
   if (!opts_are_set) {
     cat("Did not find ICEWS path variables, consider running \"?setup_icews\"\n")
     cat(sprintf("Looking for data at:\n  db:  %s\n  raw: %s\n",
                 db_path, raw_file_dir))
   } else {
-    cat(sprintf("Path variables are set; looking for data at:\n  db:  %s\n  raw: %s\n",
-                file.path(find_db()),
-                file.path(find_raw())))
+    str <- "Path variables are set;"
+    if (!getOption("icews.use_db")) {
+      str <- paste0(str, "\nFile-based option\nLooking for data at:\n  ", find_raw())
+    }
+    if (getOption("icews.use_db") & !getOption("icews.keep_files")) {
+      str <- paste0(str, "\nDatabase option\nLooking for data at:\n  ", find_db())
+    }
+    if (getOption("icews.use_db") & getOption("icews.keep_files")) {
+      str <- paste0(
+        str,
+        sprintf("\nDatabase option, but keep files as well\nLooking for data at:\n  db:  %s\n  raw: %s",
+                find_db(), find_raw()))
+    }
   }
 
   if (opts_are_set) {
@@ -94,8 +63,19 @@ dr_icews <- function(db_path = NULL, raw_file_dir = NULL) {
   } else {
     Sys.sleep(0.5)
     cat("Checking database\n")
-    res <- query("SELECT COUNT(*) FROM events;")
-    cat(sprintf("Found %s events", formatC(res[[1]], format="d", big.mark=",")))
+
+    # Check if uningested local files
+    if (length(local_files) > 0) {
+      db_source_files <- list_source_files(db_path)
+      if (any(!local_files %in% db_source_files)) {
+        cat("There are local files that have not been ingested into the database,\nconsider running `update()` or `sync_db_with_files()`\n")
+      } else {
+        cat("Looks good")
+      }
+    }
+
+    res <- query_icews("SELECT COUNT(*) FROM events;")
+    cat(sprintf("Found %s events in database", formatC(res[[1]], format="d", big.mark=",")))
   }
   invisible(TRUE)
 }
@@ -148,6 +128,56 @@ burn_it_down <- function(db_path = find_db(), raw_file_dir = find_raw()) {
   }
 
   cat("It is done\n")
+}
+
+
+
+#' Read ICEWS events into memory
+#'
+#' Read the entire ICEWS event data into memory. This takes up several (2-3 in 2018) GB.
+#'
+#' @param path Either path to SQLite database file or raw file directory. If
+#'   NULL (default), the global options will be used instead.
+#'
+#' @seealso [query_icews()], [read_events_tsv()]
+#'
+#' @export
+#' @import dplyr
+#' @importFrom purrr map
+read_icews <- function(path = NULL) {
+  # data directory is specified
+  if (tools::file_ext(path)==".sqlite3") {
+    return(read_icews_db(path))
+  }
+  if (any(grepl("^events.[0-9]{4}"))) {
+    return(read_icews_raw(path))
+  }
+  if (get_icews_opts()$use_db) {
+    return(read_icews_db(find_db()))
+  }
+  read_icews_raw(find_raw())
+}
+
+
+#' Read data from raw files
+#'
+#' @param raw_file_dir Directory containing the raw event TSV files.
+read_icews_raw <- function(raw_file_dir) {
+  data_files <- list_raw_files()
+  events <- data_files %>%
+    purrr::map(read_events_tsv) %>%
+    dplyr::bind_rows()
+  # Add year and yearmonth since these will be useful for getting counts over time
+  events$year      <- as.integer(format(events$`Event Date`, "%Y"))
+  events$yearmonth <- as.integer(format(events$`Event Date`, "%Y%m"))
+  events
+}
+
+#' Read data from DB
+#'
+#' @param db_path Path to SQLite database file.
+read_icews_db <- function(db_path) {
+  query_icews("SELECT * FROM events;", db_path)
 }
 
 

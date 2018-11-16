@@ -163,10 +163,13 @@ read_icews <- function(path = NULL) {
 #' Read data from raw files
 #'
 #' @param raw_file_dir Directory containing the raw event TSV files.
-read_icews_raw <- function(raw_file_dir) {
+#' @param ... Options passed to [read_events_tsv()].
+#'
+#' @md
+read_icews_raw <- function(raw_file_dir, ...) {
   data_files <- list_raw_files()
   events <- data_files %>%
-    purrr::map(read_events_tsv) %>%
+    purrr::map(read_events_tsv, ...) %>%
     dplyr::bind_rows()
   # Add year and yearmonth since these will be useful for getting counts over time
   events$year      <- as.integer(format(events$`Event Date`, "%Y"))

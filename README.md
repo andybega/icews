@@ -32,15 +32,18 @@ library("usethis")
 setup_icews(data_dir = "/where/should/data/be", use_db = TRUE, keep_files = TRUE,
             r_profile = TRUE)
 
-update()
+update_icews()
 # Wait until all is done; like 45 minutes or more the first time around
 
 con <- connect()
 DBI::dbGetQuery(con, "SELECT count(*) AS n FROM events;")
 # or
-query("SELECT count(*) AS n FROM events;")
+query_icews("SELECT count(*) AS n FROM events;")
 # or
 tbl(con, "events") %>% summarize(n = n())
+# or, 
+# read all 16+ million rows into memory
+events <- read_icews()
 ```
 
 ### Files only

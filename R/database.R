@@ -279,7 +279,7 @@ sync_db_with_files <- function(raw_file_dir = find_raw(), db_path = find_db(),
 #' @param raw_file_dir Directory containing the raw event TSV files.
 #'
 #' @export
-update <- function(dryrun = FALSE,
+update_icews <- function(dryrun = FALSE,
                    use_db     = getOption("icews.use_db"),
                    keep_files = getOption("icews.keep_files"),
                    db_path = find_db(), raw_file_dir = find_raw()) {

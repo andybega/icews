@@ -1,0 +1,113 @@
+---
+title: "Speed comparison database versus file-based"
+author: "Andreas Beger"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Speed comparison database versus file-based}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r}
+library("icews")
+library("tidyr")
+library("tictoc")
+```
+
+# Read into memory
+
+```{r, results='hold', eval=FALSE}
+tic()
+events <- read_icews_db(find_db())
+nrow(events)
+format(object.size(events), "Gb")
+toc()
+rm(events)
+```
+
+
+```{r, results='hold', eval=FALSE}
+tic()
+events <- read_icews_raw(find_raw(), progress = FALSE)
+nrow(events)
+format(object.size(events), "Gb")
+toc()
+```
+
+
+```{r, results='hold', eval=FALSE}
+tbl_icews <- function(db_path = find_db) {
+  tbl(connect(), "events")
+}
+
+
+# Total event count by country/by year
+tic()
+cy_total_mem <- events %>% group_by(Country, year) %>% summarize(events = n())
+toc()
+
+tic()
+cy_total_db <- query_icews("SELECT count(*) as total FROM events group by country, year;")
+toc()
+
+tic()
+query_icews("analyze")
+toc()
+
+tic()
+cy_total_db <- query_icews("SELECT count(*) as total FROM events group by country, year;")
+toc()
+
+tic()
+cy_total_db <- query_icews("SELECT count(*) as total FROM events group by year, country;")
+toc()
+
+tic()
+cy_total_db <- tbl_icews() %>% group_by(country, year) %>% summarize(events = n()) %>% collect()
+toc()
+```
+
+# Column cardinality
+
+```{r, eval=FALSE}
+col_vals <- query_icews("
+select count(*) as rows,
+       count(distinct(event_id)) as event_id,
+       count(distinct(event_date)) as event_date,
+       count(distinct(source_name)) as source_name,
+       count(distinct(source_sectors)) as source_sectors,
+       count(distinct(source_country)) as source_country,
+       count(distinct(event_text)) as event_text,
+       count(distinct(cameo_code)) as cameo_code,
+       count(distinct(intensity)) as intensity,
+       count(distinct(target_name)) as target_name,
+       count(distinct(target_sectors)) as target_sectors,
+       count(distinct(target_country)) as target_country,
+       count(distinct(story_id)) as story_id,
+       count(distinct(sentence_number)) as sentence_number,
+       count(distinct(publisher)) as publisher,
+       count(distinct(city)) as city,
+       count(distinct(district)) as district,
+       count(distinct(province)) as province,
+       count(distinct(country)) as country,
+       count(distinct(latitude)) as latitude,
+       count(distinct(longitude)) as longitude,
+       count(distinct(year)) as year,
+       count(distinct(yearmonth)) as yearmonth,
+       count(distinct(source_file)) as source_file
+from events;") %>%
+  tidyr::gather(Column, Unique_values) %>%
+  arrange(Unique_values, Column) 
+
+col_vals %>%
+  knitr::kable()
+```
+

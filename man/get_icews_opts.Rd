@@ -7,5 +7,8 @@
 get_icews_opts()
 }
 \description{
-Get ICEWS options
+List the current ICEWS-related option values
+}
+\seealso{
+\code{\link[=set_icews_opts]{set_icews_opts()}}, \code{\link[=unset_icews_opts]{unset_icews_opts()}}, \code{\link[=setup_icews]{setup_icews()}}
 }

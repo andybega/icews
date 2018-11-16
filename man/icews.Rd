@@ -18,7 +18,7 @@ looks like this:\preformatted{library("icews")
 library("usethis")
 setup_icews("/path/to/icews_data", use_db = TRUE, keep_files = FALSE,
             r_profile = TRUE)
-update()
+update_icews()
 
 con <- connect()
 DBI::dbGetQuery(con, "SELECT count(*) AS n FROM events;")

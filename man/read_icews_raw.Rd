@@ -4,10 +4,12 @@
 \alias{read_icews_raw}
 \title{Read data from raw files}
 \usage{
-read_icews_raw(raw_file_dir)
+read_icews_raw(raw_file_dir, ...)
 }
 \arguments{
 \item{raw_file_dir}{Directory containing the raw event TSV files.}
+
+\item{...}{Options passed to \code{\link[=read_events_tsv]{read_events_tsv()}}.}
 }
 \description{
 Read data from raw files

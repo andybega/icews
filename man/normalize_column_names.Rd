@@ -6,6 +6,9 @@
 \usage{
 normalize_column_names(x)
 }
+\arguments{
+\item{x}{Tibble containing raw events}
+}
 \description{
 Normalize column names
 }

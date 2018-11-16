@@ -17,5 +17,5 @@ Removes the SQLite database file. This is quicker than deleting the events
 table.
 }
 \seealso{
-[purge_db()]
+\code{\link[=purge_db]{purge_db()}}, \code{\link[=delete_events]{delete_events()}}
 }

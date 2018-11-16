@@ -14,5 +14,5 @@ Delete the events table. For a complete rebuild it is quicker to delete
 the whole database file.
 }
 \seealso{
-[remove_db()]
+\code{\link[=remove_db]{remove_db()}}
 }

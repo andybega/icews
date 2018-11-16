@@ -64,35 +64,35 @@ create_event_table <- function(db_path = find_db()) {
   on.exit(DBI::dbDisconnect(con))
 
   sql <- "CREATE TABLE IF NOT EXISTS `events` (
-    `Event ID` INTEGER,
-    `Event Date` TEXT,
-    `Source Name` TEXT,
-    `Source Sectors` TEXT,
-    `Source Country` TEXT,
-    `Event Text` TEXT,
-    `CAMEO Code` TEXT,
-    `Intensity` REAL,
-    `Target Name` TEXT,
-    `Target Sectors` TEXT,
-    `Target Country` TEXT,
-    `Story ID` INTEGER,
-    `Sentence Number` INTEGER,
-    `Publisher` TEXT,
-    `City` TEXT,
-    `District` TEXT,
-    `Province` TEXT,
-    `Country` TEXT,
-    `Latitude` REAL,
-    `Longitude` REAL,
-    `year` INTEGER,
-    `yearmonth` INTEGER,
-    `source_file` TEXT
+    event_id INTEGER,
+    event_date TEXT,
+    source_name TEXT,
+    source_sectors TEXT,
+    source_country TEXT,
+    event_text TEXT,
+    cameo_code TEXT,
+    intensity REAL,
+    target_name TEXT,
+    target_sectors TEXT,
+    target_country TEXT,
+    story_id INTEGER,
+    sentence_number INTEGER,
+    publisher TEXT,
+    city TEXT,
+    district TEXT,
+    province TEXT,
+    country TEXT,
+    latitude REAL,
+    longitude REAL,
+    year INTEGER,
+    yearmonth INTEGER,
+    source_file TEXT
   );"
   res <- DBI::dbSendQuery(con, sql)
   DBI::dbClearResult(res)
 
   # Create indices
-  idx_columns <- c("Event ID", "source_file", "CAMEO Code", "Country", "year",
+  idx_columns <- c("event_id", "source_file", "cameo_code", "country", "year",
                    "yearmonth")
   idx_names <- paste0(gsub(" ", "_", tolower(idx_columns)), "_idx")
   existing_indices <- list_indices(db_path)$name
@@ -136,10 +136,10 @@ write_data_to_db <- function(events, file, db_path = find_db()) {
   on.exit(DBI::dbDisconnect(con))
 
   # Add year and yearmonth since these will be useful for getting counts over time
-  events$year      <- as.integer(format(events$`Event Date`, "%Y"))
-  events$yearmonth <- as.integer(format(events$`Event Date`, "%Y%m"))
+  events$year      <- as.integer(format(events$event_date, "%Y"))
+  events$yearmonth <- as.integer(format(events$event_date, "%Y%m"))
   # SQLite does not have date data type, use ISO text instead
-  events$`Event Date` <- as.character(events$`Event Date`)
+  events$event_date <- as.character(events$event_date)
   events$source_file  <- file
 
   DBI::dbWriteTable(con, "events", events, append = TRUE)
@@ -156,7 +156,7 @@ write_data_to_db <- function(events, file, db_path = find_db()) {
 #'
 #' @importFrom DBI dbDisconnect
 ingest_from_file <- function(raw_file_path = find_raw(), db_path = find_db()) {
-  events <- read_events_tsv(raw_file_path)
+  events <- read_events_tsv(raw_file_path, fix_names = TRUE)
   write_data_to_db(events, basename(raw_file_path), db_path)
   invisible(TRUE)
 }
@@ -182,6 +182,10 @@ ingest_from_memory <- function(file, db_path) {
 #' @param file The normalized filename, e.g. "events.1995.[...].tab", without
 #' ".zip" ending.
 #' @param db_path Path to SQLite database file
+#'
+#' @seealso [purge_db()], [delete_events()]
+#'
+#' @md
 delete_events <- function(file, db_path) {
   con <- connect(db_path)
   on.exit(DBI::dbDisconnect(con))
@@ -203,6 +207,7 @@ delete_events <- function(file, db_path) {
 #' @seealso [remove_db()]
 #'
 #' @export
+#' @md
 purge_db <- function(db_path = NULL) {
   con <- connect(db_path)
   on.exit(DBI::dbDisconnect(con))
@@ -223,9 +228,10 @@ purge_db <- function(db_path = NULL) {
 #' @param directory Should the directory be removed also? This will delete any
 #' other files that are in it.
 #'
-#' @seealso [purge_db()]
+#' @seealso [purge_db()], [delete_events()]
 #'
 #' @export
+#' @md
 remove_db <- function(db_path, directory = FALSE) {
   unlink(db_path)
   if (directory) {

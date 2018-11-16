@@ -144,6 +144,7 @@ burn_it_down <- function(db_path = find_db(), raw_file_dir = find_raw()) {
 #' @export
 #' @import dplyr
 #' @importFrom purrr map
+#' @md
 read_icews <- function(path = NULL) {
   # data directory is specified
   if (tools::file_ext(path)==".sqlite3") {

@@ -14,5 +14,5 @@ NULL (default), the global options will be used instead.}
 Read the entire ICEWS event data into memory. This takes up several (2-3 in 2018) GB.
 }
 \seealso{
-[query_icews()], [read_events_tsv()]
+\code{\link[=query_icews]{query_icews()}}, \code{\link[=read_events_tsv]{read_events_tsv()}}
 }

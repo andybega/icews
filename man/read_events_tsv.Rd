@@ -4,12 +4,13 @@
 \alias{read_events_tsv}
 \title{Read events TSV}
 \usage{
-read_events_tsv(file, fix_names = FALSE, ...)
+read_events_tsv(file, fix_names = TRUE, ...)
 }
 \arguments{
 \item{file}{Path to a raw events tab-delimited file (".tab").}
 
-\item{fix_names}{Normalize column names? Default is FALSE; see details.}
+\item{fix_names}{Normalize column names? Default is FALSE; see details. Names
+in the database are always normalized.}
 
 \item{...}{Other options passed to [readr::read_tsv()].}
 }

@@ -108,7 +108,8 @@ purge_data_files <- function(raw_file_dir = find_raw()) {
 #' default quote escape option, as the files already have escaped quotes.
 #'
 #' @param file Path to a raw events tab-delimited file (".tab").
-#' @param fix_names Normalize column names? Default is FALSE; see details.
+#' @param fix_names Normalize column names? Default is FALSE; see details. Names
+#'   in the database are always normalized.
 #' @param ... Other options passed to [readr::read_tsv()].
 #'
 #' @details The raw data file column names are capitalized and contain spaces.
@@ -118,7 +119,7 @@ purge_data_files <- function(raw_file_dir = find_raw()) {
 #'
 #' @export
 #' @importFrom readr read_tsv cols col_character col_integer col_date col_double
-read_events_tsv <- function(file, fix_names = FALSE, ...) {
+read_events_tsv <- function(file, fix_names = TRUE, ...) {
   col_fmt <- readr::cols(
     .default = col_character(),
     `Event ID` = col_integer(),
@@ -139,6 +140,7 @@ read_events_tsv <- function(file, fix_names = FALSE, ...) {
 
 #' Normalize column names
 #'
+#' @param x Tibble containing raw events
 normalize_column_names <- function(x) {
   cnames <- colnames(x)
   cnames <- tolower(cnames)

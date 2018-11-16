@@ -108,11 +108,17 @@ purge_data_files <- function(raw_file_dir = find_raw()) {
 #' default quote escape option, as the files already have escaped quotes.
 #'
 #' @param file Path to a raw events tab-delimited file (".tab").
+#' @param fix_names Normalize column names? Default is FALSE; see details.
 #' @param ... Other options passed to [readr::read_tsv()].
+#'
+#' @details The raw data file column names are capitalized and contain spaces.
+#'   To make it easier to work with them in R and SQL, they are by default
+#'   normalized by lower casing all and replacing spaces with underscores, e.g.
+#'   "Event ID" becomes "event_id".
 #'
 #' @export
 #' @importFrom readr read_tsv cols col_character col_integer col_date col_double
-read_events_tsv <- function(file, ...) {
+read_events_tsv <- function(file, fix_names = FALSE, ...) {
   col_fmt <- readr::cols(
     .default = col_character(),
     `Event ID` = col_integer(),
@@ -123,7 +129,22 @@ read_events_tsv <- function(file, ...) {
     Latitude = col_double(),
     Longitude = col_double()
   )
-  readr::read_tsv(file, col_types = col_fmt, quote = "", ...)
+  x <- readr::read_tsv(file, col_types = col_fmt, quote = "", ...)
+  if (isTRUE(fix_names)) {
+    x <- normalize_column_names(x)
+  }
+  x
+}
+
+
+#' Normalize column names
+#'
+normalize_column_names <- function(x) {
+  cnames <- colnames(x)
+  cnames <- tolower(cnames)
+  cnames <- gsub(" ", "_", cnames)
+  colnames(x) <- cnames
+  x
 }
 
 
@@ -140,22 +161,5 @@ list_raw_files <- function(raw_file_dir = find_raw(), full_names = TRUE) {
 }
 
 
-#' Read and combine raw data files
-#'
-#' Read the entire ICEWS event data into memory. This takes up several (2-3 in 2018) GB.
-#'
-#' @param raw_file_dir Directory containing the raw event TSV files.
-#'
-#' @seealso [read_events_tsv()]
-#'
-#' @export
-#' @import dplyr
-#' @importFrom purrr map
-read_icews <- function(raw_file_dir = find_raw()) {
-  data_files <- list_raw_files()
-  events <- data_files %>%
-    purrr::map(read_events_tsv) %>%
-    dplyr::bind_rows()
-  events
-}
+
 

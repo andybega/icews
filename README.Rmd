@@ -52,9 +52,12 @@ update()
 con <- connect()
 DBI::dbGetQuery(con, "SELECT count(*) AS n FROM events;")
 # or
-query("SELECT count(*) AS n FROM events;")
+query_icews("SELECT count(*) AS n FROM events;")
 # or
 tbl(con, "events") %>% summarize(n = n())
+# or, 
+# read all 16+ million rows into memory
+events <- read_icews()
 ```
 
 ### Files only

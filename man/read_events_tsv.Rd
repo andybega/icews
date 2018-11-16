@@ -4,10 +4,12 @@
 \alias{read_events_tsv}
 \title{Read events TSV}
 \usage{
-read_events_tsv(file, ...)
+read_events_tsv(file, fix_names = FALSE, ...)
 }
 \arguments{
 \item{file}{Path to a raw events tab-delimited file (".tab").}
+
+\item{fix_names}{Normalize column names? Default is FALSE; see details.}
 
 \item{...}{Other options passed to [readr::read_tsv()].}
 }
@@ -15,4 +17,10 @@ read_events_tsv(file, ...)
 Wrapper around [readr::read_tsv()] to read in the raw events tab-delimited
 files. It provides the correct column type specification and disables the
 default quote escape option, as the files already have escaped quotes.
+}
+\details{
+The raw data file column names are capitalized and contain spaces.
+  To make it easier to work with them in R and SQL, they are by default
+  normalized by lower casing all and replacing spaces with underscores, e.g.
+  "Event ID" becomes "event_id".
 }

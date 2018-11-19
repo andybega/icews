@@ -150,7 +150,7 @@ read_icews <- function(path = NULL) {
   if (tools::file_ext(path)==".sqlite3") {
     return(read_icews_db(path))
   }
-  if (any(grepl("^events.[0-9]{4}"))) {
+  if (any(grepl("^events.[0-9]{4}", dir(path)))) {
     return(read_icews_raw(path))
   }
   if (get_icews_opts()$use_db) {

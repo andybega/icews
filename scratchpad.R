@@ -127,7 +127,7 @@ events <- icews:::read_events_tsv(file.path(icews:::find_raw(), "events.2017.201
 events$year      <- as.integer(format(events$event_date, "%Y"))
 events$yearmonth <- as.integer(format(events$event_date, "%Y%m"))
 # SQLite does not have date data type, use ISO text instead
-events$event_date <- as.character(events$event_date)
+events$event_date <- as.integer(format(events$event_date, "%Y%m%d"))
 events$source_file  <- "events.2017.20180710093300.tab"
 
 sapply(events, function(x) sum(is.na(x)))
@@ -254,4 +254,9 @@ microbenchmark(
 )
 
 
-
+#
+#   Semi-normalized version
+#   _______________________
+#
+#   Take some of the text columns out, location info, etc.
+#

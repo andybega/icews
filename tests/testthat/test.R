@@ -20,3 +20,24 @@ test_that("dr_icews works", {
 test_that("print options works when options are not set", {
 
 })
+
+
+context("data helpers")
+
+test_that("gw code mapping works", {
+  df <- dplyr::tibble(
+    country = c("Serbia", "Serbia"),
+    event_date = as.Date(c("2006-06-04", "2006-06-05")),
+    stringsAsFactors = FALSE)
+  df$gwcode <- icews_to_gwcode(df$country, df$event_date)
+  expect_equal(df$gwcode, c(345L, 340L))
+
+  df <- dplyr::tibble(
+    country = c("United States", "Puerto Rico", "Guam"),
+    event_date = rep(as.Date("2018-01-01")),
+    stringsAsFactors = FALSE)
+  df$gwcode <- icews_to_gwcode(df$country, df$event_date)
+  expect_equal(df$gwcode, rep(2L, 3))
+})
+
+

@@ -24,16 +24,24 @@ reference:
       - download_file
   - title: "Interacting with the database"
     desc: >
-      Working with DVN
+      Helpers for interacting with the database, if used.
     contents:
+      - find_db
       - connect
+      - query_icews
       - list_source_files
+      - get_db_state
+      - read_icews
   - title: "Interacting with local raw data files"
     desc: >
       Working with local copies of the data files
     contents:
+      - find_raw
+      - get_local_state
+      - download_icews
       - list_raw_files
       - read_events_tsv
+      - read_icews
   - title: "Data helpers"
     desc: >
       Various helpers for working with the ICEWS event data

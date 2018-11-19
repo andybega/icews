@@ -2,10 +2,10 @@
 % Please edit documentation in R/options.R
 \name{find_db}
 \alias{find_db}
-\title{Find database path}
+\title{Find locations}
 \usage{
 find_db()
 }
 \description{
-Find database path
+Find locations
 }

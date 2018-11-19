@@ -2,7 +2,7 @@
 % Please edit documentation in R/download.R
 \name{download_file}
 \alias{download_file}
-\title{Download a single file}
+\title{Download a single file from DVN}
 \usage{
 download_file(file, to_dir)
 }

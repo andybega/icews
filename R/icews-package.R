@@ -62,7 +62,8 @@
 #'                    db_path = "~/Downloads/icews_data/db/icews.sqlite3")
 #' ```
 #'
-#' See [https://github.com/andybega/icews](https://github.com/andybega/icews) for
+#' See [https://github.com/andybega/icews](https://github.com/andybega/icews) and
+#' [https://www.andybeger.com/icews/](https://www.andybeger.com/icews/) for
 #' more information.
 #'
 #' @references

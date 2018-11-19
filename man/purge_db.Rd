@@ -2,17 +2,26 @@
 % Please edit documentation in R/database.R
 \name{purge_db}
 \alias{purge_db}
-\title{Purge ICEWS database}
+\alias{remove_db}
+\title{Purge or delete ICEWS database}
 \usage{
 purge_db(db_path = NULL)
+
+remove_db(db_path, directory = FALSE)
 }
 \arguments{
 \item{db_path}{Path to SQLite database}
+
+\item{directory}{Should the directory be removed also? This will delete any
+other files that are in it.}
+
+\item{db_path}{Path to SQLite database file.}
 }
 \description{
-Delete the events table. For a complete rebuild it is quicker to delete
-the whole database file.
+\code{purge_db} drops the events table in the database. For a complete rebuild
+it is usually quicker to remove the database file itself with \code{remove_db},
+but this will also delete any user-created tables.
 }
 \seealso{
-\code{\link[=remove_db]{remove_db()}}
+\code{\link[=purge_data_files]{purge_data_files()}}, \code{\link[=burn_it_down]{burn_it_down()}}
 }

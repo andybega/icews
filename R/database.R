@@ -198,14 +198,15 @@ delete_events <- function(file, db_path) {
 
 
 
-#' Purge ICEWS database
+#' Purge or delete ICEWS database
 #'
-#' Delete the events table. For a complete rebuild it is quicker to delete
-#' the whole database file.
+#' `purge_db` drops the events table in the database. For a complete rebuild
+#' it is usually quicker to remove the database file itself with `remove_db`,
+#' but this will also delete any user-created tables.
 #'
 #' @param db_path Path to SQLite database
 #'
-#' @seealso [remove_db()]
+#' @seealso [purge_data_files()], [burn_it_down()]
 #'
 #' @export
 #' @md
@@ -220,16 +221,11 @@ purge_db <- function(db_path = NULL) {
 }
 
 
-#' Remove database file
-#'
-#' Removes the SQLite database file. This is quicker than deleting the events
-#' table.
+#' @rdname purge_db
 #'
 #' @param db_path Path to SQLite database file.
 #' @param directory Should the directory be removed also? This will delete any
 #' other files that are in it.
-#'
-#' @seealso [purge_db()], [delete_events()]
 #'
 #' @export
 #' @md

@@ -1,5 +1,12 @@
 
+#' Get ICEWS dataverse DOI
+#'
 #' Contains the DVN DOI for ICEWS
+#'
+#' @examples
+#' get_doi()
+#'
+#' @export
 get_doi <- function() {
   "doi:10.7910/DVN/28075"
 }
@@ -87,10 +94,13 @@ dr_icews <- function(db_path = NULL, raw_file_dir = NULL) {
 
 #' Remove all data
 #'
-#' Remove all ICEWS data
+#' Remove all local ICEWS data artifacts, i.e. local data files and/or database
+#' file.
 #'
 #' @param db_path Path to SQLite database
 #' @param raw_file_dir Directory containing the raw event TSV files.
+#'
+#' @seealso [purge_data_files()], [purge_db()], [remove_db()]
 #'
 #' @importFrom utils menu
 #' @export

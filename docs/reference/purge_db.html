@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Purge ICEWS database — purge_db • icews</title>
+<title>Purge or delete ICEWS database — purge_db • icews</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,10 +30,11 @@
 
 
 
-<meta property="og:title" content="Purge ICEWS database — purge_db" />
+<meta property="og:title" content="Purge or delete ICEWS database — purge_db" />
 
-<meta property="og:description" content="Delete the events table. For a complete rebuild it is quicker to delete
-the whole database file." />
+<meta property="og:description" content="purge_db drops the events table in the database. For a complete rebuild
+it is usually quicker to remove the database file itself with remove_db,
+but this will also delete any user-created tables." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -113,19 +114,22 @@ the whole database file." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Purge ICEWS database</h1>
+    <h1>Purge or delete ICEWS database</h1>
     <small class="dont-index">Source: <a href='https://github.com/andybega/icews/blob/master/R/database.R'><code>R/database.R</code></a></small>
     <div class="hidden name"><code>purge_db.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Delete the events table. For a complete rebuild it is quicker to delete
-the whole database file.</p>
+    <p><code>purge_db</code> drops the events table in the database. For a complete rebuild
+it is usually quicker to remove the database file itself with <code>remove_db</code>,
+but this will also delete any user-created tables.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>purge_db</span>(<span class='kw'>db_path</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>purge_db</span>(<span class='kw'>db_path</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='fu'>remove_db</span>(<span class='no'>db_path</span>, <span class='kw'>directory</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -134,11 +138,20 @@ the whole database file.</p>
       <th>db_path</th>
       <td><p>Path to SQLite database</p></td>
     </tr>
+    <tr>
+      <th>directory</th>
+      <td><p>Should the directory be removed also? This will delete any
+other files that are in it.</p></td>
+    </tr>
+    <tr>
+      <th>db_path</th>
+      <td><p>Path to SQLite database file.</p></td>
+    </tr>
     </table>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='remove_db.html'>remove_db()</a></code></p></div>
+    <div class='dont-index'><p><code><a href='purge_data_files.html'>purge_data_files()</a></code>, <code><a href='burn_it_down.html'>burn_it_down()</a></code></p></div>
     
 
   </div>

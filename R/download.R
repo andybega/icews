@@ -1,7 +1,7 @@
 
 
 
-#' Download a single file
+#' Download a single file from DVN
 #'
 #' Download a single file from the ICEWS DVN repository and unzip if neccessary
 #'
@@ -92,6 +92,8 @@ download_icews <- function(to_dir = find_raw(), update = TRUE, dryrun = FALSE) {
 #' Removes the downloaded raw event TSV files
 #'
 #' @param raw_file_dir Directory containing the raw event TSV files
+#'
+#' @seealso [purge_db()], [remove_db()], [burn_it_down()]
 #'
 #' @export
 purge_data_files <- function(raw_file_dir = find_raw()) {

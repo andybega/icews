@@ -8,7 +8,7 @@ Maintainer: Andreas Beger <adbeger@gmail.com>
 Description: Download utilities and other helpers for getting the ICEWS event
   data from Dataverse. 
 License: MIT + file LICENSE
-URL: https://github.com/andybega/icews
+URL: https://www.andybeger.com/icews/, https://github.com/andybega/icews
 BugReports: https://github.com/andybega/icews/issues
 Depends:
   R (>= 2.10)
@@ -24,12 +24,12 @@ Imports:
   rlang,
   tibble
 Suggests:
-    usethis,
-    testthat,
-    tictoc,
-    tidyr,
-    knitr,
-    rmarkdown
+  usethis,
+  testthat,
+  tictoc,
+  tidyr,
+  knitr,
+  rmarkdown
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.0

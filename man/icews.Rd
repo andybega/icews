@@ -59,7 +59,8 @@ new files, use this function:\preformatted{sync_db_with_files(raw_file_dir = "~/
                    db_path = "~/Downloads/icews_data/db/icews.sqlite3")
 }
 
-See \url{https://github.com/andybega/icews} for
+See \url{https://github.com/andybega/icews} and
+\url{https://www.andybeger.com/icews/} for
 more information.
 }
 \references{
@@ -70,6 +71,7 @@ Event Data'', \url{https://doi.org/10.7910/DVN/28075}, Harvard Dataverse.
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://www.andybeger.com/icews/}
   \item \url{https://github.com/andybega/icews}
   \item Report bugs at \url{https://github.com/andybega/icews/issues}
 }

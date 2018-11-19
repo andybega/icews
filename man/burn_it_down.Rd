@@ -12,5 +12,9 @@ burn_it_down(db_path = find_db(), raw_file_dir = find_raw())
 \item{raw_file_dir}{Directory containing the raw event TSV files.}
 }
 \description{
-Remove all ICEWS data
+Remove all local ICEWS data artifacts, i.e. local data files and/or database
+file.
+}
+\seealso{
+[purge_data_files()], [purge_db()], [remove_db()]
 }

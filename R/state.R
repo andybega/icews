@@ -31,11 +31,51 @@ parse_label <- function(label) {
   out
 }
 
-
-#' Get Dataverse file list
+#' Get DVN/local file/database state
 #'
-#' Get information on current ICEWS files on Dataverse
+#' Determine what data files, event sets, and version are currently on dataverse,
+#' in the local files, or in the local database.
 #'
+#' @rdname state
+#'
+#' @details The data files (tab-separated files, ".tab") on dataverse that
+#'   contain the raw event data follow a common format denoting the set of
+#'   events contained in a file and which version of the event data and/or file
+#'   dump they correspond to. For example, "events.1995.20150313082510.tab"
+#'   contains events for 1995 and the version is denoted by the timestamp,
+#'   "20150313082510".
+#'
+#'   The download and update functions
+#'   ([update_icews()], [download_data()]) will recognize which event sets
+#'   are locally available or still need to be downloaded, and whether any
+#'   local even sets have been superseded by a new version in dataverse, by
+#'   using
+#'
+#' @return For `get_local_state` and `get_db_state`, a tibble with columns:
+#'   - db/local_file: the full source data file name, e.g. "events.1995.20150313082510.tab".
+#'   - db/local_data_set: the event set contained in the file, e.g. "events.1995".
+#'   - db/local_version: the version of the file/event set, e.g. "20150313082510"
+#'
+#'   For `get_dvn_manifest`, a list of length 3, containing:
+#'   - data_files: a tibble similar to those returned by `get_local_state` and
+#'     `get_db_state`, with an additional column for the file label on dataverse
+#'     since some files are zipped, i.e. ending with ".tab.zip" instead of ".tab".
+#'   - files: a summary list of all files on DVN, consisting of the data files
+#'     but also documentation and metadata files.
+#'   - dataverse_dataset: an object of class "dataverse_dataset", returned by
+#'     [dataverse::get_dataset()].
+#'
+#' @examples
+#' \dontrun{
+#' # Remote (DVN) state
+#' get_dvn_manifest()
+#' # Local file state
+#' get_local_state()
+#' # Database state
+#' get_db_state()
+#' }
+#'
+#' @md
 #' @export
 #' @import dataverse
 #' @import tibble
@@ -61,12 +101,11 @@ get_dvn_manifest <- function() {
 }
 
 
-#' Get local file state
-#'
-#' Determine what data files are present locally, and which event sets and
-#' versions they contain.
+#' @rdname state
 #'
 #' @param raw_file_dir Directory containing raw data files
+#'
+#' @export
 get_local_state <- function(raw_file_dir = find_raw()) {
   files <- dir(raw_file_dir)
   state <- parse_label(files)
@@ -78,13 +117,11 @@ get_local_state <- function(raw_file_dir = find_raw()) {
   state
 }
 
-
-#' Get database state
+#' @rdname state
 #'
-#' Determine what data files, event sets, and version are currently in the
-#' database.
+#' @param db_path Path to SQLite database files.
 #'
-#' @param db_path Path to SQLite database file
+#' @export
 get_db_state <- function(db_path = find_db()) {
   db_files <- list_source_files(db_path)
   state <- parse_label(db_files)
@@ -99,7 +136,6 @@ get_db_state <- function(db_path = find_db()) {
 #' Plan file changes related to download/updating
 #'
 #' @param raw_file_dir Directory containing the raw event TSV files
-#'
 plan_file_changes <- function(raw_file_dir) {
 
   action <- NULL

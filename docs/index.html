@@ -146,8 +146,8 @@ events &lt;-<span class="st"> </span><span class="kw"><a href="reference/read_ic
 <h3 class="hasAnchor">
 <a href="#persist-the-data-directory-location" class="anchor"></a>Persist the data directory location</h3>
 <p>The package can keep track of the data location via variables stored in the package options. The easiest way is to add these to an “.Rprofile” file so that they are available each time R starts up.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/setup_icews.html">setup_icews</a></span>(<span class="dt">data_dir =</span> <span class="st">"/where/should/data/be"</span>, <span class="dt">use_db =</span> <span class="st">"TRUE"</span>, 
-            <span class="dt">keep_files =</span> <span class="ot">FALSE</span>, <span class="dt">r_profile =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/setup_icews.html">setup_icews</a></span>(<span class="dt">data_dir =</span> <span class="st">"/where/should/data/be"</span>, <span class="dt">use_db =</span> <span class="ot">TRUE</span>, 
+            <span class="dt">keep_files =</span> <span class="ot">TRUE</span>, <span class="dt">r_profile =</span> <span class="ot">TRUE</span>)</code></pre></div>
 <p>This will open the “.Rprofile” file and tell you what to add to it (requires <a href="https://cran.r-project.org/package=usethis">usethis</a> to be installed). From now on the package knows where your data lives, and most of the functions can be called without specifying any directory or path arguments.</p>
 <p>This sets three variables:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># ICEWS data location and options</span>
@@ -159,7 +159,8 @@ events &lt;-<span class="st"> </span><span class="kw"><a href="reference/read_ic
 <h3 class="hasAnchor">
 <a href="#use-a-sqlite-database-that-keeps-in-sync-with-dvn" class="anchor"></a>Use a SQLite database that keeps in sync with DVN</h3>
 <p>To setup and populate a database with the current version on DVN, use this command:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">update</span>()</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># assumes setup_icews with use_db = TRUE has already been called</span>
+<span class="kw"><a href="reference/update_icews.html">update_icews</a></span>()</code></pre></div>
 <p>This will download any data files needed from DVN, and create and populate a SQLite database with them. The events will be in a table called “events”. To connect, use <code><a href="reference/connect.html">connect()</a></code>; this returns a RSQLite database connection. From then on, it can be used like this:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">"DBI"</span>)
 <span class="kw">library</span>(<span class="st">"dplyr"</span>)
@@ -175,7 +176,7 @@ con &lt;-<span class="st"> </span><span class="kw"><a href="reference/connect.ht
 <div id="bonus-cameo-codes" class="section level3">
 <h3 class="hasAnchor">
 <a href="#bonus-cameo-codes" class="anchor"></a>Bonus: CAMEO codes</h3>
-<p>Also included is a dictionary of the CAMEO code for event types.</p>
+<p>Also included is a dictionary of the CAMEO code for event types. This includes quad and penta category mappings as well.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="st">"cameo_codes"</span>)
 <span class="kw">str</span>(cameo_codes)
 <span class="co">#&gt; Classes 'tbl_df', 'tbl' and 'data.frame':    312 obs. of  11 variables:</span>

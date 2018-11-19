@@ -12,3 +12,6 @@ purge_data_files(raw_file_dir = find_raw())
 \description{
 Removes the downloaded raw event TSV files
 }
+\seealso{
+[purge_db()], [remove_db()], [burn_it_down()]
+}

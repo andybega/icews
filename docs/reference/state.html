@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Remove all data — burn_it_down • icews</title>
+<title>Get DVN/local file/database state — get_dvn_manifest • icews</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,10 +30,10 @@
 
 
 
-<meta property="og:title" content="Remove all data — burn_it_down" />
+<meta property="og:title" content="Get DVN/local file/database state — get_dvn_manifest" />
 
-<meta property="og:description" content="Remove all local ICEWS data artifacts, i.e. local data files and/or database
-file." />
+<meta property="og:description" content="Determine what data files, event sets, and version are currently on dataverse,
+in the local files, or in the local database." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -113,46 +113,93 @@ file." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Remove all data</h1>
-    <small class="dont-index">Source: <a href='https://github.com/andybega/icews/blob/master/R/utils.R'><code>R/utils.R</code></a></small>
-    <div class="hidden name"><code>burn_it_down.Rd</code></div>
+    <h1>Get DVN/local file/database state</h1>
+    <small class="dont-index">Source: <a href='https://github.com/andybega/icews/blob/master/R/state.R'><code>R/state.R</code></a></small>
+    <div class="hidden name"><code>state.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Remove all local ICEWS data artifacts, i.e. local data files and/or database
-file.</p>
+    <p>Determine what data files, event sets, and version are currently on dataverse,
+in the local files, or in the local database.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>burn_it_down</span>(<span class='kw'>db_path</span> <span class='kw'>=</span> <span class='fu'><a href='find_db.html'>find_db</a></span>(), <span class='kw'>raw_file_dir</span> <span class='kw'>=</span> <span class='fu'><a href='find_raw.html'>find_raw</a></span>())</pre>
+    <pre class="usage"><span class='fu'>get_dvn_manifest</span>()
+
+<span class='fu'>get_local_state</span>(<span class='kw'>raw_file_dir</span> <span class='kw'>=</span> <span class='fu'><a href='find_raw.html'>find_raw</a></span>())
+
+<span class='fu'>get_db_state</span>(<span class='kw'>db_path</span> <span class='kw'>=</span> <span class='fu'><a href='find_db.html'>find_db</a></span>())</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>db_path</th>
-      <td><p>Path to SQLite database</p></td>
+      <th>raw_file_dir</th>
+      <td><p>Directory containing raw data files</p></td>
     </tr>
     <tr>
-      <th>raw_file_dir</th>
-      <td><p>Directory containing the raw event TSV files.</p></td>
+      <th>db_path</th>
+      <td><p>Path to SQLite database files.</p></td>
     </tr>
     </table>
     
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <div class='dont-index'><p>[purge_data_files()], [purge_db()], [remove_db()]</p></div>
+    <p>For <code>get_local_state</code> and <code>get_db_state</code>, a tibble with columns:</p><ul>
+<li><p>db/local_file: the full source data file name, e.g. "events.1995.20150313082510.tab".</p></li>
+<li><p>db/local_data_set: the event set contained in the file, e.g. "events.1995".</p></li>
+<li><p>db/local_version: the version of the file/event set, e.g. "20150313082510"</p></li>
+</ul>
+
+<p>For <code>get_dvn_manifest</code>, a list of length 3, containing:</p><ul>
+<li><p>data_files: a tibble similar to those returned by <code>get_local_state</code> and
+<code>get_db_state</code>, with an additional column for the file label on dataverse
+since some files are zipped, i.e. ending with ".tab.zip" instead of ".tab".</p></li>
+<li><p>files: a summary list of all files on DVN, consisting of the data files
+but also documentation and metadata files.</p></li>
+<li><p>dataverse_dataset: an object of class "dataverse_dataset", returned by
+<code><a href='http://www.rdocumentation.org/packages/dataverse/topics/get_dataset'>dataverse::get_dataset()</a></code>.</p></li>
+</ul>
+
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The data files (tab-separated files, ".tab") on dataverse that
+contain the raw event data follow a common format denoting the set of
+events contained in a file and which version of the event data and/or file
+dump they correspond to. For example, "events.1995.20150313082510.tab"
+contains events for 1995 and the version is denoted by the timestamp,
+"20150313082510".</p>
+<p>The download and update functions
+(<code><a href='update_icews.html'>update_icews()</a></code>, <code><a href='download_data.html'>download_data()</a></code>) will recognize which event sets
+are locally available or still need to be downloaded, and whether any
+local even sets have been superseded by a new version in dataverse, by
+using</p>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class='co'># NOT RUN {</span>
+<span class='co'># Remote (DVN) state</span>
+<span class='fu'>get_dvn_manifest</span>()
+<span class='co'># Local file state</span>
+<span class='fu'>get_local_state</span>()
+<span class='co'># Database state</span>
+<span class='fu'>get_db_state</span>()
+<span class='co'># }</span><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#see-also">See also</a></li>
-          </ul>
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

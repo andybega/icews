@@ -2,10 +2,14 @@
 % Please edit documentation in R/utils.R
 \name{get_doi}
 \alias{get_doi}
-\title{Contains the DVN DOI for ICEWS}
+\title{Get ICEWS dataverse DOI}
 \usage{
 get_doi()
 }
 \description{
 Contains the DVN DOI for ICEWS
+}
+\examples{
+get_doi()
+
 }

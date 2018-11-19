@@ -164,14 +164,27 @@ find_path <- function(x) {
   stop(paste(lines, collapse = "\n"))
 }
 
-#' Find database path
-find_db <- function() {
-  find_path("db")
-}
-
-#' Find raw file directory
+#' Find locations
+#'
+#' If the optiosn have been set (see [setup_icews()]), `find_raw` will return
+#' the path to the raw data file directory, `find_db` the database file path.
+#'
+#' @examples
+#' dontrun{
+#' find_raw()
+#' find_db()
+#' }
+#'
+#' @export
 find_raw <- function() {
   find_path("raw")
+}
+
+#' Find locations
+#'
+#' @export
+find_db <- function() {
+  find_path("db")
 }
 
 #' Find docs directory

@@ -200,9 +200,9 @@
       <tr>
         
         <td>
-          <p><code><a href="get_dvn_manifest.html">get_dvn_manifest()</a></code> </p>
+          <p><code><a href="state.html">get_dvn_manifest()</a></code> <code><a href="state.html">get_local_state()</a></code> <code><a href="state.html">get_db_state()</a></code> </p>
         </td>
-        <td><p>Get Dataverse file list</p></td>
+        <td><p>Get DVN/local file/database state</p></td>
       </tr><tr>
         
         <td>
@@ -214,10 +214,16 @@
       <tr>
         <th colspan="2">
           <h2 id="section-interacting-with-the-database" class="hasAnchor"><a href="#section-interacting-with-the-database" class="anchor"></a>Interacting with the database</h2>
-          <p class="section-desc"><p>Working with DVN</p></p>
+          <p class="section-desc"><p>Helpers for interacting with the database, if used.</p></p>
         </th>
       </tr>
       <tr>
+        
+        <td>
+          <p><code><a href="find_db.html">find_db()</a></code> </p>
+        </td>
+        <td><p>Find locations</p></td>
+      </tr><tr>
         
         <td>
           <p><code><a href="connect.html">connect()</a></code> </p>
@@ -226,9 +232,27 @@
       </tr><tr>
         
         <td>
+          <p><code><a href="query_icews.html">query_icews()</a></code> </p>
+        </td>
+        <td><p>Query</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="list_source_files.html">list_source_files()</a></code> </p>
         </td>
         <td><p>List of ingested source files</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="state.html">get_dvn_manifest()</a></code> <code><a href="state.html">get_local_state()</a></code> <code><a href="state.html">get_db_state()</a></code> </p>
+        </td>
+        <td><p>Get DVN/local file/database state</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="read_icews.html">read_icews()</a></code> </p>
+        </td>
+        <td><p>Read ICEWS events into memory</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -240,9 +264,39 @@
       <tr>
         
         <td>
+          <p><code><a href="find_raw.html">find_raw()</a></code> </p>
+        </td>
+        <td><p>Find locations</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="state.html">get_dvn_manifest()</a></code> <code><a href="state.html">get_local_state()</a></code> <code><a href="state.html">get_db_state()</a></code> </p>
+        </td>
+        <td><p>Get DVN/local file/database state</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="download_data.html">download_data()</a></code> <code><a href="download_data.html">download_icews()</a></code> </p>
+        </td>
+        <td><p>Download ICEWS data files</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="list_raw_files.html">list_raw_files()</a></code> </p>
         </td>
         <td><p>List the raw data file paths</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="read_events_tsv.html">read_events_tsv()</a></code> </p>
+        </td>
+        <td><p>Read events TSV</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="read_icews.html">read_icews()</a></code> </p>
+        </td>
+        <td><p>Read ICEWS events into memory</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -269,12 +323,6 @@
           <p><code><a href="read_icews.html">read_icews()</a></code> </p>
         </td>
         <td><p>Read ICEWS events into memory</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="read_events_tsv.html">read_events_tsv()</a></code> </p>
-        </td>
-        <td><p>Read events TSV</p></td>
       </tr><tr>
         
         <td>
@@ -318,21 +366,15 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="purge_db.html">purge_db()</a></code> </p>
+          <p><code><a href="purge_db.html">purge_db()</a></code> <code><a href="purge_db.html">remove_db()</a></code> </p>
         </td>
-        <td><p>Purge ICEWS database</p></td>
+        <td><p>Purge or delete ICEWS database</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="purge_data_files.html">purge_data_files()</a></code> </p>
         </td>
         <td><p>Purge file downloads</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="remove_db.html">remove_db()</a></code> </p>
-        </td>
-        <td><p>Remove database file</p></td>
       </tr>
     </tbody>
     </table>

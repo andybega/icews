@@ -2,10 +2,18 @@
 % Please edit documentation in R/options.R
 \name{find_raw}
 \alias{find_raw}
-\title{Find raw file directory}
+\title{Find locations}
 \usage{
 find_raw()
 }
 \description{
-Find raw file directory
+If the optiosn have been set (see [setup_icews()]), `find_raw` will return
+the path to the raw data file directory, `find_db` the database file path.
+}
+\examples{
+dontrun{
+find_raw()
+find_db()
+}
+
 }

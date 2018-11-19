@@ -1,0 +1,94 @@
+---
+title: "Introduction to icews"
+author: "Andreas Beger"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  # it's not reasonable to use the full 8GB database when knitting this...
+  eval = FALSE
+)
+```
+
+```{r}
+library("icews")
+library("ggplot2")
+```
+
+The package is setup primarily with the intention that a SQLite database will be used to store the events. A more minimalist, alternative workflow is to work with the raw tab-separated data files only. 
+
+At the moment, there isn't really any advantage to using the database option over working with the raw files. It takes around 2 minutes for my laptop to read the raw data into memory, which itself takes up a bit over 2 GB of space, but once that is done it is easy to work interactively with the data in R. With indices, the database takes up a larger space on disk, more than 8 GB, and the queries themselves should take longer than in-memory work. But for a specific query with the right indices in the database, it is probably faster to use SQL than to load the whole data into memory and then do the query/data transformations. 
+
+## Database workflow
+
+For this workflow, we will setup the options to use a database to store the events, and to discard the raw data files. 
+
+```{r}
+setup_icews("~/path/to/icews_data", use_db = TRUE, keep_files = FALSE,
+            r_profile = TRUE)
+```
+
+ The "r_profile" option will open the ".Rprofile" file and print lines that should be added to it so that the package will find the correct paths and settings in future R sessions. 
+
+
+
+## Files-only workflow
+
+Again, we start with the setup function and add the relevant options to the ".Rprofile" file in order to avoid having to deal with paths in future sessions.
+
+```{r}
+setup_icews("~/path/to/icews_data", use_db = FALSE, keep_files = TRUE,
+            r_profile = TRUE)
+```
+
+# Example query
+
+
+
+```{r, eval = FALSE}
+data("cameo_codes")
+events <- query_icews("SELECT event_date, country FROM events;")
+cy_totals <- events %>%
+  mutate(event_date = as.Date(as.character(event_date), format = "%Y%m%d", 
+                              origin = "1970-01-01"),
+         gwcode = icews_to_gwcode(country, event_date),
+         year = as.integer(format(event_date, "%Y"))) %>%
+  group_by(gwcode, year) %>%
+  summarize(events = n())
+
+ggplot(cy_totals, aes(x = year, y = events, group = gwcode)) +
+  geom_line() +
+  theme_minimal()
+```
+
+# ICEWS event data overview
+
+"Event ID" is not a unique ID, but together with "Event Date" it does appear to be unique. 
+
+```{r}
+query_icews("
+SELECT id_n, count(*) as instances
+FROM ( 
+      SELECT event_id, count(*) as id_n 
+      FROM events
+      GROUP BY event_id
+     )
+GROUP BY id_n;
+") %>% knitr::kable()
+```
+
+| id_n| instances|
+|----:|---------:|
+|    1|  17074435|
+|    2|    145312|
+
+In all cases, the duplicate events have distinct event dates. 
+

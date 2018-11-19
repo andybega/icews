@@ -7,10 +7,12 @@ Major rewrite of the download and synchronization code, with some **breaking cha
 * Rename `query` to `query_icews` to avoid ambiguity. 
 * Replace `sync_db` with `update_icews` for general purpose use, and `sync_db_with_files()` for synchronizing the database with local data files without downloading any new ones. The `update_icews()` function is setup to work with the path and other options. 
 * Column names in the database are always, and with raw files by default, normalized by lower-casing and replacing all spaces with underscores, e.g. "Event ID" to "event_id". This is to make working in R and SQL with the events data easier, i.e. no need to backquote names. 
+Other changes/additions:
 
+* Add `icews_to_gwcode` to translate ICEWS country names to their respective Gleditsch & Ward country code. 
+* Add a downloader for documentation files, `download_docs`. Find out in which directory the doc files are with `find_docs`. 
 * Change `read_icews` to also work if a database backend is used, previously only for reading from files. 
 * Change `cameo_codes` data to include columns for quad and penta categories. 
-* Add `icews_to_gwcode` to translate ICEWS country names to their respective Gleditsch & Ward country code. 
 
 
 # icews 0.1.0

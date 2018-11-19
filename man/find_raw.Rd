@@ -2,17 +2,25 @@
 % Please edit documentation in R/options.R
 \name{find_raw}
 \alias{find_raw}
+\alias{find_db}
+\alias{find_docs}
 \title{Find locations}
 \usage{
 find_raw()
+
+find_db()
+
+find_docs()
 }
 \description{
-If the optiosn have been set (see [setup_icews()]), `find_raw` will return
-the path to the raw data file directory, `find_db` the database file path.
+If the optiosn have been set (see \code{\link[=setup_icews]{setup_icews()}}), \code{find_raw} will return
+the path to the raw data file directory, \code{find_db} the database file path,
+and \code{find_docs} the directory containing documentation files.
 }
 \examples{
 \dontrun{
 find_raw()
+find_docs()
 find_db()
 }
 

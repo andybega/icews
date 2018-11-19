@@ -125,10 +125,11 @@
 <li>Rename <code>download_icews</code> to <code>download_data</code>; the old version is still around but will be taken out at some point.</li>
 <li>Rename <code>query</code> to <code>query_icews</code> to avoid ambiguity.</li>
 <li>Replace <code>sync_db</code> with <code>update_icews</code> for general purpose use, and <code><a href="../reference/sync_db_with_files.html">sync_db_with_files()</a></code> for synchronizing the database with local data files without downloading any new ones. The <code><a href="../reference/update_icews.html">update_icews()</a></code> function is setup to work with the path and other options.</li>
-<li><p>Column names in the database are always, and with raw files by default, normalized by lower-casing and replacing all spaces with underscores, e.g. “Event ID” to “event_id”. This is to make working in R and SQL with the events data easier, i.e. no need to backquote names.</p></li>
+<li><p>Column names in the database are always, and with raw files by default, normalized by lower-casing and replacing all spaces with underscores, e.g. “Event ID” to “event_id”. This is to make working in R and SQL with the events data easier, i.e. no need to backquote names. Other changes/additions:</p></li>
+<li>Add <code>icews_to_gwcode</code> to translate ICEWS country names to their respective Gleditsch &amp; Ward country code.</li>
+<li>Add a downloader for documentation files, <code>download_docs</code>. Find out in which directory the doc files are with <code>find_docs</code>.</li>
 <li>Change <code>read_icews</code> to also work if a database backend is used, previously only for reading from files.</li>
-<li>Change <code>cameo_codes</code> data to include columns for quad and penta categories.</li>
-<li><p>Add <code>icews_to_gwcode</code> to translate ICEWS country names to their respective Gleditsch &amp; Ward country code.</p></li>
+<li><p>Change <code>cameo_codes</code> data to include columns for quad and penta categories.</p></li>
 </ul>
 </div>
     <div id="icews-0-1-0" class="section level1">

@@ -149,13 +149,13 @@ Also included is a dictionary of the CAMEO code for event types.
 
 ```{r}
 data("cameo_codes")
-head(cameo_codes[, 1:5])
+str(cameo_codes)
 ```
 
 And, a dictionary mapping Goldstein scores to CAMEO codes. 
 
 ```{r}
 data("goldstein_mappings")
-head(goldstein_mappings[, 1:5])
+str(goldstein_mappings)
 ```
 

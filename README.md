@@ -135,26 +135,59 @@ Also included is a dictionary of the CAMEO code for event types.
 
 ``` r
 data("cameo_codes")
-head(cameo_codes[, 1:5])
-#>   code                     name level lvl0 lvl1
-#> 1   01    MAKE PUBLIC STATEMENT     0   01 <NA>
-#> 2  010           Make statement     1   01  010
-#> 3  011          Decline comment     1   01  011
-#> 4  012 Make pessimistic comment     1   01  012
-#> 5  013  Make optimistic comment     1   01  013
-#> 6  014   Consider policy option     1   01  014
+str(cameo_codes)
+#> Classes 'tbl_df', 'tbl' and 'data.frame':    312 obs. of  11 variables:
+#>  $ cameo_code    : chr  "01" "010" "011" "012" ...
+#>  $ name          : chr  "MAKE PUBLIC STATEMENT" "Make statement" "Decline comment" "Make pessimistic comment" ...
+#>  $ level         : num  0 1 1 1 1 1 1 1 1 1 ...
+#>  $ lvl0          : int  1 1 1 1 1 1 1 1 1 1 ...
+#>  $ lvl1          : int  NA 10 11 12 13 14 15 16 17 18 ...
+#>  $ description   : chr  NA "All public statements expressed verbally or in action not otherwise specified." "Explicitly decline or refuse to comment on a situation." "Express pessimism, negative outlook." ...
+#>  $ usage_notes   : chr  NA "This residual category is not coded except when distinctions among 011 to 017 cannot be made. Note that statements are typicall "This event form is a verbal act. The target could be who the source actor declines to make a comment to or about." "This event form is a verbal act. Only statements with explicit pessimistic components should be coded as 012; otherwise, defaul ...
+#>  $ example       : chr  NA "U.S. military chief General Colin Powell said on Wednesday NATO would need to remain strong." "NATO on Monday declined to comment on an estimate that Yugoslav army and special police troops in Kosovo were losing 90 to 100  "Former West Germany Chancellor Willy Brandt said in a radio interview broadcast today he was skeptical over Moscow\u0082\xc4\xf ...
+#>  $ order         : int  1 2 3 4 5 6 7 8 9 10 ...
+#>  $ quad_category : chr  "verbal cooperation" "verbal cooperation" "verbal cooperation" "verbal cooperation" ...
+#>  $ penta_category: chr  "statement" "statement" "statement" "statement" ...
 ```
 
 And, a dictionary mapping Goldstein scores to CAMEO codes.
 
 ``` r
 data("goldstein_mappings")
-head(goldstein_mappings[, 1:5])
-#>   code                     name goldstein nsLeft nsRight
-#> 1   01    MAKE PUBLIC STATEMENT       0.0      1      22
-#> 2  010           Make statement       0.0      2       3
-#> 3  011          Decline comment      -0.1      4       5
-#> 4  012 Make pessimistic comment      -0.4      6       7
-#> 5  013  Make optimistic comment       0.4      8       9
-#> 6  014   Consider policy option       0.0     10      11
+str(goldstein_mappings)
+#> Classes 'tbl_df', 'tbl' and 'data.frame':    312 obs. of  5 variables:
+#>  $ code     : chr  "01" "010" "011" "012" ...
+#>  $ name     : chr  "MAKE PUBLIC STATEMENT" "Make statement" "Decline comment" "Make pessimistic comment" ...
+#>  $ goldstein: num  0 0 -0.1 -0.4 0.4 0 0 -5 0 3.4 ...
+#>  $ nsLeft   : int  1 2 4 6 8 10 12 14 16 18 ...
+#>  $ nsRight  : int  22 3 5 7 9 11 13 15 17 19 ...
+#>  - attr(*, "spec")=List of 2
+#>   ..$ cols   :List of 12
+#>   .. ..$ X1          : list()
+#>   .. .. ..- attr(*, "class")= chr  "collector_integer" "collector"
+#>   .. ..$ eventtype_ID: list()
+#>   .. .. ..- attr(*, "class")= chr  "collector_integer" "collector"
+#>   .. ..$ name        : list()
+#>   .. .. ..- attr(*, "class")= chr  "collector_character" "collector"
+#>   .. ..$ code        : list()
+#>   .. .. ..- attr(*, "class")= chr  "collector_character" "collector"
+#>   .. ..$ goldstein   : list()
+#>   .. .. ..- attr(*, "class")= chr  "collector_double" "collector"
+#>   .. ..$ nsLeft      : list()
+#>   .. .. ..- attr(*, "class")= chr  "collector_integer" "collector"
+#>   .. ..$ nsRight     : list()
+#>   .. .. ..- attr(*, "class")= chr  "collector_integer" "collector"
+#>   .. ..$ description : list()
+#>   .. .. ..- attr(*, "class")= chr  "collector_character" "collector"
+#>   .. ..$ usage_notes : list()
+#>   .. .. ..- attr(*, "class")= chr  "collector_character" "collector"
+#>   .. ..$ example     : list()
+#>   .. .. ..- attr(*, "class")= chr  "collector_character" "collector"
+#>   .. ..$ root_code   : list()
+#>   .. .. ..- attr(*, "class")= chr  "collector_character" "collector"
+#>   .. ..$ order       : list()
+#>   .. .. ..- attr(*, "class")= chr  "collector_integer" "collector"
+#>   ..$ default: list()
+#>   .. ..- attr(*, "class")= chr  "collector_guess" "collector"
+#>   ..- attr(*, "class")= chr "col_spec"
 ```

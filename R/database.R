@@ -223,7 +223,6 @@ purge_db <- function(db_path = NULL) {
 
 #' @rdname purge_db
 #'
-#' @param db_path Path to SQLite database file.
 #' @param directory Should the directory be removed also? This will delete any
 #' other files that are in it.
 #'

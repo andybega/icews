@@ -11,7 +11,7 @@ If the optiosn have been set (see [setup_icews()]), `find_raw` will return
 the path to the raw data file directory, `find_db` the database file path.
 }
 \examples{
-dontrun{
+\dontrun{
 find_raw()
 find_db()
 }

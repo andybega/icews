@@ -33,7 +33,7 @@ read_icews <- function(path = NULL) {
 #'
 #' @md
 read_icews_raw <- function(raw_file_dir, ...) {
-  data_files <- list_raw_files()
+  data_files <- list_local_files()
   events <- data_files %>%
     purrr::map(read_events_tsv, ...) %>%
     dplyr::bind_rows()

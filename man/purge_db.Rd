@@ -14,8 +14,6 @@ remove_db(db_path, directory = FALSE)
 
 \item{directory}{Should the directory be removed also? This will delete any
 other files that are in it.}
-
-\item{db_path}{Path to SQLite database file.}
 }
 \description{
 \code{purge_db} drops the events table in the database. For a complete rebuild

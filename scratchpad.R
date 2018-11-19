@@ -67,6 +67,7 @@ pkgdown::build_site()
 "
 db_path Path to SQLite database file.
 raw_file_dir Directory containing the raw event TSV files.
+docs_dir Directory containing the documentation files.
 use_db Store events in a SQLite database?
 keep_files If using a database, retain raw data TSV files?
 "

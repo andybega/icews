@@ -160,7 +160,7 @@ normalize_column_names <- function(x) {
 #' @param full_names Return the full path or only file name?
 #'
 #' @export
-list_raw_files <- function(raw_file_dir = find_raw(), full_names = TRUE) {
+list_local_files <- function(raw_file_dir = find_raw(), full_names = TRUE) {
   dir(raw_file_dir, pattern = ".tab", full.names = full_names)
 }
 

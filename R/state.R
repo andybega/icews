@@ -107,7 +107,7 @@ get_dvn_manifest <- function() {
 #'
 #' @export
 get_local_state <- function(raw_file_dir = find_raw()) {
-  files <- dir(raw_file_dir)
+  files <- basename(list_local_files())
   state <- parse_label(files)
   if (!isTRUE(all(state$is_data))) {
     stop(sprintf("unexpected non-data files found in '%s'", raw_file_dir))

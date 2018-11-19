@@ -16,8 +16,11 @@ knitr::opts_chunk$set(
 )
 ```
 
+Generally, in-memory calculations are much faster than calculations via SQL, but they come at the cost of loading several GB into memory, which on my laptop takes about 2 minutes. 
+
 ```{r}
 library("icews")
+
 library("tidyr")
 library("tictoc")
 ```
@@ -30,9 +33,13 @@ events <- read_icews_db(find_db())
 nrow(events)
 format(object.size(events), "Gb")
 toc()
-rm(events)
 ```
 
+```
+#> [1] 17365059
+#> [1] "2.7 Gb"
+#> 274.15 sec elapsed
+```
 
 ```{r, results='hold', eval=FALSE}
 tic()
@@ -42,36 +49,55 @@ format(object.size(events), "Gb")
 toc()
 ```
 
+```
+#> [1] 17365059
+#> [1] "2.6 Gb"
+#> 144.995 sec elapsed
+```
+
+# Country-year event counts
+
+The in-memory calculation is much faster than in the database, although longer if one counts the overhead of reading the data into memory as well.
 
 ```{r, results='hold', eval=FALSE}
-tbl_icews <- function(db_path = find_db) {
-  tbl(connect(), "events")
-}
-
-
-# Total event count by country/by year
 tic()
-cy_total_mem <- events %>% group_by(Country, year) %>% summarize(events = n())
+cy_total_mem <- events %>% 
+  group_by(country, year) %>% 
+  summarize(events = n())
 toc()
+```
 
+```
+#> 1.057 sec elapsed
+```
+
+```{r, eval=FALSE}
 tic()
-cy_total_db <- query_icews("SELECT count(*) as total FROM events group by country, year;")
+cy_total_db <- query_icews(
+  "SELECT count(*) AS total FROM events GROUP BY country, year;")
 toc()
+```
 
+```
+#> 528.075 sec elapsed
+```
+
+```{r, eval=FALSE}
 tic()
-query_icews("analyze")
+cy_total_db <- query_icews(
+  "SELECT count(*) AS total FROM events GROUP BY year, country;")
 toc()
+```
 
-tic()
-cy_total_db <- query_icews("SELECT count(*) as total FROM events group by country, year;")
-toc()
+```
+#> 68.513 sec elapsed
+```
 
+```{r, eval=FALSE}
 tic()
-cy_total_db <- query_icews("SELECT count(*) as total FROM events group by year, country;")
-toc()
-
-tic()
-cy_total_db <- tbl_icews() %>% group_by(country, year) %>% summarize(events = n()) %>% collect()
+cy_total_db <- tbl(connect(), "events") %>% 
+  group_by(country, year) %>% 
+  summarize(events = n())
 toc()
 ```
 
@@ -111,3 +137,29 @@ col_vals %>%
   knitr::kable()
 ```
 
+|Column          | Unique_values|
+|:---------------|-------------:|
+|sentence_number |             6|
+|source_file     |            24|
+|year            |            24|
+|intensity       |            41|
+|source_country  |           249|
+|target_country  |           250|
+|country         |           251|
+|cameo_code      |           273|
+|event_text      |           273|
+|yearmonth       |           285|
+|publisher       |           290|
+|province        |          5166|
+|event_date      |          8674|
+|district        |          9881|
+|target_name     |         73399|
+|source_name     |         75780|
+|latitude        |         85686|
+|city            |         88217|
+|longitude       |         89652|
+|target_sectors  |        200290|
+|source_sectors  |        248443|
+|story_id        |       8450555|
+|event_id        |      17219747|
+|rows            |      17365059|

@@ -111,3 +111,147 @@ events_by_ym %>%
   labs(x = "Date", y = "Events") +
   ggtitle("ICEWS events per month") +
   theme_minimal()
+
+
+
+
+
+#
+#   Playing around with normalization
+#   _____________
+
+dir(icews:::find_raw())
+
+events <- icews:::read_events_tsv(file.path(icews:::find_raw(), "events.2017.20180710093300.tab"))
+# Add year and yearmonth since these will be useful for getting counts over time
+events$year      <- as.integer(format(events$event_date, "%Y"))
+events$yearmonth <- as.integer(format(events$event_date, "%Y%m"))
+# SQLite does not have date data type, use ISO text instead
+events$event_date <- as.character(events$event_date)
+events$source_file  <- "events.2017.20180710093300.tab"
+
+sapply(events, function(x) sum(is.na(x)))
+
+con <- connect()
+query_icews("
+create table if not exists `events2017` (
+    event_id INTEGER NOT NULL,
+    event_date TEXT NOT NULL,
+    source_name TEXT,
+    source_sectors TEXT,
+    source_country TEXT,
+    event_text TEXT,
+    cameo_code TEXT,
+    intensity REAL,
+    target_name TEXT,
+    target_sectors TEXT,
+    target_country TEXT,
+    story_id INTEGER NOT NULL,
+    sentence_number INTEGER,
+    publisher TEXT,
+    city TEXT,
+    district TEXT,
+    province TEXT,
+    country TEXT,
+    latitude REAL,
+    longitude REAL,
+    year INTEGER,
+    yearmonth INTEGER,
+    source_file TEXT NOT NULL,
+    PRIMARY KEY (event_id, event_date)
+    );")
+
+dbListTables(con)
+dbWriteTable(con, "events2017", events, append = TRUE)
+
+# table with indices
+query_icews("
+create table if not exists events2017idx (
+            event_id INTEGER NOT NULL,
+            event_date TEXT NOT NULL,
+            source_name TEXT,
+            source_sectors TEXT,
+            source_country TEXT,
+            event_text TEXT,
+            cameo_code TEXT,
+            intensity REAL,
+            target_name TEXT,
+            target_sectors TEXT,
+            target_country TEXT,
+            story_id INTEGER NOT NULL,
+            sentence_number INTEGER,
+            publisher TEXT,
+            city TEXT,
+            district TEXT,
+            province TEXT,
+            country TEXT,
+            latitude REAL,
+            longitude REAL,
+            year INTEGER,
+            yearmonth INTEGER,
+            source_file TEXT NOT NULL,
+            PRIMARY KEY (event_id, event_date)
+);")
+
+dbWriteTable(con, "events2017idx", events, append = TRUE)
+
+idx_cols <- c("source_file", "cameo_code", "country", "year", "yearmonth")
+for (x in idx_cols) {
+  dbSendQuery(con, sprintf("create index %s on events2017idx(%s)",
+                           paste0("events2017_", x, "_idx"), x))
+}
+
+
+
+# semi-normalized table
+query_icews("
+create table if not exists events2017norm (
+            event_id INTEGER NOT NULL,
+            event_date TEXT NOT NULL,
+            source_name TEXT,
+            source_sectors TEXT,
+            source_country TEXT,
+            event_text TEXT,
+            cameo_code TEXT,
+            intensity REAL,
+            target_name TEXT,
+            target_sectors TEXT,
+            target_country TEXT,
+            story_id INTEGER NOT NULL,
+            sentence_number INTEGER,
+            city TEXT,
+            district TEXT,
+            province TEXT,
+            country TEXT,
+            latitude REAL,
+            longitude REAL,
+            year INTEGER,
+            yearmonth INTEGER,
+            source_file TEXT NOT NULL,
+            PRIMARY KEY (event_id, event_date),
+            FOREIGN KEY (story_id) REFERENCES stories2017norm(story_id)
+);")
+
+query_icews("
+create table if not exists stories2017norm (
+            story_id INTEGER NOT NULL PRIMARY KEY,
+            publisher TEXT);")
+
+dbWriteTable(con, "events2017idx", events, append = TRUE)
+
+idx_cols <- c("source_file", "cameo_code", "country", "year", "yearmonth")
+for (x in idx_cols) {
+  dbSendQuery(con, sprintf("create index %s on events2017idx(%s)",
+                           paste0("events2017_", x, "_idx"), x))
+}
+
+
+
+microbenchmark(
+  dbGetQuery(con, "select count(*) from events2017"),
+  dbGetQuery(con, "select count(*) from events2017idx"),
+  times = 100
+)
+
+
+

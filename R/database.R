@@ -63,9 +63,9 @@ create_event_table <- function(db_path = find_db()) {
   con <- connect(db_path)
   on.exit(DBI::dbDisconnect(con))
 
-  sql <- "CREATE TABLE IF NOT EXISTS `events` (
-    event_id INTEGER,
-    event_date TEXT,
+  sql <- "CREATE TABLE IF NOT EXISTS events (
+    event_id INTEGER NOT NULL,
+    event_date INTEGER NOT NULL,
     source_name TEXT,
     source_sectors TEXT,
     source_country TEXT,
@@ -84,17 +84,18 @@ create_event_table <- function(db_path = find_db()) {
     country TEXT,
     latitude REAL,
     longitude REAL,
-    year INTEGER,
-    yearmonth INTEGER,
-    source_file TEXT
+    year INTEGER NOT NULL,
+    yearmonth INTEGER NOT NULL,
+    source_file TEXT NOT NULL,
+    PRIMARY KEY (event_id, event_date)
   );"
   res <- DBI::dbSendQuery(con, sql)
   DBI::dbClearResult(res)
 
   # Create indices
-  idx_columns <- c("event_id", "source_file", "cameo_code", "country", "year",
+  idx_columns <- c("source_file", "cameo_code", "country", "year",
                    "yearmonth")
-  idx_names <- paste0(gsub(" ", "_", tolower(idx_columns)), "_idx")
+  idx_names <- paste0("events_", gsub(" ", "_", tolower(idx_columns)), "_idx")
   existing_indices <- list_indices(db_path)$name
   need_cols <- idx_columns[!idx_names %in% existing_indices]
   if (length(need_cols) > 0) {
@@ -118,6 +119,7 @@ check_db_exists <- function(db_path) {
   if (file.exists(db_path)) {
     return(TRUE)
   }
+  cat(sprintf("Initializing database at '%s'", db_path))
   create_db(db_path)
   create_event_table(db_path)
   invisible(TRUE)
@@ -139,7 +141,7 @@ write_data_to_db <- function(events, file, db_path = find_db()) {
   events$year      <- as.integer(format(events$event_date, "%Y"))
   events$yearmonth <- as.integer(format(events$event_date, "%Y%m"))
   # SQLite does not have date data type, use ISO text instead
-  events$event_date <- as.character(events$event_date)
+  events$event_date <- as.integer(format(events$event_date, "%Y%m%d"))
   events$source_file  <- file
 
   DBI::dbWriteTable(con, "events", events, append = TRUE)

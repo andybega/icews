@@ -6,7 +6,7 @@
 \title{CAMEO code dictionary}
 \format{Data frame
 \describe{
- \item{code}{CAMEO code; the codes need to remain as a character. Coercing
+ \item{cameo_code}{CAMEO code; the codes need to remain as a character. Coercing
    to integer will create ambiguity, e.g. '010 / Make statement' and
    '10 / DEMAND' will both collapse to 10.}
  \item{name}{CAMEO code name}
@@ -17,6 +17,10 @@
  \item{usage_notes}{Usage notes.}
  \item{example}{Example sentence from which this event type is parsed.}
  \item{order}{Sort order of codes}
+ \item{quad_category}{Quad category grouping event types into verbal/material
+   cooperation/conflict.}
+ \item{penta_category}{Derived from quad category, but root code '01' statements
+   in their own category, as these usually make up the bulk of events.}
 }}
 \source{
 \url{http://eventdata.parusanalytics.com/data.dir/cameo.html}

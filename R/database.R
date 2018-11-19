@@ -7,7 +7,6 @@
 #'   the database will be created at ICEWS_DATA_DIR/db/icews.sqlite3. Otherwise,
 #'   an alternative path for the database file.
 #'
-#' @export
 #' @import dplyr
 create_db <- function(db_path = find_db()) {
   # Make sure we are not overwriting existing database

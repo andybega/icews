@@ -1,0 +1,58 @@
+reference:
+  - title: "Basic usage and sync"
+    desc: >
+      Basic functionality for downloading ICEWS data from dataverse.
+    contents:
+      - dr_icews
+      - update_icews
+      - download_icews
+      - read_icews
+      - query_icews
+  - title: "Setup and options"
+    desc: >
+      Setup and check option values.
+    contents:
+      - setup_icews
+      - get_icews_opts
+      - set_icews_opts
+      - unset_icews_opts
+  - title: "Interacting with DVN"
+    desc: >
+      Working with DVN
+    contents:
+      - get_dvn_manifest
+      - download_file
+  - title: "Interacting with the database"
+    desc: >
+      Working with DVN
+    contents:
+      - connect
+      - list_source_files
+  - title: "Interacting with local raw data files"
+    desc: >
+      Working with local copies of the data files
+    contents:
+      - list_raw_files
+      - read_events_tsv
+  - title: "Data helpers"
+    desc: >
+      Various helpers for working with the ICEWS event data
+    contents:
+      - connect
+      - query_icews
+      - read_icews
+      - icews_to_gwcode
+  - title: "Data"
+    desc: >
+      Package data
+    contents:
+      - cameo_codes
+      - goldstein_mappings
+  - title: "Cleaning up"
+    desc: >
+      Destructive functions to remove all or portions of the data and database.
+    contents:
+      - burn_it_down
+      - purge_db
+      - purge_data_files
+      - remove_db

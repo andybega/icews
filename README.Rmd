@@ -101,8 +101,8 @@ Beyond this basic usage, the goal is to abstract as many little pains away as po
 The package can keep track of the data location via variables stored in the package options. The easiest way is to add these to an ".Rprofile" file so that they are available each time R starts up.
 
 ```{r, eval = FALSE}
-setup_icews(data_dir = "/where/should/data/be", use_db = "TRUE", 
-            keep_files = FALSE, r_profile = TRUE)
+setup_icews(data_dir = "/where/should/data/be", use_db = TRUE, 
+            keep_files = TRUE, r_profile = TRUE)
 ```
 
 This will open the ".Rprofile" file and tell you what to add to it (requires [usethis](https://cran.r-project.org/package=usethis) to be installed). From now on the package knows where your data lives, and most of the functions can be called without specifying any directory or path arguments.  
@@ -121,7 +121,8 @@ options(icews.keep_files = TRUE)
 To setup and populate a database with the current version on DVN, use this command:
 
 ```{r, eval = FALSE}
-update()
+# assumes setup_icews with use_db = TRUE has already been called
+update_icews()
 ```
 
 This will download any data files needed from DVN, and create and populate a SQLite database with them. The events will be in a table called "events". To connect, use `connect()`; this returns a RSQLite database connection. From then on, it can be used like this:
@@ -145,7 +146,7 @@ DBI::dbDisconnect(con)
 
 ### Bonus: CAMEO codes
 
-Also included is a dictionary of the CAMEO code for event types. 
+Also included is a dictionary of the CAMEO code for event types. This includes quad and penta category mappings as well. 
 
 ```{r}
 data("cameo_codes")

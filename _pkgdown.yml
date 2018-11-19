@@ -6,6 +6,7 @@ reference:
       - dr_icews
       - update_icews
       - download_icews
+      - download_docs
       - read_icews
       - query_icews
   - title: "Setup and options"
@@ -37,9 +38,9 @@ reference:
       Working with local copies of the data files
     contents:
       - find_raw
+      - list_local_files
       - get_local_state
       - download_icews
-      - list_raw_files
       - read_events_tsv
       - read_icews
   - title: "Data helpers"
@@ -54,6 +55,7 @@ reference:
     desc: >
       Package data
     contents:
+      - get_doi
       - cameo_codes
       - goldstein_mappings
   - title: "Cleaning up"

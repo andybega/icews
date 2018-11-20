@@ -20,6 +20,7 @@ get_doi <- function() {
 #' @param raw_file_dir Directory containing the raw event TSV files.
 #'
 #' @export
+
 dr_icews <- function(db_path = NULL, raw_file_dir = NULL) {
 
   opts_are_set <- !is.null(getOption("icews.data_dir"))
@@ -76,8 +77,6 @@ dr_icews <- function(db_path = NULL, raw_file_dir = NULL) {
       db_source_files <- list_source_files(db_path)
       if (any(!local_files %in% db_source_files)) {
         cat("There are local files that have not been ingested into the database,\nconsider running `update()` or `sync_db_with_files()`\n")
-      } else {
-        cat("Looks good")
       }
     }
 

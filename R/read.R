@@ -38,7 +38,7 @@ read_icews <- function(path = NULL) {
 
 #' Read data from raw files
 #'
-#' @param raw_file_dir Directory containing the raw event TSV files.
+#' @template rfd
 #' @param ... Options passed to [read_events_tsv()].
 #'
 #' @md
@@ -63,7 +63,7 @@ read_icews_raw <- function(raw_file_dir, ...) {
 
 #' Read data from DB
 #'
-#' @param db_path Path to SQLite database file.
+#' @template dbp
 read_icews_db <- function(db_path) {
   events <- query_icews("SELECT * FROM events;", db_path)
   events$event_date <- as.Date(as.character(events$event_date), format = "%Y%m%d")

@@ -1,14 +1,35 @@
 
 
 
-#' Setup ICEWS environment variables
+#' Setup ICEWS options
 #'
-#' Checks for and creates several ICEWS environment variables.
+#' Checks for an sets several options like paths to data locations; and provides
+#' instructions for the .Rprofile entries needed to persist the settings.
 #'
 #' @param data_dir Where should the raw TSV data be kept?
 #' @param use_db Store events in a SQLite database?
 #' @param keep_files keep_files If using a database, retain raw data TSV files?
 #' @param r_profile If TRUE, this will write config parameters to a .Renviron file.
+#'
+#' @details Generally, the most flexible option is to keep both a database and
+#'   the raw event files. As of late 2018, the database takes up about 8GB of
+#'   space and the raw event files 5GB. The database contains several pre-built
+#'   indices, which account for the extra space. Reading the raw data from files
+#'   into memory takes about 2 minutes but from then on is more convenient and
+#'   quicker for exploratory, interactive work. Queries on the database take
+#'   longer, but don't require the initial loading into memory overhead. And
+#'   with the right indices, it is possible to further cut down the time for
+#'   specific queries.
+#'
+#'   Either way, I heavily recommend adding the option values to .Rprofile,
+#'   to take away the trouble of having to deal with paths manually.
+#'
+#' @return `unset_icews_opts` silently returns a list of prior option values to
+#'   make it possible reset the values if needed. See [get_icews_opts()] and
+#'   [set_icews_opts()].
+#'
+#'   `get_icews_opts` returns on object of class "icews_opts". Essentially a list
+#'   containing the option values but with format and print methods.
 #'
 #' @export
 setup_icews <- function(data_dir, use_db = TRUE, keep_files = FALSE, r_profile = TRUE) {
@@ -46,11 +67,7 @@ setup_icews <- function(data_dir, use_db = TRUE, keep_files = FALSE, r_profile =
   invisible(NULL)
 }
 
-#' Set ICEWS options
-#'
-#' @param data_dir Where should the raw TSV data be kept?
-#' @param use_db Store events in a SQLite database?
-#' @param keep_files keep_files If using a database, retain raw data TSV files?
+#' @rdname setup_icews
 #'
 #' @export
 set_icews_opts <- function(data_dir, use_db, keep_files) {
@@ -60,13 +77,8 @@ set_icews_opts <- function(data_dir, use_db, keep_files) {
   invisible(NULL)
 }
 
-#' Unset ICEWS options
+#' @rdname setup_icews
 #'
-#' @return Silently returns a list of prior option values to make it possible
-#'   reset the values if needed. See [get_icews_opts()] and
-#'   [set_icews_opts()].
-#'
-#' @md
 #' @export
 unset_icews_opts <- function() {
   opts <- get_icews_opts()
@@ -77,14 +89,9 @@ unset_icews_opts <- function() {
 }
 
 
-#' Get ICEWS options
-#'
-#' List the current ICEWS-related option values
-#'
-#' @seealso [set_icews_opts()], [unset_icews_opts()], [setup_icews()]
+#' @rdname setup_icews
 #'
 #' @export
-#' @md
 get_icews_opts <- function() {
   out <- list(
     data_dir = getOption("icews.data_dir"),
@@ -120,7 +127,7 @@ opts_string <- function(opts) {
 #' @export
 #' @md
 format.icews_opts <- function(x, ...) {
-  opts <- get_icews_opts()
+  opts <- x
   str  <- list()
   for (i in seq_along(opts)) {
     str[i] <- paste0(names(opts)[i], ": ", opts[i])

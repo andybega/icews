@@ -53,11 +53,12 @@ reference:
       - icews_to_gwcode
   - title: "Data"
     desc: >
-      Package data
+      Package data, including a sample of the ICEWS event data.
     contents:
       - get_doi
       - cameo_codes
       - goldstein_mappings
+      - icews_sample
   - title: "Cleaning up"
     desc: >
       Destructive functions to remove all or portions of the data and database.

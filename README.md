@@ -162,33 +162,4 @@ str(goldstein_mappings)
 #>  $ goldstein: num  0 0 -0.1 -0.4 0.4 0 0 -5 0 3.4 ...
 #>  $ nsLeft   : int  1 2 4 6 8 10 12 14 16 18 ...
 #>  $ nsRight  : int  22 3 5 7 9 11 13 15 17 19 ...
-#>  - attr(*, "spec")=List of 2
-#>   ..$ cols   :List of 12
-#>   .. ..$ X1          : list()
-#>   .. .. ..- attr(*, "class")= chr  "collector_integer" "collector"
-#>   .. ..$ eventtype_ID: list()
-#>   .. .. ..- attr(*, "class")= chr  "collector_integer" "collector"
-#>   .. ..$ name        : list()
-#>   .. .. ..- attr(*, "class")= chr  "collector_character" "collector"
-#>   .. ..$ code        : list()
-#>   .. .. ..- attr(*, "class")= chr  "collector_character" "collector"
-#>   .. ..$ goldstein   : list()
-#>   .. .. ..- attr(*, "class")= chr  "collector_double" "collector"
-#>   .. ..$ nsLeft      : list()
-#>   .. .. ..- attr(*, "class")= chr  "collector_integer" "collector"
-#>   .. ..$ nsRight     : list()
-#>   .. .. ..- attr(*, "class")= chr  "collector_integer" "collector"
-#>   .. ..$ description : list()
-#>   .. .. ..- attr(*, "class")= chr  "collector_character" "collector"
-#>   .. ..$ usage_notes : list()
-#>   .. .. ..- attr(*, "class")= chr  "collector_character" "collector"
-#>   .. ..$ example     : list()
-#>   .. .. ..- attr(*, "class")= chr  "collector_character" "collector"
-#>   .. ..$ root_code   : list()
-#>   .. .. ..- attr(*, "class")= chr  "collector_character" "collector"
-#>   .. ..$ order       : list()
-#>   .. .. ..- attr(*, "class")= chr  "collector_integer" "collector"
-#>   ..$ default: list()
-#>   .. ..- attr(*, "class")= chr  "collector_guess" "collector"
-#>   ..- attr(*, "class")= chr "col_spec"
 ```

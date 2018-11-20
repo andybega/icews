@@ -42,3 +42,16 @@
 #' data(goldstein_mappings)
 #' head(goldstein_mappings)
 "goldstein_mappings"
+
+#' ICEWS event data sample
+#'
+#' A sample of the ICEWS event data consisting of the 4,993 events between 1 and
+#' 3 June 2018.
+#'
+#' @source
+#' \url{https://doi.org/10.7910/DVN/28075}
+#'
+#' @examples
+#' data("icews_sample")
+#' str(icews_sample)
+"icews_sample"

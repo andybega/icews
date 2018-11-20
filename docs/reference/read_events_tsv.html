@@ -32,7 +32,7 @@
 
 <meta property="og:title" content="Read events TSV — read_events_tsv" />
 
-<meta property="og:description" content="Wrapper around [readr::read_tsv()] to read in the raw events tab-delimited
+<meta property="og:description" content="Wrapper around readr::read_tsv() to read in the raw events tab-delimited
 files. It provides the correct column type specification and disables the
 default quote escape option, as the files already have escaped quotes." />
 <meta name="twitter:card" content="summary" />
@@ -127,7 +127,7 @@ default quote escape option, as the files already have escaped quotes." />
 
     <div class="ref-description">
     
-    <p>Wrapper around [readr::read_tsv()] to read in the raw events tab-delimited
+    <p>Wrapper around <code><a href='https://readr.tidyverse.org/reference/read_delim.html'>readr::read_tsv()</a></code> to read in the raw events tab-delimited
 files. It provides the correct column type specification and disables the
 default quote escape option, as the files already have escaped quotes.</p>
     
@@ -149,16 +149,16 @@ in the database are always normalized.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Other options passed to [readr::read_tsv()].</p></td>
+      <td><p>Other options passed to <code><a href='https://readr.tidyverse.org/reference/read_delim.html'>readr::read_tsv()</a></code>.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The raw data file column names are capitalized and contain spaces.
-  To make it easier to work with them in R and SQL, they are by default
-  normalized by lower casing all and replacing spaces with underscores, e.g.
-  "Event ID" becomes "event_id".</p>
+To make it easier to work with them in R and SQL, they are by default
+normalized by lower casing all and replacing spaces with underscores, e.g.
+"Event ID" becomes "event_id".</p>
     
 
   </div>

@@ -4,11 +4,14 @@
 \alias{read_icews}
 \title{Read ICEWS events into memory}
 \usage{
-read_icews(path = NULL)
+read_icews(path = NULL, n_max = NULL)
 }
 \arguments{
 \item{path}{Either path to SQLite database file or raw file directory. If
 NULL (default), the global options will be used instead.}
+
+\item{n_max}{Maximum number of events to load, if NULL (default), no limit is
+used, i.e. all events are imported.}
 }
 \description{
 Read the entire ICEWS event data into memory. This takes up several (2-3 in 2018) GB.

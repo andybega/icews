@@ -129,7 +129,7 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>read_icews_db</span>(<span class='no'>db_path</span>)</pre>
+    <pre class="usage"><span class='fu'>read_icews_db</span>(<span class='no'>db_path</span>, <span class='kw'>n_max</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -137,6 +137,11 @@
     <tr>
       <th>db_path</th>
       <td><p>Path to SQLite database file.</p></td>
+    </tr>
+    <tr>
+      <th>n_max</th>
+      <td><p>Maximum number of events to load, if NULL (default), no limit is
+used, i.e. all events are imported.</p></td>
     </tr>
     </table>
     

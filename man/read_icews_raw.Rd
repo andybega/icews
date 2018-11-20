@@ -4,10 +4,13 @@
 \alias{read_icews_raw}
 \title{Read data from raw files}
 \usage{
-read_icews_raw(raw_file_dir, ...)
+read_icews_raw(raw_file_dir, n_max = NULL, ...)
 }
 \arguments{
 \item{raw_file_dir}{Directory containing the raw event TSV files.}
+
+\item{n_max}{Maximum number of events to load, if NULL (default), no limit is
+used, i.e. all events are imported.}
 
 \item{...}{Options passed to \code{\link[=read_events_tsv]{read_events_tsv()}}.}
 }

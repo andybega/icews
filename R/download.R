@@ -121,6 +121,7 @@ purge_data_files <- function(raw_file_dir = find_raw()) {
 #'
 #' @export
 #' @importFrom readr read_tsv cols col_character col_integer col_date col_double
+#' @md
 read_events_tsv <- function(file, fix_names = TRUE, ...) {
   col_fmt <- readr::cols(
     .default = col_character(),

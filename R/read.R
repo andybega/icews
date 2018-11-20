@@ -4,6 +4,7 @@
 #'
 #' @param path Either path to SQLite database file or raw file directory. If
 #'   NULL (default), the global options will be used instead.
+#' @template n_max
 #'
 #' @seealso [query_icews()], [read_events_tsv()]
 #'
@@ -11,7 +12,11 @@
 #' @import dplyr
 #' @importFrom purrr map
 #' @md
-read_icews <- function(path = NULL) {
+read_icews <- function(path = NULL, n_max = NULL) {
+  # check n_max is positive integer
+  if (!is.integer(n_max) | n_max < 1) {
+    stop("n_max must be a positive integer")
+  }
   # throw error if path is null but options are not set
   opts <- get_icews_opts()
   null_path <- is.null(path)
@@ -20,18 +25,18 @@ read_icews <- function(path = NULL) {
   }
   # opts set; preferentially read from raw files
   if (null_path & isTRUE(opts$keep_files)) {
-    return(read_icews_raw(find_raw()))
+    return(read_icews_raw(find_raw(), n_max))
   }
   # opts set; but db only
   if (null_path & isTRUE(opts$keep_files)) {
-    return(read_icews_db(find_db()))
+    return(read_icews_db(find_db(), n_max))
   }
   # path is set, figure out to what it goes
   if (tools::file_ext(path)==".sqlite3") {
-    return(read_icews_db(path))
+    return(read_icews_db(path, n_max))
   }
   if (any(grepl("^events.[0-9]{4}", dir(path)))) {
-    return(read_icews_raw(path))
+    return(read_icews_raw(path, n_max))
   }
 }
 
@@ -39,14 +44,22 @@ read_icews <- function(path = NULL) {
 #' Read data from raw files
 #'
 #' @template rfd
+#' @template n_max
 #' @param ... Options passed to [read_events_tsv()].
 #'
 #' @md
-read_icews_raw <- function(raw_file_dir, ...) {
+read_icews_raw <- function(raw_file_dir, n_max = NULL, ...) {
   data_files <- list_local_files()
-  events <- data_files %>%
-    purrr::map(read_events_tsv, ...) %>%
-    dplyr::bind_rows()
+  event_list <- list(NULL)
+  n <- 0L
+  n_max <- ifelse(is.null(n_max), Inf, n_max)
+  for (i in seq_along(data_files)) {
+    event_list[[i]] <- read_events_tsv(data_files[i], n_max = n_max)
+    n <- n + nrow(event_list[[i]])
+    if (n >= n_max) break
+  }
+  events <- dplyr::bind_rows(event_list)
+
   # Add year and yearmonth since these will be useful for getting counts over time
   # un-normalized names
   if ("Event Date" %in% names(events)) {
@@ -64,8 +77,11 @@ read_icews_raw <- function(raw_file_dir, ...) {
 #' Read data from DB
 #'
 #' @template dbp
-read_icews_db <- function(db_path) {
-  events <- query_icews("SELECT * FROM events;", db_path)
+#' @template n_max
+read_icews_db <- function(db_path, n_max = NULL) {
+  limit <- ifelse(is.null(n_max), "", paste0(" LIMIT ", n_max))
+  sql   <- sprintf("SELECT * FROM events%s;", limit)
+  events <- query_icews(sql, db_path)
   events$event_date <- as.Date(as.character(events$event_date), format = "%Y%m%d")
   events
 }

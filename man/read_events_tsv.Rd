@@ -12,16 +12,16 @@ read_events_tsv(file, fix_names = TRUE, ...)
 \item{fix_names}{Normalize column names? Default is FALSE; see details. Names
 in the database are always normalized.}
 
-\item{...}{Other options passed to [readr::read_tsv()].}
+\item{...}{Other options passed to \code{\link[readr:read_tsv]{readr::read_tsv()}}.}
 }
 \description{
-Wrapper around [readr::read_tsv()] to read in the raw events tab-delimited
+Wrapper around \code{\link[readr:read_tsv]{readr::read_tsv()}} to read in the raw events tab-delimited
 files. It provides the correct column type specification and disables the
 default quote escape option, as the files already have escaped quotes.
 }
 \details{
 The raw data file column names are capitalized and contain spaces.
-  To make it easier to work with them in R and SQL, they are by default
-  normalized by lower casing all and replacing spaces with underscores, e.g.
-  "Event ID" becomes "event_id".
+To make it easier to work with them in R and SQL, they are by default
+normalized by lower casing all and replacing spaces with underscores, e.g.
+"Event ID" becomes "event_id".
 }

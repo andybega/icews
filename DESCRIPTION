@@ -24,6 +24,7 @@ Imports:
   rlang,
   tibble
 Suggests:
+  ggplot2,
   usethis,
   testthat,
   tictoc,

@@ -129,7 +129,7 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>read_icews_raw</span>(<span class='no'>raw_file_dir</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>read_icews_raw</span>(<span class='no'>raw_file_dir</span>, <span class='kw'>n_max</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -137,6 +137,11 @@
     <tr>
       <th>raw_file_dir</th>
       <td><p>Directory containing the raw event TSV files.</p></td>
+    </tr>
+    <tr>
+      <th>n_max</th>
+      <td><p>Maximum number of events to load, if NULL (default), no limit is
+used, i.e. all events are imported.</p></td>
     </tr>
     <tr>
       <th>...</th>

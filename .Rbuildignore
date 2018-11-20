@@ -8,4 +8,5 @@
 ^README-.*\.png$
 
 ^data-raw$
+^man-roxygen$
 scratchpad.R

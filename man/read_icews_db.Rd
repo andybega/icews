@@ -4,10 +4,13 @@
 \alias{read_icews_db}
 \title{Read data from DB}
 \usage{
-read_icews_db(db_path)
+read_icews_db(db_path, n_max = NULL)
 }
 \arguments{
 \item{db_path}{Path to SQLite database file.}
+
+\item{n_max}{Maximum number of events to load, if NULL (default), no limit is
+used, i.e. all events are imported.}
 }
 \description{
 Read data from DB

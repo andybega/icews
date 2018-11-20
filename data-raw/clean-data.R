@@ -33,6 +33,7 @@ cameo_codes <- cameo_codes %>%
 
 goldstein_mappings <- read_csv("data-raw/cameo-codes.csv") %>%
   select(code, name, goldstein, nsLeft, nsRight)
+attr(goldstein_mappings, "spec") <- NULL
 
 usethis::use_data(cameo_codes, overwrite = TRUE)
 usethis::use_data(goldstein_mappings, overwrite = TRUE)

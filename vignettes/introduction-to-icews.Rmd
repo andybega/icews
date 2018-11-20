@@ -2,7 +2,10 @@
 title: "Introduction to icews"
 author: "Andreas Beger"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: yes
+    keep_md: yes
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
@@ -29,7 +32,7 @@ The icews package provides several features to make it easier to work with the I
 - the option to keep either only the data files, or a SQLite database containing the data, or both
 - **data helpers** for reading the entire data into memory ([read_icews](https://www.andybeger.com/icews/reference/read_icews.html)), regardless of the backend used (files or database), read and properly format a single data file ([read_events_tsv](https://www.andybeger.com/icews/reference/read_events_tsv.html)), or connect ([connect](https://www.andybeger.com/icews/reference/connect.html)) or directly query the database ([query_icews](https://www.andybeger.com/icews/reference/query_icews.html))
 
-# Setup and data acquisition
+## Setup and data acquisition
 
 The package is setup primarily with the intention that a SQLite database will be used to store the events. A more minimalist, alternative workflow is to work with the raw tab-separated data files only. 
 
@@ -39,15 +42,18 @@ The most flexible, and recommended option, is to use both files and database. Us
 
 *Note: the package is inherently unfriendly to a completely replicable workflow, as it is setup with the intention that one will use R options set in .Rprofile at each session start. And in any case, it is not trivial to throw around 5 GB of data.*
 
-*One side effect is that several parts of this introduction incorporte results from the local data copy I have, but which is not included on GitHub or the package install. However, I have tried to make the code here as explicity and replicable as possible.*
+*One side effect is that several parts of this vignette incorporte results from the local data copy I have, but which is not included on GitHub or the package install. However, I have tried to make the code here as explicity and replicable as possible.*
 
-## Recommended: database and retain files
+### Recommended: use database and retain files
 
 First, load some libraries required for this and the remainder of the vignette:
 
-```{r}
-library("icews")
-library("ggplot2")
+```{r, eval = TRUE}
+suppressPackageStartupMessages({
+  library("icews")
+  library("dplyr")
+  library("ggplot2")
+})
 ```
 
 Assuming this is the first time the icews package has been loaded, start by setting the option variables that the package will use to determine what kind of backend to use and where to keep files:
@@ -122,7 +128,7 @@ events <- tbl(con, "events") %>% head(5) %>% collect()
 ```
 
 
-## Database-only setup
+### Database-only setup
 
 For this workflow, we will setup the options to use a database to store the events, and to discard the raw data files. 
 
@@ -133,7 +139,7 @@ setup_icews("~/path/to/icews_data", use_db = TRUE, keep_files = FALSE,
 
 `update_icews` will now download the ".tab" data files to a temporary file and ingest from there. This saves about 5GB of space as of late 2018. 
 
-## Files-only setup
+### Files-only setup
 
 Again, we start with the setup function and add the relevant options to the ".Rprofile" file in order to avoid having to deal with paths in future sessions.
 
@@ -152,49 +158,130 @@ download_data(to_dir = "~/Downloads/icews_data", update = TRUE, dryrun = TRUE)
 ```
 
 ```
+File system changes:
+Found 0 local data file(s)
+Downloading 24 file(s)
+Removing 0 old file(s)
 
+Plan:
+Download            'events.1995.20150313082510.tab.zip'
+Download            'events.1996.20150313082528.tab.zip'
+...
 ```
 
-# Example query
+## Data overview
+
+```{r}
+data("icews_sample")
+str(icews_sample)
+```
 
 
+The data include a country column that contains short names for a slightly expanded version of the countries and territories with an [ISO 3166-1](https://en.wikipedia.org/wiki/ISO_3166-1) code.^[At least it appears to be this.]. 
 
-```{r, eval = FALSE}
-data("cameo_codes")
-events <- query_icews("SELECT event_date, country FROM events;")
-cy_totals <- events %>%
-  mutate(event_date = as.Date(as.character(event_date), format = "%Y%m%d", 
-                              origin = "1970-01-01"),
-         gwcode = icews_to_gwcode(country, event_date),
-         year = as.integer(format(event_date, "%Y"))) %>%
-  group_by(gwcode, year) %>%
+### Format differences between the raw data and database version
+
+By default when importing data, and always in the database, column names are normalized by converting to lower case and replacing white space with underscore, e.g. "Event ID" becomes "event_id". 
+
+In regard to column data types, the "event_date" column on import is converted to an R Date class vector. SQLite does not have a date data type. There is some limited support for dates in standard character format, e.g. YYYY-MM-DD, but the event dates are instead stored as integers with format YYYYMMDD in the database since the associated index is faster. 
+
+### Some example queries
+
+The next section below gives a more thorough overview of the ICEWS data; here are some simple example transformations of the data, with several alternative ways to do each. 
+
+First, the total number of events per year, with three different methods giving equivalent results:
+
+```{r year-totals}
+# SQL
+events1 <- query_icews("SELECT year, count(*) as events
+                        FROM events 
+                        GROUP BY year;")
+
+# dplyr
+events2 <- tbl(connect(), "events") %>%
+  group_by(year) %>%
+  summarize(events = n()) %>%
+  collect()
+
+# read-in memory then dplyr
+events3 <- read_icews() %>%
+  group_by(year) %>%
   summarize(events = n())
 
-ggplot(cy_totals, aes(x = year, y = events, group = gwcode)) +
+# plot the country series
+ggplot(events1, aes(x = year, y = events)) +
   geom_line() +
   theme_minimal()
 ```
 
-# ICEWS event data overview
-
-"Event ID" is not a unique ID, but together with "Event Date" it does appear to be unique. 
-
-```{r}
-query_icews("
-SELECT id_n, count(*) as instances
-FROM ( 
-      SELECT event_id, count(*) as id_n 
-      FROM events
-      GROUP BY event_id
-     )
-GROUP BY id_n;
-") %>% knitr::kable()
+```{r, echo=FALSE, eval=TRUE, out.width="90%"}
+ggsave("cached_figures/intro-year-totals.png", height = 3, width = 6)
+knitr::include_graphics("cached_figures/intro-year-totals.png")
 ```
 
-| id_n| instances|
-|----:|---------:|
-|    1|  17074435|
-|    2|    145312|
 
-In all cases, the duplicate events have distinct event dates. 
+Next we will do country-year totals, using the ICEWS country column.
+
+```{r country-year-totals}
+# SQL
+events1 <- query_icews("SELECT country, year, count(*) as events
+                        FROM events 
+                        GROUP BY year, country;")
+
+# dplyr
+events2 <- tbl(connect(), "events") %>%
+  group_by(year, country) %>%
+  summarize(events = n()) %>%
+  collect()
+
+# read-in memory then dplyr
+events3 <- read_icews() %>%
+  group_by(year, country) %>%
+  summarize(events = n())
+
+# plot the country series
+ggplot(events1, aes(x = year, y = events, group = country)) +
+  geom_line() +
+  theme_minimal()
+```
+
+```{r, echo=FALSE, eval=TRUE, out.width="90%"}
+ggsave("cached_figures/intro-country-year-totals.png", height = 3, width = 6)
+knitr::include_graphics("cached_figures/intro-country-year-totals.png")
+```
+
+The ICEWS country names, and the ISO standard they are derived from, for state-centric analysis and data aggregations: (1) they tend to disregard states that do not exist anymore, e.g. Yugoslavia, and state changes in general, and (2) a lot of non-independent territories are treated separately from their associated states, e.g. Puerto Rico, American Samoa, etc. have seperate designations from the US. The Gleditsch and Ward (GW) list of independent states^[See http://ksgleditsch.com/statelist.html and https://doi.org/10.1080/03050629908434958.], which extends and improves upon the Correlates of War (COW) state list^[See "State System Membership" at http://www.correlatesofwar.org/data-sets.], provides an alternative coding that aims to capture independent states and preserve historical accuracy. 
+
+```{r gw-year-totals}
+data("cameo_codes")
+events <- query_icews("SELECT event_date, country FROM events;")
+gw_totals <- events %>%
+  mutate(
+    # convert integer to proper Date
+    event_date = as.Date(as.character(event_date), format = "%Y%m%d", 
+                         origin = "1970-01-01"),
+    # translate country to GW codes
+    gwcode = icews_to_gwcode(country, event_date),
+    # extract year for aggregation
+    year = as.integer(format(event_date, "%Y"))
+  ) %>%
+  group_by(gwcode, year) %>%
+  summarize(events = n())
+
+# plot the GW country series
+ggplot(gw_totals, aes(x = year, y = events, group = gwcode)) +
+  geom_line() +
+  theme_minimal()
+```
+
+```{r, echo=FALSE, eval=TRUE, out.width="90%"}
+ggsave("cached_figures/intro-gw-year-totals.png", height = 3, width = 6)
+knitr::include_graphics("cached_figures/intro-gw-year-totals.png")
+```
+
+
+
+
+
+
 

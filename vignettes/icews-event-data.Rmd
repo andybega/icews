@@ -1,0 +1,55 @@
+---
+title: "ICEWS event data"
+author: "Andreas Beger"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+This vignette gives an overview of the ICEWS event data: how each event record is structured, and some the relationship between different sets of information in the event records and columns. The latter is mainly for instances where superficial assumptions one might make, e.g. that "event_id" is a unique event ID, are wrong. 
+
+*Note: the package is inherently unfriendly to a completely replicable workflow, as it is setup with the intention that one will use R options set in .Rprofile at each session start. And in any case, it is not trivial to throw around 5 GB of data.*
+
+*One side effect is that several parts of this vignette incorporte results from the local data copy I have, but which is not included on GitHub or the package install. However, I have tried to make the code here as explicity and replicable as possible.*
+
+## Things to look out for
+
+Below are a couple of gotchas that might lead to wrongly aggregated data. 
+
+### Event ID is not unique
+
+"Event ID" is not a unique ID, but together with "Event Date" it does appear to be unique. 
+
+```{r}
+query_icews("
+SELECT id_n, count(*) as instances
+FROM ( 
+      SELECT event_id, count(*) as id_n 
+      FROM events
+      GROUP BY event_id
+     )
+GROUP BY id_n;
+") %>% knitr::kable()
+```
+
+| id_n| instances|
+|----:|---------:|
+|    1|  17074435|
+|    2|    145312|
+
+In all cases, the duplicate events have distinct event dates. 
+
+### Each actor can have multiple sectors, and they can change over time
+
+### CAMEO codes are unique but have a nested hierarchical structure

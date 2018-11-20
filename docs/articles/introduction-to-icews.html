@@ -52,6 +52,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/icews-event-data.html">ICEWS event data</a>
+    </li>
+    <li>
       <a href="../articles/introduction-to-icews.html">Introduction to icews</a>
     </li>
     <li>
@@ -85,7 +88,7 @@
       <h1>Introduction to icews</h1>
                         <h4 class="author">Andreas Beger</h4>
             
-            <h4 class="date">2018-11-19</h4>
+            <h4 class="date">2018-11-20</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/andybega/icews/blob/master/vignettes/introduction-to-icews.Rmd"><code>vignettes/introduction-to-icews.Rmd</code></a></small>
       <div class="hidden name"><code>introduction-to-icews.Rmd</code></div>
@@ -94,72 +97,197 @@
 
     
     
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">"icews"</span>)
-<span class="kw">library</span>(<span class="st">"ggplot2"</span>)</code></pre></div>
+<p>The ICEWS event data are one of the major event data sources publicly available, currently providing more than 17 million events from 1995 to late 2018 for more than 198 independent countries. The data were at first delivered with a one-year delay, but since late 2018 are available with monthly updates and no embargo period.</p>
+<p>The data are delivered via Dataverse, an open-source research data sharing platform. The main repository at <a href="https://doi.org/10.7910/DVN/28075" class="uri">https://doi.org/10.7910/DVN/28075</a> contains documentation and data in the form of 20+ data files covering each year from 1995 to the present.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> Although it is straightforward to bulk-download the entire repository, the data files are contained in a mix of “.tab” and zippes “.tab.zip” files, file versions can change and minimally change every month for the data file for the current year, and the bulk-download itself is several GB in size.</p>
+<p>The icews package provides several features to make it easier to work with the ICEWS event data:</p>
+<ul>
+<li>
+<strong>programmatic download</strong> of the event data to a user-specified location that can be persisted between R sessions via relevant “.Rprofile” entries (see <a href="https://www.andybeger.com/icews/reference/setup_icews.html">setup_icews</a>)</li>
+<li>
+<strong>keep an updated local copy</strong> of the event data, with new downloads or updates in place as needed when new files or file versions are available on dataverse (see <a href="https://www.andybeger.com/icews/reference/update_icews.html">update_icews</a>)</li>
+<li>the option to keep either only the data files, or a SQLite database containing the data, or both</li>
+<li>
+<strong>data helpers</strong> for reading the entire data into memory (<a href="https://www.andybeger.com/icews/reference/read_icews.html">read_icews</a>), regardless of the backend used (files or database), read and properly format a single data file (<a href="https://www.andybeger.com/icews/reference/read_events_tsv.html">read_events_tsv</a>), or connect (<a href="https://www.andybeger.com/icews/reference/connect.html">connect</a>) or directly query the database (<a href="https://www.andybeger.com/icews/reference/query_icews.html">query_icews</a>)</li>
+</ul>
+<div id="setup-and-data-acquisition" class="section level2">
+<h2 class="hasAnchor">
+<a href="#setup-and-data-acquisition" class="anchor"></a>Setup and data acquisition</h2>
 <p>The package is setup primarily with the intention that a SQLite database will be used to store the events. A more minimalist, alternative workflow is to work with the raw tab-separated data files only.</p>
 <p>At the moment, there isn’t really any advantage to using the database option over working with the raw files. It takes around 2 minutes for my laptop to read the raw data into memory, which itself takes up a bit over 2 GB of space, but once that is done it is easy to work interactively with the data in R. With indices, the database takes up a larger space on disk, more than 8 GB, and the queries themselves should take longer than in-memory work. But for a specific query with the right indices in the database, it is probably faster to use SQL than to load the whole data into memory and then do the query/data transformations.</p>
-<div id="database-workflow" class="section level2">
-<h2 class="hasAnchor">
-<a href="#database-workflow" class="anchor"></a>Database workflow</h2>
+<p>The most flexible, and recommended option, is to use both files and database. Usually the several GB of extra space this takes up is not a constraint. The next three sections will cover the intial setup and subsequent workflow for the recommended dual, and database or files-only workflows.</p>
+<p><em>Note: the package is inherently unfriendly to a completely replicable workflow, as it is setup with the intention that one will use R options set in .Rprofile at each session start. And in any case, it is not trivial to throw around 5 GB of data.</em></p>
+<p><em>One side effect is that several parts of this vignette incorporte results from the local data copy I have, but which is not included on GitHub or the package install. However, I have tried to make the code here as explicity and replicable as possible.</em></p>
+<div id="recommended-use-database-and-retain-files" class="section level3">
+<h3 class="hasAnchor">
+<a href="#recommended-use-database-and-retain-files" class="anchor"></a>Recommended: use database and retain files</h3>
+<p>First, load some libraries required for this and the remainder of the vignette:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">suppressPackageStartupMessages</span>({
+  <span class="kw">library</span>(<span class="st">"icews"</span>)
+  <span class="kw">library</span>(<span class="st">"dplyr"</span>)
+  <span class="kw">library</span>(<span class="st">"ggplot2"</span>)
+})</code></pre></div>
+<p>Assuming this is the first time the icews package has been loaded, start by setting the option variables that the package will use to determine what kind of backend to use and where to keep files:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/setup_icews.html">setup_icews</a></span>(<span class="st">"~/path/to/icews_data"</span>, <span class="dt">use_db =</span> <span class="ot">TRUE</span>, <span class="dt">keep_files =</span> <span class="ot">FALSE</span>,
+            <span class="dt">r_profile =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<p>The first argument is the path to the directory where ICEWS data will be kept. Several subdirectories will be created in this directory:</p>
+<ul>
+<li>
+<code>raw</code>: store for the raw, unzipped “.tab” files</li>
+<li>
+<code>db</code>: contains <code>icews.sqlite3</code>, the database</li>
+<li>
+<code>docs</code>: ICEWS documentation and metadata (changelog)</li>
+</ul>
+<p>No other files should be placed in these directories, as this may break the package functionality.</p>
+<p>The “use_db” and “keep_files” arguments are both set to true. If “use_db” is false, a files-only option is used, regardless of what “keep_files” is set at. The final, “r_profile”, option will print instructions for what needs to be added to “.Rprofile” to persist the option settings, and, if <a href="https://cran.r-project.org/package=usethis">usethis</a> is installed, open the “.Rprofile” file. It should produce output like this:</p>
+<pre><code>Add these lines to the .Rprofile file:
+
+# ICEWS data location and options
+options(icews.data_dir   = "~/path/to/icews_data")
+options(icews.use_db     = TRUE)
+options(icews.keep_files = FALSE)
+
+● Modify '/Users/andybega/.Rprofile'
+● Restart R for changes to take effect
+Path options are set</code></pre>
+<p>From now on, icews will know where the data lives and what to do.</p>
+<p>Now we can start the data download. First, it might be a good idea to check what the planned changes are, which we can do by calling <code>update_icews</code> with <code>dryrun = TRUE</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/update_icews.html">update_icews</a></span>(<span class="dt">dryrun =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>sdf</code></pre>
+<p>The initial download should take quite some time, around an hour or so. But any subsequent updates will only download files or make changes in two instances: a completely new data file is available on Dataverse, e.g. if a new year has started, or an existing file/event set with a new version is available on Dataverse, in which case the existing file and records will be updated in place with the new version. Let us now do the actual sync:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/update_icews.html">update_icews</a></span>()</code></pre></div>
+<p>That’s it. To work with the data, there now several options. Read the whole data into memory:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">events &lt;-<span class="st"> </span><span class="kw"><a href="../reference/read_icews.html">read_icews</a></span>()</code></pre></div>
+<p>Read only a single file, e.g. just to explore some of the data:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">events &lt;-<span class="st"> </span><span class="kw"><a href="../reference/read_events_tsv.html">read_events_tsv</a></span>(<span class="kw"><a href="../reference/list_local_files.html">list_local_files</a></span>()[<span class="dv">1</span>])</code></pre></div>
+<p>Connect to the database and use with with DBI or dplyr, or just plain SQL:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">con &lt;-<span class="st"> </span><span class="kw"><a href="../reference/connect.html">connect</a></span>()
+events &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/DBI/topics/dbGetQuery">dbGetQuery</a></span>(con, <span class="st">"SELECT * FROM events LIMIT 5;"</span>)
+
+events &lt;-<span class="st"> </span><span class="kw"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"SELECT * FROM events LIMIT 5;"</span>)
+
+events &lt;-<span class="st"> </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/tbl.html">tbl</a></span>(con, <span class="st">"events"</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>(<span class="dv">5</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/compute.html">collect</a></span>()</code></pre></div>
+</div>
+<div id="database-only-setup" class="section level3">
+<h3 class="hasAnchor">
+<a href="#database-only-setup" class="anchor"></a>Database-only setup</h3>
 <p>For this workflow, we will setup the options to use a database to store the events, and to discard the raw data files.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/setup_icews.html">setup_icews</a></span>(<span class="st">"~/path/to/icews_data"</span>, <span class="dt">use_db =</span> <span class="ot">TRUE</span>, <span class="dt">keep_files =</span> <span class="ot">FALSE</span>,
             <span class="dt">r_profile =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<p>The “r_profile” option will open the “.Rprofile” file and print lines that should be added to it so that the package will find the correct paths and settings in future R sessions.</p>
+<p><code>update_icews</code> will now download the “.tab” data files to a temporary file and ingest from there. This saves about 5GB of space as of late 2018.</p>
 </div>
-<div id="files-only-workflow" class="section level2">
-<h2 class="hasAnchor">
-<a href="#files-only-workflow" class="anchor"></a>Files-only workflow</h2>
+<div id="files-only-setup" class="section level3">
+<h3 class="hasAnchor">
+<a href="#files-only-setup" class="anchor"></a>Files-only setup</h3>
 <p>Again, we start with the setup function and add the relevant options to the “.Rprofile” file in order to avoid having to deal with paths in future sessions.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/setup_icews.html">setup_icews</a></span>(<span class="st">"~/path/to/icews_data"</span>, <span class="dt">use_db =</span> <span class="ot">FALSE</span>, <span class="dt">keep_files =</span> <span class="ot">TRUE</span>,
             <span class="dt">r_profile =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<p><code>update_icews</code> will now only download and keep in sync the local data files.</p>
+<p>A completely minimalistic alternative that <strong>does not require options to be set</strong> is to use <code>download_data</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">old_opts &lt;-<span class="st"> </span><span class="kw"><a href="../reference/setup_icews.html">unset_icews_opts</a></span>()
+<span class="kw"><a href="../reference/download_data.html">download_data</a></span>(<span class="dt">to_dir =</span> <span class="st">"~/Downloads/icews_data"</span>, <span class="dt">update =</span> <span class="ot">TRUE</span>, <span class="dt">dryrun =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>File system changes:
+Found 0 local data file(s)
+Downloading 24 file(s)
+Removing 0 old file(s)
+
+Plan:
+Download            'events.1995.20150313082510.tab.zip'
+Download            'events.1996.20150313082528.tab.zip'
+...</code></pre>
 </div>
-<div id="example-query" class="section level1">
-<h1 class="hasAnchor">
-<a href="#example-query" class="anchor"></a>Example query</h1>
+</div>
+<div id="data-overview" class="section level2">
+<h2 class="hasAnchor">
+<a href="#data-overview" class="anchor"></a>Data overview</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="st">"icews_sample"</span>)
+<span class="kw">str</span>(icews_sample)</code></pre></div>
+<p>The data include a country column that contains short names for a slightly expanded version of the countries and territories with an <a href="https://en.wikipedia.org/wiki/ISO_3166-1">ISO 3166-1</a> code.<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>.</p>
+<div id="format-differences-between-the-raw-data-and-database-version" class="section level3">
+<h3 class="hasAnchor">
+<a href="#format-differences-between-the-raw-data-and-database-version" class="anchor"></a>Format differences between the raw data and database version</h3>
+<p>By default when importing data, and always in the database, column names are normalized by converting to lower case and replacing white space with underscore, e.g. “Event ID” becomes “event_id”.</p>
+<p>In regard to column data types, the “event_date” column on import is converted to an R Date class vector. SQLite does not have a date data type. There is some limited support for dates in standard character format, e.g. YYYY-MM-DD, but the event dates are instead stored as integers with format YYYYMMDD in the database since the associated index is faster.</p>
+</div>
+<div id="some-example-queries" class="section level3">
+<h3 class="hasAnchor">
+<a href="#some-example-queries" class="anchor"></a>Some example queries</h3>
+<p>The next section below gives a more thorough overview of the ICEWS data; here are some simple example transformations of the data, with several alternative ways to do each.</p>
+<p>First, the total number of events per year, with three different methods giving equivalent results:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># SQL</span>
+events1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"SELECT year, count(*) as events</span>
+<span class="st">                        FROM events </span>
+<span class="st">                        GROUP BY year;"</span>)
+
+<span class="co"># dplyr</span>
+events2 &lt;-<span class="st"> </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/tbl.html">tbl</a></span>(<span class="kw"><a href="../reference/connect.html">connect</a></span>(), <span class="st">"events"</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(year) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="dt">events =</span> <span class="kw"><a href="http://dplyr.tidyverse.org/reference/n.html">n</a></span>()) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/compute.html">collect</a></span>()
+
+<span class="co"># read-in memory then dplyr</span>
+events3 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/read_icews.html">read_icews</a></span>() <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(year) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="dt">events =</span> <span class="kw"><a href="http://dplyr.tidyverse.org/reference/n.html">n</a></span>())
+
+<span class="co"># plot the country series</span>
+<span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(events1, <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">x =</span> year, <span class="dt">y =</span> events)) <span class="op">+</span>
+<span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span>()</code></pre></div>
+<p><img src="cached_figures/intro-year-totals.png" width="90%"></p>
+<p>Next we will do country-year totals, using the ICEWS country column.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># SQL</span>
+events1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"SELECT country, year, count(*) as events</span>
+<span class="st">                        FROM events </span>
+<span class="st">                        GROUP BY year, country;"</span>)
+
+<span class="co"># dplyr</span>
+events2 &lt;-<span class="st"> </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/tbl.html">tbl</a></span>(<span class="kw"><a href="../reference/connect.html">connect</a></span>(), <span class="st">"events"</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(year, country) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="dt">events =</span> <span class="kw"><a href="http://dplyr.tidyverse.org/reference/n.html">n</a></span>()) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/compute.html">collect</a></span>()
+
+<span class="co"># read-in memory then dplyr</span>
+events3 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/read_icews.html">read_icews</a></span>() <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(year, country) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="dt">events =</span> <span class="kw"><a href="http://dplyr.tidyverse.org/reference/n.html">n</a></span>())
+
+<span class="co"># plot the country series</span>
+<span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(events1, <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">x =</span> year, <span class="dt">y =</span> events, <span class="dt">group =</span> country)) <span class="op">+</span>
+<span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span>()</code></pre></div>
+<p><img src="cached_figures/intro-country-year-totals.png" width="90%"></p>
+<p>The ICEWS country names, and the ISO standard they are derived from, for state-centric analysis and data aggregations: (1) they tend to disregard states that do not exist anymore, e.g. Yugoslavia, and state changes in general, and (2) a lot of non-independent territories are treated separately from their associated states, e.g. Puerto Rico, American Samoa, etc. have seperate designations from the US. The Gleditsch and Ward (GW) list of independent states<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a>, which extends and improves upon the Correlates of War (COW) state list<a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a>, provides an alternative coding that aims to capture independent states and preserve historical accuracy.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="st">"cameo_codes"</span>)
 events &lt;-<span class="st"> </span><span class="kw"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"SELECT event_date, country FROM events;"</span>)
-cy_totals &lt;-<span class="st"> </span>events <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">event_date =</span> <span class="kw">as.Date</span>(<span class="kw">as.character</span>(event_date), <span class="dt">format =</span> <span class="st">"%Y%m%d"</span>, 
-                              <span class="dt">origin =</span> <span class="st">"1970-01-01"</span>),
-         <span class="dt">gwcode =</span> <span class="kw"><a href="../reference/icews_to_gwcode.html">icews_to_gwcode</a></span>(country, event_date),
-         <span class="dt">year =</span> <span class="kw">as.integer</span>(<span class="kw">format</span>(event_date, <span class="st">"%Y"</span>))) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">group_by</span>(gwcode, year) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">summarize</span>(<span class="dt">events =</span> <span class="kw">n</span>())
+gw_totals &lt;-<span class="st"> </span>events <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(
+    <span class="co"># convert integer to proper Date</span>
+    <span class="dt">event_date =</span> <span class="kw">as.Date</span>(<span class="kw">as.character</span>(event_date), <span class="dt">format =</span> <span class="st">"%Y%m%d"</span>, 
+                         <span class="dt">origin =</span> <span class="st">"1970-01-01"</span>),
+    <span class="co"># translate country to GW codes</span>
+    <span class="dt">gwcode =</span> <span class="kw"><a href="../reference/icews_to_gwcode.html">icews_to_gwcode</a></span>(country, event_date),
+    <span class="co"># extract year for aggregation</span>
+    <span class="dt">year =</span> <span class="kw">as.integer</span>(<span class="kw">format</span>(event_date, <span class="st">"%Y"</span>))
+  ) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(gwcode, year) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="dt">events =</span> <span class="kw"><a href="http://dplyr.tidyverse.org/reference/n.html">n</a></span>())
 
-<span class="kw"><a href="ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(cy_totals, <span class="kw"><a href="ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">x =</span> year, <span class="dt">y =</span> events, <span class="dt">group =</span> gwcode)) <span class="op">+</span>
-<span class="st">  </span><span class="kw"><a href="ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw"><a href="ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span>()</code></pre></div>
+<span class="co"># plot the GW country series</span>
+<span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(gw_totals, <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">x =</span> year, <span class="dt">y =</span> events, <span class="dt">group =</span> gwcode)) <span class="op">+</span>
+<span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span>()</code></pre></div>
+<p><img src="cached_figures/intro-gw-year-totals.png" width="90%"></p>
 </div>
-<div id="icews-event-data-overview" class="section level1">
-<h1 class="hasAnchor">
-<a href="#icews-event-data-overview" class="anchor"></a>ICEWS event data overview</h1>
-<p>“Event ID” is not a unique ID, but together with “Event Date” it does appear to be unique.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"</span>
-<span class="st">SELECT id_n, count(*) as instances</span>
-<span class="st">FROM ( </span>
-<span class="st">      SELECT event_id, count(*) as id_n </span>
-<span class="st">      FROM events</span>
-<span class="st">      GROUP BY event_id</span>
-<span class="st">     )</span>
-<span class="st">GROUP BY id_n;</span>
-<span class="st">"</span>) <span class="op">%&gt;%</span><span class="st"> </span>knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>()</code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="right">id_n</th>
-<th align="right">instances</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right">17074435</td>
-</tr>
-<tr class="even">
-<td align="right">2</td>
-<td align="right">145312</td>
-</tr>
-</tbody>
-</table>
-<p>In all cases, the duplicate events have distinct event dates.</p>
+</div>
+<div class="footnotes">
+<hr>
+<ol>
+<li id="fn1"><p>Another repository at <a href="https://doi.org/10.7910/DVN/QI2T9A" class="uri">https://doi.org/10.7910/DVN/QI2T9A</a> has been providing daily data updates since October 2018, however the icews package is not yet setup to work with these as well.<a href="#fnref1">↩</a></p></li>
+<li id="fn2"><p>At least it appears to be this.<a href="#fnref2">↩</a></p></li>
+<li id="fn3"><p>See <a href="http://ksgleditsch.com/statelist.html" class="uri">http://ksgleditsch.com/statelist.html</a> and <a href="https://doi.org/10.1080/03050629908434958" class="uri">https://doi.org/10.1080/03050629908434958</a>.<a href="#fnref3">↩</a></p></li>
+<li id="fn4"><p>See “State System Membership” at <a href="http://www.correlatesofwar.org/data-sets" class="uri">http://www.correlatesofwar.org/data-sets</a>.<a href="#fnref4">↩</a></p></li>
+</ol>
 </div>
   </div>
 
@@ -168,10 +296,8 @@ cy_totals &lt;-<span class="st"> </span>events <span class="op">%&gt;%</span>
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#database-workflow">Database workflow</a></li>
-      <li><a href="#files-only-workflow">Files-only workflow</a></li>
-      <li><a href="#example-query">Example query</a></li>
-      <li><a href="#icews-event-data-overview">ICEWS event data overview</a></li>
+<li><a href="#setup-and-data-acquisition">Setup and data acquisition</a></li>
+      <li><a href="#data-overview">Data overview</a></li>
       </ul>
 </div>
       </div>

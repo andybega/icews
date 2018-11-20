@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Setup ICEWS environment variables — setup_icews • icews</title>
+<title>Setup ICEWS options — setup_icews • icews</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,10 @@
 
 
 
-<meta property="og:title" content="Setup ICEWS environment variables — setup_icews" />
+<meta property="og:title" content="Setup ICEWS options — setup_icews" />
 
-<meta property="og:description" content="Checks for and creates several ICEWS environment variables." />
+<meta property="og:description" content="Checks for an sets several options like paths to data locations; and provides
+instructions for the .Rprofile entries needed to persist the settings." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -84,6 +85,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/icews-event-data.html">ICEWS event data</a>
+    </li>
+    <li>
       <a href="../articles/introduction-to-icews.html">Introduction to icews</a>
     </li>
     <li>
@@ -115,19 +119,24 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Setup ICEWS environment variables</h1>
+    <h1>Setup ICEWS options</h1>
     <small class="dont-index">Source: <a href='https://github.com/andybega/icews/blob/master/R/options.R'><code>R/options.R</code></a></small>
     <div class="hidden name"><code>setup_icews.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Checks for and creates several ICEWS environment variables.</p>
+    <p>Checks for an sets several options like paths to data locations; and provides
+instructions for the .Rprofile entries needed to persist the settings.</p>
     
     </div>
 
     <pre class="usage"><span class='fu'>setup_icews</span>(<span class='no'>data_dir</span>, <span class='kw'>use_db</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>keep_files</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>r_profile</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+  <span class='kw'>r_profile</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+
+<span class='fu'>unset_icews_opts</span>()
+
+<span class='fu'>get_icews_opts</span>()</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -150,13 +159,45 @@
     </tr>
     </table>
     
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p><code>unset_icews_opts</code> silently returns a list of prior option values to
+make it possible reset the values if needed. See <code>get_icews_opts()</code> and
+<code><a href='set_icews_opts.html'>set_icews_opts()</a></code>.</p>
+<p><code>get_icews_opts</code> returns on object of class "icews_opts". Essentially a list
+containing the option values but with format and print methods.</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Generally, the most flexible option is to keep both a database and
+the raw event files. As of late 2018, the database takes up about 8GB of
+space and the raw event files 5GB. The database contains several pre-built
+indices, which account for the extra space. Reading the raw data from files
+into memory takes about 2 minutes but from then on is more convenient and
+quicker for exploratory, interactive work. Queries on the database take
+longer, but don't require the initial loading into memory overhead. And
+with the right indices, it is possible to further cut down the time for
+specific queries.</p>
+<p>Either way, I heavily recommend adding the option values to .Rprofile,
+to take away the trouble of having to deal with paths manually.</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='set_icews_opts.html'>set_icews_opts()</a></code></p></div>
+    
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
+
+      <li><a href="#see-also">See also</a></li>
+          </ul>
 
   </div>
 </div>

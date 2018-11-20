@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Query — query_icews • icews</title>
+<title>Query ICEWS — query_icews • icews</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,7 +30,7 @@
 
 
 
-<meta property="og:title" content="Query — query_icews" />
+<meta property="og:title" content="Query ICEWS — query_icews" />
 
 <meta property="og:description" content="Get results from a query to the database" />
 <meta name="twitter:card" content="summary" />
@@ -84,6 +84,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/icews-event-data.html">ICEWS event data</a>
+    </li>
+    <li>
       <a href="../articles/introduction-to-icews.html">Introduction to icews</a>
     </li>
     <li>
@@ -115,7 +118,7 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Query</h1>
+    <h1>Query ICEWS</h1>
     <small class="dont-index">Source: <a href='https://github.com/andybega/icews/blob/master/R/database.R'><code>R/database.R</code></a></small>
     <div class="hidden name"><code>query_icews.Rd</code></div>
     </div>
@@ -137,17 +140,32 @@
     </tr>
     <tr>
       <th>db_path</th>
-      <td><p>Path to SQLite database file</p></td>
+      <td><p>Path to SQLite database file]</p></td>
     </tr>
     </table>
     
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
+    <p>`query_icews` is a wrapper around [DBI::dbGetQuery()] that will
+open a connection to the database, submit and return the query results, and
+then close the database connection.</p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class='co'># NOT RUN {</span>
+<span class='fu'>query_icews</span>(<span class='st'>"SELECT count(*) FROM events;"</span>)
+<span class='co'># }</span><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#details">Details</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

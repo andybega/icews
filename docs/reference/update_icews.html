@@ -86,6 +86,9 @@ files." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/icews-event-data.html">ICEWS event data</a>
+    </li>
+    <li>
       <a href="../articles/introduction-to-icews.html">Introduction to icews</a>
     </li>
     <li>
@@ -118,7 +121,7 @@ files." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Update database and files</h1>
-    <small class="dont-index">Source: <a href='https://github.com/andybega/icews/blob/master/R/database.R'><code>R/database.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/andybega/icews/blob/master/R/update.R'><code>R/update.R</code></a></small>
     <div class="hidden name"><code>update_icews.Rd</code></div>
     </div>
 
@@ -159,13 +162,46 @@ files.</p>
     </tr>
     </table>
     
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
+    <p>The behavior of <code>update_icews</code> depends on the ICEWS option values,
+as set via <code>setup_icews</code>, or alternatively manually specified function
+arguments. The intended use is with options set in .Rprofile.</p>
+<p>If "use_db" and "keep_files" are both true, data files will be downloaded to
+the "raw" directory in the root ICEWS directory
+(<code>get_icews_opts()$data_dir</code>), then ingested into a SQLite database in the
+"db" directory. Each data file is ingested before the next one is downloaded,
+so that if the process is interrupted there will be at least some data in the
+database.</p>
+<p>If "use_db" is set with "keep_files" as false, data is downloaded to
+temporary files before ingestion. This saves about 5GB of space as of late
+2018.</p>
+<p>If "use_db" is false, then regardless of the "keep_files" value, only the
+raw data files will be downloaded. This is equivalent to <code><a href='download_data.html'>download_data()</a></code>.</p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class='co'># NOT RUN {</span>
+<span class='co'># assuming this is the first time the package is used:</span>
+<span class='fu'><a href='setup_icews.html'>setup_icews</a></span>(<span class='st'>"path/to/icews_data"</span>, <span class='kw'>use_db</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>keep_files</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+            <span class='kw'>r_profile</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='co'># see the plan for the initial download</span>
+<span class='fu'>update_icews</span>(<span class='kw'>dryrun</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='co'># do the initial download; this will take a while (1hr or so)</span>
+<span class='fu'>update_icews</span>(<span class='kw'>dryrun</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='co'># call it again in the future to check if updates are needed</span>
+<span class='co'># }</span><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#details">Details</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

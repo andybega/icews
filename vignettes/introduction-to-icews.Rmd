@@ -18,16 +18,111 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r}
-library("icews")
-library("ggplot2")
-```
+The ICEWS event data are one of the major event data sources publicly available, currently providing more than 17 million events from 1995 to late 2018 for more than 198 independent countries. The data were at first delivered with a one-year delay, but since late 2018 are available with monthly updates and no embargo period. 
+
+The data are delivered via Dataverse, an open-source research data sharing platform. The main repository at https://doi.org/10.7910/DVN/28075 contains documentation and data in the form of 20+ data files covering each year from 1995 to the present.^[Another repository at https://doi.org/10.7910/DVN/QI2T9A has been providing daily data updates since October 2018, however the icews package is not yet setup to work with these as well.] Although it is straightforward to bulk-download the entire repository, the data files are contained in a mix of ".tab" and zippes ".tab.zip" files, file versions can change and minimally change every month for the data file for the current year, and the bulk-download itself is several GB in size. 
+
+The icews package provides several features to make it easier to work with the ICEWS event data:
+
+- **programmatic download** of the event data to a user-specified location that can be persisted between R sessions via relevant ".Rprofile" entries (see [setup_icews](https://www.andybeger.com/icews/reference/setup_icews.html))
+- **keep an updated local copy** of the event data, with new downloads or updates in place as needed when new files or file versions are available on dataverse (see [update_icews](https://www.andybeger.com/icews/reference/update_icews.html))
+- the option to keep either only the data files, or a SQLite database containing the data, or both
+- **data helpers** for reading the entire data into memory ([read_icews](https://www.andybeger.com/icews/reference/read_icews.html)), regardless of the backend used (files or database), read and properly format a single data file ([read_events_tsv](https://www.andybeger.com/icews/reference/read_events_tsv.html)), or connect ([connect](https://www.andybeger.com/icews/reference/connect.html)) or directly query the database ([query_icews](https://www.andybeger.com/icews/reference/query_icews.html))
+
+# Setup and data acquisition
 
 The package is setup primarily with the intention that a SQLite database will be used to store the events. A more minimalist, alternative workflow is to work with the raw tab-separated data files only. 
 
 At the moment, there isn't really any advantage to using the database option over working with the raw files. It takes around 2 minutes for my laptop to read the raw data into memory, which itself takes up a bit over 2 GB of space, but once that is done it is easy to work interactively with the data in R. With indices, the database takes up a larger space on disk, more than 8 GB, and the queries themselves should take longer than in-memory work. But for a specific query with the right indices in the database, it is probably faster to use SQL than to load the whole data into memory and then do the query/data transformations. 
 
-## Database workflow
+The most flexible, and recommended option, is to use both files and database. Usually the several GB of extra space this takes up is not a constraint. The next three sections will cover the intial setup and subsequent workflow for the recommended dual, and database or files-only workflows. 
+
+*Note: the package is inherently unfriendly to a completely replicable workflow, as it is setup with the intention that one will use R options set in .Rprofile at each session start. And in any case, it is not trivial to throw around 5 GB of data.*
+
+*One side effect is that several parts of this introduction incorporte results from the local data copy I have, but which is not included on GitHub or the package install. However, I have tried to make the code here as explicity and replicable as possible.*
+
+## Recommended: database and retain files
+
+First, load some libraries required for this and the remainder of the vignette:
+
+```{r}
+library("icews")
+library("ggplot2")
+```
+
+Assuming this is the first time the icews package has been loaded, start by setting the option variables that the package will use to determine what kind of backend to use and where to keep files:
+
+```{r}
+setup_icews("~/path/to/icews_data", use_db = TRUE, keep_files = FALSE,
+            r_profile = TRUE)
+```
+
+The first argument is the path to the directory where ICEWS data will be kept. Several subdirectories will be created in this directory:
+
+- `raw`: store for the raw, unzipped ".tab" files
+- `db`: contains `icews.sqlite3`, the database
+- `docs`: ICEWS documentation and metadata (changelog)
+
+No other files should be placed in these directories, as this may break the package functionality. 
+
+The "use_db" and "keep_files" arguments are both set to true. If "use_db" is false, a files-only option is used, regardless of what "keep_files" is set at. The final, "r_profile", option will print instructions for what needs to be added to ".Rprofile" to persist the option settings, and, if [usethis](https://cran.r-project.org/package=usethis) is installed, open the ".Rprofile" file. It should produce output like this:
+
+```
+Add these lines to the .Rprofile file:
+
+# ICEWS data location and options
+options(icews.data_dir   = "~/path/to/icews_data")
+options(icews.use_db     = TRUE)
+options(icews.keep_files = FALSE)
+
+● Modify '/Users/andybega/.Rprofile'
+● Restart R for changes to take effect
+Path options are set
+```
+
+From now on, icews will know where the data lives and what to do.
+
+Now we can start the data download. First, it might be a good idea to check what the planned changes are, which we can do by calling `update_icews` with `dryrun = TRUE`. 
+
+```{r}
+update_icews(dryrun = TRUE)
+```
+
+```
+sdf
+```
+
+The initial download should take quite some time, around an hour or so. But any subsequent updates will only download files or make changes in two instances: a completely new data file is available on Dataverse, e.g. if a new year has started, or an existing file/event set with a new version is available on Dataverse, in which case the existing file and records will be updated in place with the new version. Let us now do the actual sync:
+
+```{r}
+update_icews()
+```
+
+That's it. To work with the data, there now several options. Read the whole data into memory:
+
+```{r}
+events <- read_icews()
+```
+
+Read only a single file, e.g. just to explore some of the data:
+
+```{r}
+events <- read_events_tsv(list_local_files()[1])
+```
+
+Connect to the database and use with with DBI or dplyr, or just plain SQL: 
+
+```{r}
+con <- connect()
+events <- DBI::dbGetQuery(con, "SELECT * FROM events LIMIT 5;")
+
+events <- query_icews("SELECT * FROM events LIMIT 5;")
+
+events <- tbl(con, "events") %>% head(5) %>% collect()
+```
+
+
+## Database-only setup
 
 For this workflow, we will setup the options to use a database to store the events, and to discard the raw data files. 
 
@@ -36,17 +131,28 @@ setup_icews("~/path/to/icews_data", use_db = TRUE, keep_files = FALSE,
             r_profile = TRUE)
 ```
 
- The "r_profile" option will open the ".Rprofile" file and print lines that should be added to it so that the package will find the correct paths and settings in future R sessions. 
+`update_icews` will now download the ".tab" data files to a temporary file and ingest from there. This saves about 5GB of space as of late 2018. 
 
-
-
-## Files-only workflow
+## Files-only setup
 
 Again, we start with the setup function and add the relevant options to the ".Rprofile" file in order to avoid having to deal with paths in future sessions.
 
 ```{r}
 setup_icews("~/path/to/icews_data", use_db = FALSE, keep_files = TRUE,
             r_profile = TRUE)
+```
+
+`update_icews` will now only download and keep in sync the local data files. 
+
+A completely minimalistic alternative that **does not require options to be set** is to use `download_data`:
+
+```{r}
+old_opts <- unset_icews_opts()
+download_data(to_dir = "~/Downloads/icews_data", update = TRUE, dryrun = TRUE)
+```
+
+```
+
 ```
 
 # Example query

@@ -39,12 +39,21 @@ connect <- function(db_path = find_db()) {
   con
 }
 
-#' Query
+#' Query ICEWS
 #'
 #' Get results from a query to the database
 #'
 #' @param query SQL query string
-#' @param db_path Path to SQLite database file
+#' @param db_path Path to SQLite database file]
+#'
+#' @details `query_icews` is a wrapper around [DBI::dbGetQuery()] that will
+#' open a connection to the database, submit and return the query results, and
+#' then close the database connection.
+#'
+#' @examples
+#' \dontrun{
+#' query_icews("SELECT count(*) FROM events;")
+#' }
 #'
 #' @export
 query_icews <- function(query, db_path = find_db()) {
@@ -255,73 +264,6 @@ sync_db_with_files <- function(raw_file_dir = find_raw(), db_path = find_db(),
   }
 
   check_db_exists(db_path)
-  execute_plan(plan, raw_file_dir = raw_file_dir, db_path = db_path)
-
-  cat("File and/or database update done\n")
-  invisible(TRUE)
-}
-
-
-#' Update database and files
-#'
-#' Maintain a current set of ICEWS events in the local database that match
-#' the latest versions on DVN. If needed, create the database and download data
-#' files.
-#'
-#' @param dryrun Just list changes that would be made, without making them.
-#' @param use_db Store events in a SQLite database?
-#' @param keep_files If using a database, retain raw data TSV files?
-#' @param db_path Path to SQLite database file
-#' @param raw_file_dir Directory containing the raw event TSV files.
-#'
-#' @export
-update_icews <- function(dryrun = FALSE,
-                   use_db     = getOption("icews.use_db"),
-                   keep_files = getOption("icews.keep_files"),
-                   db_path = find_db(), raw_file_dir = find_raw()) {
-
-  # Check input
-  # dryrun
-  if (!is.logical(dryrun) | is.na(dryrun)) {
-    stop("dryrun argument should be TRUE or FALSE")
-  }
-
-  # use_db
-  if (!is.logical(use_db) | is.na(use_db)) {
-    stop("use_db argument should be TRUE or FALSE")
-  }
-  if (is.null(use_db)) {
-    stop("Option \"icews.use_db\" is not set, consider running `setup_icews()`\n?setup_icews")
-  }
-
-  # keep_files
-  if (!is.logical(keep_files) | is.na(keep_files)) {
-    stop("keep_files argument should be TRUE or FALSE")
-  }
-  if (is.null(keep_files)) {
-    stop("Option \"icews.keep_files\" is not set, consider running `setup_icews()`\n?setup_icews")
-  }
-
-  # Check if "/raw" should/does exist
-  if (!dir.exists(raw_file_dir) & (keep_files | !use_db)) {
-    dir.create(raw_file_dir)
-  }
-
-
-  # Determine action plan based on DB and file options
-  if (!use_db) {
-    plan <- plan_file_changes(raw_file_dir)
-  } else {
-    # use a database
-    check_db_exists(db_path)
-    plan <- plan_database_changes(db_path, raw_file_dir, keep_files, use_local = TRUE)
-  }
-
-  if (isTRUE(dryrun)) {
-    print_plan(plan)
-    return(invisible(plan))
-  }
-
   execute_plan(plan, raw_file_dir = raw_file_dir, db_path = db_path)
 
   cat("File and/or database update done\n")

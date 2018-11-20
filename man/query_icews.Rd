@@ -2,15 +2,26 @@
 % Please edit documentation in R/database.R
 \name{query_icews}
 \alias{query_icews}
-\title{Query}
+\title{Query ICEWS}
 \usage{
 query_icews(query, db_path = find_db())
 }
 \arguments{
 \item{query}{SQL query string}
 
-\item{db_path}{Path to SQLite database file}
+\item{db_path}{Path to SQLite database file]}
 }
 \description{
 Get results from a query to the database
+}
+\details{
+`query_icews` is a wrapper around [DBI::dbGetQuery()] that will
+open a connection to the database, submit and return the query results, and
+then close the database connection.
+}
+\examples{
+\dontrun{
+query_icews("SELECT count(*) FROM events;")
+}
+
 }

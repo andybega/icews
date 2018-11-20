@@ -2,10 +2,16 @@
 % Please edit documentation in R/options.R
 \name{setup_icews}
 \alias{setup_icews}
-\title{Setup ICEWS environment variables}
+\alias{unset_icews_opts}
+\alias{get_icews_opts}
+\title{Setup ICEWS options}
 \usage{
 setup_icews(data_dir, use_db = TRUE, keep_files = FALSE,
   r_profile = TRUE)
+
+unset_icews_opts()
+
+get_icews_opts()
 }
 \arguments{
 \item{data_dir}{Where should the raw TSV data be kept?}
@@ -16,6 +22,32 @@ setup_icews(data_dir, use_db = TRUE, keep_files = FALSE,
 
 \item{r_profile}{If TRUE, this will write config parameters to a .Renviron file.}
 }
+\value{
+\code{unset_icews_opts} silently returns a list of prior option values to
+make it possible reset the values if needed. See \code{\link[=get_icews_opts]{get_icews_opts()}} and
+\code{\link[=set_icews_opts]{set_icews_opts()}}.
+
+\code{get_icews_opts} returns on object of class "icews_opts". Essentially a list
+containing the option values but with format and print methods.
+}
 \description{
-Checks for and creates several ICEWS environment variables.
+Checks for an sets several options like paths to data locations; and provides
+instructions for the .Rprofile entries needed to persist the settings.
+}
+\details{
+Generally, the most flexible option is to keep both a database and
+the raw event files. As of late 2018, the database takes up about 8GB of
+space and the raw event files 5GB. The database contains several pre-built
+indices, which account for the extra space. Reading the raw data from files
+into memory takes about 2 minutes but from then on is more convenient and
+quicker for exploratory, interactive work. Queries on the database take
+longer, but don't require the initial loading into memory overhead. And
+with the right indices, it is possible to further cut down the time for
+specific queries.
+
+Either way, I heavily recommend adding the option values to .Rprofile,
+to take away the trouble of having to deal with paths manually.
+}
+\seealso{
+\code{\link[=set_icews_opts]{set_icews_opts()}}
 }

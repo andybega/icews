@@ -10,13 +10,17 @@
 #'
 #' @export
 #' @import dplyr
-#' @importFrom purrr map
 #' @md
 read_icews <- function(path = NULL, n_max = NULL) {
   # check n_max is positive integer
-  if (!is.integer(n_max) | n_max < 1) {
-    stop("n_max must be a positive integer")
+  if (!is.null(n_max)) {
+    if (!is.integer(n_max) | n_max < 1) {
+      stop("n_max must be a positive integer")
+    }
+  } else {
+    n_max <- ifelse(is.null(n_max), Inf, n_max)
   }
+
   # throw error if path is null but options are not set
   opts <- get_icews_opts()
   null_path <- is.null(path)
@@ -49,12 +53,11 @@ read_icews <- function(path = NULL, n_max = NULL) {
 #'
 #' @md
 read_icews_raw <- function(raw_file_dir, n_max = NULL, ...) {
-  data_files <- list_local_files()
+  data_files <- list_local_files(raw_file_dir)
   event_list <- list(NULL)
   n <- 0L
-  n_max <- ifelse(is.null(n_max), Inf, n_max)
   for (i in seq_along(data_files)) {
-    event_list[[i]] <- read_events_tsv(data_files[i], n_max = n_max)
+    event_list[[i]] <- read_events_tsv(data_files[i], n_max = n_max, ...)
     n <- n + nrow(event_list[[i]])
     if (n >= n_max) break
   }
@@ -79,7 +82,7 @@ read_icews_raw <- function(raw_file_dir, n_max = NULL, ...) {
 #' @template dbp
 #' @template n_max
 read_icews_db <- function(db_path, n_max = NULL) {
-  limit <- ifelse(is.null(n_max), "", paste0(" LIMIT ", n_max))
+  limit <- ifelse(is.infinite(n_max), "", paste0(" LIMIT ", n_max))
   sql   <- sprintf("SELECT * FROM events%s;", limit)
   events <- query_icews(sql, db_path)
   events$event_date <- as.Date(as.character(events$event_date), format = "%Y%m%d")

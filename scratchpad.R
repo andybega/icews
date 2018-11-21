@@ -8,12 +8,13 @@ library("pkgdown")
 
 # Before syncing to Github
 devtools::document()
-devtools::load_all()
 devtools::test()
 devtools::check()
 pkgdown::build_site()
 
 
+check_win()
+check_win_devel()
 
 
 #

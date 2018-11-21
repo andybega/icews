@@ -15,11 +15,9 @@ Depends:
 Imports:
   countrycode,
   dataverse,
-  dbplyr,
   DBI,
   RSQLite,
   dplyr,
-  purrr,
   readr,
   rlang,
   tibble

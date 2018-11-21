@@ -94,8 +94,23 @@ Now we can start the data download. First, it might be a good idea to check what
 update_icews(dryrun = TRUE)
 ```
 
+The output looks something like this:
+
 ```
-sdf
+File system changes:
+Found 24 local data file(s)
+Downloading 1 file(s)
+Removing 1 old file(s)
+
+Database changes:
+Deleting old records for 1 file(s)
+Ingesting records from 1 file(s)
+
+Plan:
+Download            'events.2018.20181119132436.tab'
+Delete records from 'events.2018.20181010112357.tab'
+Ingest records from 'events.2018.20181119132436.tab'
+Remove              'events.2018.20181010112357.tab'
 ```
 
 The initial download should take quite some time, around an hour or so. But any subsequent updates will only download files or make changes in two instances: a completely new data file is available on Dataverse, e.g. if a new year has started, or an existing file/event set with a new version is available on Dataverse, in which case the existing file and records will be updated in place with the new version. Let us now do the actual sync:
@@ -171,13 +186,15 @@ Download            'events.1996.20150313082528.tab.zip'
 
 ## Data overview
 
-```{r}
+The package includes a data sample for the 4,993 events betwen 1 and 3 June 2018. This provides an overview of the data structure:
+
+```{r, eval=TRUE}
 data("icews_sample")
 str(icews_sample)
 ```
 
 
-The data include a country column that contains short names for a slightly expanded version of the countries and territories with an [ISO 3166-1](https://en.wikipedia.org/wiki/ISO_3166-1) code.^[At least it appears to be this.]. 
+The country column includes short country names for a slightly expanded version of the countries and territories with an [ISO 3166-1](https://en.wikipedia.org/wiki/ISO_3166-1) code.^[At least it appears to be this.]. 
 
 ### Format differences between the raw data and database version
 

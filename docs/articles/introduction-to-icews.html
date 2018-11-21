@@ -153,7 +153,21 @@ Path options are set</code></pre>
 <p>From now on, icews will know where the data lives and what to do.</p>
 <p>Now we can start the data download. First, it might be a good idea to check what the planned changes are, which we can do by calling <code>update_icews</code> with <code>dryrun = TRUE</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/update_icews.html">update_icews</a></span>(<span class="dt">dryrun =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<pre><code>sdf</code></pre>
+<p>The output looks something like this:</p>
+<pre><code>File system changes:
+Found 24 local data file(s)
+Downloading 1 file(s)
+Removing 1 old file(s)
+
+Database changes:
+Deleting old records for 1 file(s)
+Ingesting records from 1 file(s)
+
+Plan:
+Download            'events.2018.20181119132436.tab'
+Delete records from 'events.2018.20181010112357.tab'
+Ingest records from 'events.2018.20181119132436.tab'
+Remove              'events.2018.20181010112357.tab'</code></pre>
 <p>The initial download should take quite some time, around an hour or so. But any subsequent updates will only download files or make changes in two instances: a completely new data file is available on Dataverse, e.g. if a new year has started, or an existing file/event set with a new version is available on Dataverse, in which case the existing file and records will be updated in place with the new version. Let us now do the actual sync:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/update_icews.html">update_icews</a></span>()</code></pre></div>
 <p>That’s it. To work with the data, there now several options. Read the whole data into memory:</p>
@@ -200,9 +214,33 @@ Download            'events.1996.20150313082528.tab.zip'
 <div id="data-overview" class="section level2">
 <h2 class="hasAnchor">
 <a href="#data-overview" class="anchor"></a>Data overview</h2>
+<p>The package includes a data sample for the 4,993 events betwen 1 and 3 June 2018. This provides an overview of the data structure:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="st">"icews_sample"</span>)
-<span class="kw">str</span>(icews_sample)</code></pre></div>
-<p>The data include a country column that contains short names for a slightly expanded version of the countries and territories with an <a href="https://en.wikipedia.org/wiki/ISO_3166-1">ISO 3166-1</a> code.<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>.</p>
+<span class="kw">str</span>(icews_sample)
+<span class="co">#&gt; Classes 'tbl_df', 'tbl' and 'data.frame':    4993 obs. of  22 variables:</span>
+<span class="co">#&gt;  $ event_id       : int  32889836 32889837 32891290 32891065 32891064 32889838 32891059 32891060 32891062 32891061 ...</span>
+<span class="co">#&gt;  $ event_date     : Date, format: "2018-06-01" "2018-06-01" ...</span>
+<span class="co">#&gt;  $ source_name    : chr  "Foreign Affairs (Bangladesh)" "High Ranking Military Personnel (Vietnam)" "Ministry (Japan)" "Japan" ...</span>
+<span class="co">#&gt;  $ source_sectors : chr  "Executive,Foreign Ministry,Government" "Military,Government" "Government" NA ...</span>
+<span class="co">#&gt;  $ source_country : chr  "Bangladesh" "Vietnam" "Japan" "Japan" ...</span>
+<span class="co">#&gt;  $ event_text     : chr  "Consult" "Consult" "Consider policy option" "Express intent to engage in diplomatic cooperation (such as policy support)" ...</span>
+<span class="co">#&gt;  $ cameo_code     : chr  "040" "040" "014" "032" ...</span>
+<span class="co">#&gt;  $ intensity      : num  1 1 0 4.5 4.5 0 3 4 2.5 4 ...</span>
+<span class="co">#&gt;  $ target_name    : chr  "High Ranking Military Personnel (Vietnam)" "Foreign Affairs (Bangladesh)" "Citizen (Japan)" "Vietnam" ...</span>
+<span class="co">#&gt;  $ target_sectors : chr  "Military,Government" "Executive,Foreign Ministry,Government" "General Population / Civilian / Social,Social" NA ...</span>
+<span class="co">#&gt;  $ target_country : chr  "Vietnam" "Bangladesh" "Japan" "Vietnam" ...</span>
+<span class="co">#&gt;  $ story_id       : int  47400351 47400351 47400357 47400359 47400359 47400360 47400361 47400361 47400361 47400361 ...</span>
+<span class="co">#&gt;  $ sentence_number: int  2 2 5 2 2 3 2 3 3 3 ...</span>
+<span class="co">#&gt;  $ publisher      : chr  "Vietnam News Agency Bulletin" "Vietnam News Agency Bulletin" "Mainichi Daily News" "Vietnam News Agency Bulletin" ...</span>
+<span class="co">#&gt;  $ city           : chr  "Hanoi" "Hanoi" "Osaka" NA ...</span>
+<span class="co">#&gt;  $ district       : chr  NA NA "Osaka-shi" NA ...</span>
+<span class="co">#&gt;  $ province       : chr  "Thanh Pho Ha Noi" "Thanh Pho Ha Noi" "Osaka-fu" NA ...</span>
+<span class="co">#&gt;  $ country        : chr  "Vietnam" "Vietnam" "Japan" "Japan" ...</span>
+<span class="co">#&gt;  $ latitude       : num  21 21 34.7 35.6 21 ...</span>
+<span class="co">#&gt;  $ longitude      : num  106 106 136 140 106 ...</span>
+<span class="co">#&gt;  $ year           : int  2018 2018 2018 2018 2018 2018 2018 2018 2018 2018 ...</span>
+<span class="co">#&gt;  $ yearmonth      : int  201806 201806 201806 201806 201806 201806 201806 201806 201806 201806 ...</span></code></pre></div>
+<p>The country column includes short country names for a slightly expanded version of the countries and territories with an <a href="https://en.wikipedia.org/wiki/ISO_3166-1">ISO 3166-1</a> code.<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>.</p>
 <div id="format-differences-between-the-raw-data-and-database-version" class="section level3">
 <h3 class="hasAnchor">
 <a href="#format-differences-between-the-raw-data-and-database-version" class="anchor"></a>Format differences between the raw data and database version</h3>

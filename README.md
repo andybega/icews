@@ -6,7 +6,12 @@ icews
 
 Get the ICEWS event data from the Dataverse repo at [https://doi.org/10.7910/DVN/28075](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/28075).
 
-The goal is to eventually develop this into a package that can (a) keep a single local copy of the ICEWS event data in sync with the latest data on Dataverse and (b) be re-used between projects without the need to duplicate the 2-3Gb of data each time.
+The package provides these major features:
+
+-   get the ICEWS event data without having to deal with Dataverse:
+-   use raw data files (tab-separated variables, .tsv) or a database (SQLite3) or both as the storage backend
+-   set options so that in future R sessions icews knows where your data lives
+-   icews keeps the local data in sync with the latest versions on Dataverse
 
 Installation
 ------------

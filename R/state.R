@@ -38,6 +38,9 @@ parse_label <- function(label) {
 #'
 #' @rdname state
 #'
+#' @param icews_doi DOI of the main ICEWS repo on Dataverse, see [get_doi()]
+#' @param server For unit tests only; default is set to [dataverse::get_dataset()] default.
+#'
 #' @details The data files (tab-separated files, ".tab") on dataverse that
 #'   contain the raw event data follow a common format denoting the set of
 #'   events contained in a file and which version of the event data and/or file
@@ -79,9 +82,12 @@ parse_label <- function(label) {
 #' @export
 #' @import dataverse
 #' @import tibble
-get_dvn_manifest <- function() {
-  icews_doi  <- get_doi()
-  dvn_files  <- dataverse::get_dataset(icews_doi)
+get_dvn_manifest <- function(icews_doi = get_doi(), server = Sys.getenv("DATAVERSE_SERVER")) {
+  dvn_files  <- tryCatch(
+    dataverse::get_dataset(icews_doi, server = server),
+    error = function(e) {
+      stop("Something went wrong in 'dataverse' or the Dataverse API, try again. Original error message:\n", e$message)
+    })
 
   file_list <- tibble::tibble(
     label = dvn_files$files$label,

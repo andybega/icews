@@ -1,5 +1,11 @@
+context("State getter functions")
 
-context("State")
+test_that("get_dvn_manifest captures API errors", {
+
+  expect_error(get_dvn_manifest("foo", server = "demo.dataverse.org"), "Something went wrong in")
+
+})
+
 
 test_that("Labels are correctly parsed", {
   labels <- c("changes.txt", "events.1995.20150313082510.tab.zip")
@@ -15,6 +21,4 @@ test_that("Labels are correctly parsed", {
   x <- parse_label(labels)
   expect_is(x, "data.frame")
   expect_equal(x$file, c("changes.txt", "events.1995.20150313082510.tab"))
-
-
 })

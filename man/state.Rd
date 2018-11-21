@@ -8,12 +8,17 @@
 \usage{
 get_db_state(db_path = find_db())
 
-get_dvn_manifest()
+get_dvn_manifest(icews_doi = get_doi(),
+  server = Sys.getenv("DATAVERSE_SERVER"))
 
 get_local_state(raw_file_dir = find_raw())
 }
 \arguments{
 \item{db_path}{Path to SQLite database files.}
+
+\item{icews_doi}{DOI of the main ICEWS repo on Dataverse, see \code{\link[=get_doi]{get_doi()}}}
+
+\item{server}{For unit tests only; default is set to \code{\link[dataverse:get_dataset]{dataverse::get_dataset()}} default.}
 
 \item{raw_file_dir}{Directory containing raw data files}
 }

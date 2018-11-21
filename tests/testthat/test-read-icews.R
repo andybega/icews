@@ -29,7 +29,7 @@ test_that("read_events_tsv works", {
 test_that("read_icews_raw works", {
 
   raw_file_dir <- file.path(tempdir(), "raw")
-  dir.create(raw_file_dir)
+  dir.create(raw_file_dir, showWarnings=FALSE)
 
   sample_tsv <- system.file("extdata", "events.2018.sample.tab", package = "icews")
   file.copy(sample_tsv, raw_file_dir)

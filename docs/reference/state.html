@@ -133,7 +133,8 @@ in the local files, or in the local database.</p>
 
     <pre class="usage"><span class='fu'>get_db_state</span>(<span class='kw'>db_path</span> <span class='kw'>=</span> <span class='fu'><a href='find_raw.html'>find_db</a></span>())
 
-<span class='fu'>get_dvn_manifest</span>()
+<span class='fu'>get_dvn_manifest</span>(<span class='kw'>icews_doi</span> <span class='kw'>=</span> <span class='fu'><a href='get_doi.html'>get_doi</a></span>(),
+  <span class='kw'>server</span> <span class='kw'>=</span> <span class='fu'>Sys.getenv</span>(<span class='st'>"DATAVERSE_SERVER"</span>))
 
 <span class='fu'>get_local_state</span>(<span class='kw'>raw_file_dir</span> <span class='kw'>=</span> <span class='fu'><a href='find_raw.html'>find_raw</a></span>())</pre>
     
@@ -143,6 +144,14 @@ in the local files, or in the local database.</p>
     <tr>
       <th>db_path</th>
       <td><p>Path to SQLite database files.</p></td>
+    </tr>
+    <tr>
+      <th>icews_doi</th>
+      <td><p>DOI of the main ICEWS repo on Dataverse, see <code><a href='get_doi.html'>get_doi()</a></code></p></td>
+    </tr>
+    <tr>
+      <th>server</th>
+      <td><p>For unit tests only; default is set to <code><a href='http://www.rdocumentation.org/packages/dataverse/topics/get_dataset'>dataverse::get_dataset()</a></code> default.</p></td>
     </tr>
     <tr>
       <th>raw_file_dir</th>

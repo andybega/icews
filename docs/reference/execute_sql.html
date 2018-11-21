@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create a local ICEWS database — create_db • icews</title>
+<title>Execute one of the included SQL definition files at inst/sql — execute_sql • icews</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Create a local ICEWS database — create_db" />
+<meta property="og:title" content="Execute one of the included SQL definition files at inst/sql — execute_sql" />
 
-<meta property="og:description" content="Initialize a local ICEWS database." />
+<meta property="og:description" content="Execute one of the included SQL definition files at inst/sql" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -118,27 +118,29 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Create a local ICEWS database</h1>
-    <small class="dont-index">Source: <a href='https://github.com/andybega/icews/blob/master/R/create_db.R'><code>R/create_db.R</code></a></small>
-    <div class="hidden name"><code>create_db.Rd</code></div>
+    <h1>Execute one of the included SQL definition files at inst/sql</h1>
+    <small class="dont-index">Source: <a href='https://github.com/andybega/icews/blob/master/R/execute_sql.R'><code>R/execute_sql.R</code></a></small>
+    <div class="hidden name"><code>execute_sql.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Initialize a local ICEWS database.</p>
+    <p>Execute one of the included SQL definition files at inst/sql</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>create_db</span>(<span class='kw'>db_path</span> <span class='kw'>=</span> <span class='fu'><a href='find_raw.html'>find_db</a></span>())</pre>
+    <pre class="usage"><span class='fu'>execute_sql</span>(<span class='no'>x</span>, <span class='no'>db_path</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
+      <th>x</th>
+      <td><p>Name of one of the SQL files at inst/sql</p></td>
+    </tr>
+    <tr>
       <th>db_path</th>
-      <td><p>If NULL and the ICEWS_DATA_DIR environment variable is set,
-the database will be created at ICEWS_DATA_DIR/db/icews.sqlite3. Otherwise,
-an alternative path for the database file.</p></td>
+      <td><p>Path to SQLite database file.</p></td>
     </tr>
     </table>
     

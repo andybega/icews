@@ -1,5 +1,5 @@
 
-
+stop()
 
 
 # Before syncing to Github
@@ -215,3 +215,54 @@ microbenchmark(
 #
 #   Take some of the text columns out, location info, etc.
 #
+
+
+"
+CREATE TABLE IF NOT EXISTS stats (
+  name TEXT,
+  value INTEGER
+);
+
+insert into stats values ('events_n', NULL);
+
+update stats set value = ( select count(*) from events )
+where name=='events_n';
+
+create trigger update_events_n_after_insert after insert on events
+BEGIN
+  update stats set value = ( select count(*) from events )
+  where name=='events_n';
+END;
+
+create trigger update_events_n_after_update after update on events
+BEGIN
+  update stats set value = ( select count(*) from events )
+  where name=='events_n';
+END;
+
+create trigger update_events_n_after_delete after delete on events
+BEGIN
+  update stats set value = ( select count(*) from events )
+  where name=='events_n';
+END;
+
+# select name from sqlite_master where type = 'trigger';
+"
+
+con <- connect()
+res <- dbSendQuery(con, "CREATE TABLE IF NOT EXISTS stats (
+  name TEXT,
+                   value INTEGER
+);")
+dbClearResult(res)
+dbDisconnect(con)
+
+foo <- read_file(system.file("sql", "test.sql", package = "icews"))
+foo <- strsplit(foo, "\n\n")[[1]]
+for (i in seq_along(foo)) {
+  con <- connect()
+  res <- dbSendQuery(con, foo[i])
+  dbClearResult(res)
+  dbDisconnect(con)
+}
+

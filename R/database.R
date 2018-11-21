@@ -1,26 +1,3 @@
-
-#' Create a local ICEWS database
-#'
-#' Initialize a local ICEWS database.
-#'
-#' @param db_path If NULL and the ICEWS_DATA_DIR environment variable is set,
-#'   the database will be created at ICEWS_DATA_DIR/db/icews.sqlite3. Otherwise,
-#'   an alternative path for the database file.
-#'
-#' @import dplyr
-create_db <- function(db_path = find_db()) {
-  # Make sure we are not overwriting existing database
-  if (file.exists(db_path)) {
-    stop(sprintf("Database already exists at '%s'", db_path))
-  }
-
-  if (!dir.exists(dirname(db_path))) {
-    dir.create(dirname(db_path))
-  }
-  con <- dplyr::src_sqlite(db_path, create = TRUE)
-  invisible(con)
-}
-
 #' Connect to local ICEWS database
 #'
 #' Create a DB connection for the local ICEWS database.
@@ -64,62 +41,6 @@ query_icews <- function(query, db_path = find_db()) {
   res
 }
 
-#' Create event table and indices
-#'
-#' @param db_path Path to SQLite database file
-create_event_table <- function(db_path = find_db()) {
-  con <- connect(db_path)
-  on.exit(DBI::dbDisconnect(con))
-
-  sql <- "CREATE TABLE IF NOT EXISTS events (
-    event_id INTEGER NOT NULL,
-    event_date INTEGER NOT NULL,
-    source_name TEXT,
-    source_sectors TEXT,
-    source_country TEXT,
-    event_text TEXT,
-    cameo_code TEXT,
-    intensity REAL,
-    target_name TEXT,
-    target_sectors TEXT,
-    target_country TEXT,
-    story_id INTEGER,
-    sentence_number INTEGER,
-    publisher TEXT,
-    city TEXT,
-    district TEXT,
-    province TEXT,
-    country TEXT,
-    latitude REAL,
-    longitude REAL,
-    year INTEGER NOT NULL,
-    yearmonth INTEGER NOT NULL,
-    source_file TEXT NOT NULL,
-    PRIMARY KEY (event_id, event_date)
-  );"
-  res <- DBI::dbSendQuery(con, sql)
-  DBI::dbClearResult(res)
-
-  # Create indices
-  idx_columns <- c("source_file", "cameo_code", "country", "year",
-                   "yearmonth")
-  idx_names <- paste0("events_", gsub(" ", "_", tolower(idx_columns)), "_idx")
-  existing_indices <- list_indices(db_path)$name
-  need_cols <- idx_columns[!idx_names %in% existing_indices]
-  if (length(need_cols) > 0) {
-    #cat("Building indices\n")
-    need_names <- idx_names[!idx_names %in% existing_indices]
-    for (i in 1:length(need_cols)) {
-      #cat(sprintf("Creating index for '%s'\n", need_cols[i]))
-      sql <- sprintf("CREATE INDEX IF NOT EXISTS %s ON events(`%s`);", need_names[i], need_cols[i])
-      res <- DBI::dbSendQuery(con, sql)
-      DBI::dbClearResult(res)
-    }
-  }
-  invisible(NULL)
-}
-
-
 #' Check and if needed setup database
 #'
 #' @param db_path Path to SQLite database file
@@ -129,7 +50,6 @@ check_db_exists <- function(db_path) {
   }
   cat(sprintf("Initializing database at '%s'", db_path))
   create_db(db_path)
-  create_event_table(db_path)
   invisible(TRUE)
 }
 

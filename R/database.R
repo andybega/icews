@@ -35,6 +35,7 @@ connect <- function(db_path = find_db()) {
 #' }
 #'
 #' @export
+#' @md
 query_icews <- function(query, db_path = find_db()) {
   con <- connect(db_path)
   on.exit(DBI::dbDisconnect(con))

@@ -69,7 +69,6 @@ test_that("execute_sql works", {
 
 test_that("connect throws error for not existing DB", {
   expect_error(con <- connect("foo"), "Could not find database file")
-  dbDisconnect(con)
 })
 
 test_that("connect works with in memory test db", {

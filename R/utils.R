@@ -11,6 +11,7 @@
 #'
 #' @importFrom utils menu
 #' @export
+#' @md
 burn_it_down <- function(db_path = find_db(), raw_file_dir = find_raw()) {
 
   a <- menu(title = "Are you crazy?", choices = c("Yes", "Trust me, I know what I'm doing"))

@@ -15,7 +15,7 @@ query_icews(query, db_path = find_db())
 Get results from a query to the database
 }
 \details{
-`query_icews` is a wrapper around [DBI::dbGetQuery()] that will
+\code{query_icews} is a wrapper around \code{\link[DBI:dbGetQuery]{DBI::dbGetQuery()}} that will
 open a connection to the database, submit and return the query results, and
 then close the database connection.
 }

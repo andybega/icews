@@ -13,5 +13,5 @@ purge_data_files(raw_file_dir = find_raw())
 Removes the downloaded raw event TSV files
 }
 \seealso{
-[purge_db()], [remove_db()], [burn_it_down()]
+\code{\link[=purge_db]{purge_db()}}, \code{\link[=remove_db]{remove_db()}}, \code{\link[=burn_it_down]{burn_it_down()}}
 }

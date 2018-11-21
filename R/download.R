@@ -96,6 +96,7 @@ download_icews <- function(to_dir = find_raw(), update = TRUE, dryrun = FALSE) {
 #' @seealso [purge_db()], [remove_db()], [burn_it_down()]
 #'
 #' @export
+#' @md
 purge_data_files <- function(raw_file_dir = find_raw()) {
 
   data_files <- dir(raw_file_dir, pattern = "events[\\.0-9]+.tab", full.names = TRUE)

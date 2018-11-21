@@ -16,5 +16,5 @@ Remove all local ICEWS data artifacts, i.e. local data files and/or database
 file.
 }
 \seealso{
-[purge_data_files()], [purge_db()], [remove_db()]
+\code{\link[=purge_data_files]{purge_data_files()}}, \code{\link[=purge_db]{purge_db()}}, \code{\link[=remove_db]{remove_db()}}
 }

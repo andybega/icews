@@ -117,19 +117,6 @@ get_local_state <- function(raw_file_dir = find_raw()) {
   state
 }
 
-#' @rdname state
-#'
-#' @param db_path Path to SQLite database files.
-#'
-#' @export
-get_db_state <- function(db_path = find_db()) {
-  db_files <- list_source_files(db_path)
-  state <- parse_label(db_files)
-  state$label <- state$is_data <- NULL
-  colnames(state) <- paste0("db_", colnames(state))
-  state
-}
-
 
 #' Plan file changes
 #'

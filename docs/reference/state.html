@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get DVN/local file/database state — get_dvn_manifest • icews</title>
+<title>Get DVN/local file/database state — get_db_state • icews</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,7 +30,7 @@
 
 
 
-<meta property="og:title" content="Get DVN/local file/database state — get_dvn_manifest" />
+<meta property="og:title" content="Get DVN/local file/database state — get_db_state" />
 
 <meta property="og:description" content="Determine what data files, event sets, and version are currently on dataverse,
 in the local files, or in the local database." />
@@ -120,7 +120,7 @@ in the local files, or in the local database." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Get DVN/local file/database state</h1>
-    <small class="dont-index">Source: <a href='https://github.com/andybega/icews/blob/master/R/state.R'><code>R/state.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/andybega/icews/blob/master/R/get_db_state.R'><code>R/get_db_state.R</code></a>, <a href='https://github.com/andybega/icews/blob/master/R/state.R'><code>R/state.R</code></a></small>
     <div class="hidden name"><code>state.Rd</code></div>
     </div>
 
@@ -131,22 +131,22 @@ in the local files, or in the local database.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>get_dvn_manifest</span>()
+    <pre class="usage"><span class='fu'>get_db_state</span>(<span class='kw'>db_path</span> <span class='kw'>=</span> <span class='fu'><a href='find_raw.html'>find_db</a></span>())
 
-<span class='fu'>get_local_state</span>(<span class='kw'>raw_file_dir</span> <span class='kw'>=</span> <span class='fu'><a href='find_raw.html'>find_raw</a></span>())
+<span class='fu'>get_dvn_manifest</span>()
 
-<span class='fu'>get_db_state</span>(<span class='kw'>db_path</span> <span class='kw'>=</span> <span class='fu'><a href='find_raw.html'>find_db</a></span>())</pre>
+<span class='fu'>get_local_state</span>(<span class='kw'>raw_file_dir</span> <span class='kw'>=</span> <span class='fu'><a href='find_raw.html'>find_raw</a></span>())</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>raw_file_dir</th>
-      <td><p>Directory containing raw data files</p></td>
-    </tr>
-    <tr>
       <th>db_path</th>
       <td><p>Path to SQLite database files.</p></td>
+    </tr>
+    <tr>
+      <th>raw_file_dir</th>
+      <td><p>Directory containing raw data files</p></td>
     </tr>
     </table>
     

@@ -1,3 +1,15 @@
+#' Get ICEWS dataverse DOI
+#'
+#' Contains the DVN DOI for ICEWS
+#'
+#' @examples
+#' get_doi()
+#'
+#' @export
+get_doi <- function() {
+  "doi:10.7910/DVN/28075"
+}
+
 #' CAMEO code dictionary
 #'
 #' CAMEO event type code dictionary

@@ -2,6 +2,10 @@
 stop()
 
 
+library("usethis")
+library("devtools")
+library("pkgdown")
+
 # Before syncing to Github
 devtools::document()
 devtools::load_all()

@@ -32,7 +32,8 @@
 
 <meta property="og:title" content="Download documentation — download_docs" />
 
-<meta property="og:description" content="Download documentation files" />
+<meta property="og:description" content="Download documentation files. This is not done by update_icews(), i.e. it
+has to be done manually if you want the documentation files." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -125,11 +126,12 @@
 
     <div class="ref-description">
     
-    <p>Download documentation files</p>
+    <p>Download documentation files. This is not done by <code><a href='update_icews.html'>update_icews()</a></code>, i.e. it
+has to be done manually if you want the documentation files.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>download_docs</span>(<span class='kw'>docs_dir</span> <span class='kw'>=</span> <span class='fu'><a href='find_raw.html'>find_docs</a></span>())</pre>
+    <pre class="usage"><span class='fu'>download_docs</span>(<span class='kw'>docs_dir</span> <span class='kw'>=</span> <span class='fu'><a href='find_raw.html'>find_docs</a></span>(), <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -138,15 +140,41 @@
       <th>docs_dir</th>
       <td><p>Directory containing the documentation files.</p></td>
     </tr>
+    <tr>
+      <th>quiet</th>
+      <td><p>Don't print progress messages</p></td>
+    </tr>
     </table>
     
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
+    <p>Invisibly returns the "docs_dir" argument value.</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p><code>download_docs</code> will always download the current set of documentation
+files on dataverse. There is no update functionality, i.e. existing files
+will always be silently overwritten.</p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class='co'># NOT RUN {</span>
+<span class='no'>docs_path</span> <span class='kw'>&lt;-</span> <span class='fu'>download_docs</span>(<span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='fu'>dir</span>(<span class='no'>docs_path</span>)
+<span class='co'># }</span><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

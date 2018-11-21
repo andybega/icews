@@ -4,11 +4,29 @@
 \alias{download_docs}
 \title{Download documentation}
 \usage{
-download_docs(docs_dir = find_docs())
+download_docs(docs_dir = find_docs(), quiet = TRUE)
 }
 \arguments{
 \item{docs_dir}{Directory containing the documentation files.}
+
+\item{quiet}{Don't print progress messages}
+}
+\value{
+Invisibly returns the "docs_dir" argument value.
 }
 \description{
-Download documentation files
+Download documentation files. This is not done by \code{\link[=update_icews]{update_icews()}}, i.e. it
+has to be done manually if you want the documentation files.
+}
+\details{
+\code{download_docs} will always download the current set of documentation
+files on dataverse. There is no update functionality, i.e. existing files
+will always be silently overwritten.
+}
+\examples{
+\dontrun{
+docs_path <- download_docs(quiet = FALSE)
+dir(docs_path)
+}
+
 }

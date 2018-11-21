@@ -8,7 +8,9 @@
 #' @importFrom DBI dbConnect
 #' @importFrom RSQLite SQLite
 connect <- function(db_path = find_db()) {
-  if (!file.exists(db_path)) {
+  # check for temporary databases
+  temp_db <- db_path %in% c("", ":memory:", "file::memory:")
+  if (!temp_db & !file.exists(db_path)) {
     stop(sprintf("Could not find database file at '%s'", db_path))
   }
 

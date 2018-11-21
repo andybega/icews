@@ -8,7 +8,7 @@ of separate SQL statements}
 read_sql_statements(x)
 }
 \arguments{
-\item{x}{Name of one of the SQL files at inst/sql}
+\item{x}{Path to a .sql file containing SQL statements (not queries)}
 }
 \description{
 Read one of the included SQL files at inst/sql and split it into a vector

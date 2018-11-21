@@ -12,10 +12,6 @@ test_that("column names are normalized", {
                c("event_id", "source_actor", "yearmonth"))
 })
 
-test_that("dr_icews works", {
-  expect_error(dr_icews(db_path = "", raw_file_dir = ""), NA)
-})
-
 
 test_that("option setter works", {
   opts <- get_icews_opts()
@@ -32,6 +28,63 @@ test_that("state functions respect path arguments", {
   # there should be nothing at ~/
   expect_equal(nrow(get_local_state("~/")), 0)
 })
+
+
+test_that("find_path works", {
+  opts <- get_icews_opts()
+  set_icews_opts(x = "~/icews_data", use_db = TRUE, keep_files = TRUE)
+
+  expect_error(find_raw(), NA)
+  expect_error(find_db(), NA)
+  expect_error(find_docs(), NA)
+
+  set_icews_opts(x = NULL, use_db = TRUE, keep_files = TRUE)
+
+  expect_error(find_path("raw"))
+
+  set_icews_opts(opts)
+})
+
+
+test_that("get_doi works", {
+  expect_error(get_doi(), NA)
+})
+
+
+test_that("execute_sql works", {
+  test_str <- "create table test1 (col1 integer);\n\ncreate table test2 (col2 text);"
+  out <- read_sql_statements(test_str)
+  expect_length(out, 2)
+
+  test_str <- "-- comment\n\ncreate table test1 (col1 integer);\n\ncreate table test2 (col2 text);"
+  out <- read_sql_statements(test_str)
+  expect_length(out, 2)
+
+  sql <- c("create table test1 (col1 integer);", "create table test2 (col2 text);")
+  expect_error(execute_sql_statements(sql, ":memory:"), NA)
+
+  expect_error(execute_sql("events.sql", ":memory:"), NA)
+})
+
+
+test_that("connect throws error for not existing DB", {
+  expect_error(con <- connect("foo"), "Could not find database file")
+  dbDisconnect(con)
+})
+
+test_that("connect works with in memory test db", {
+  expect_error(con <- connect(":memory:"), NA)
+  dbDisconnect(con)
+
+  expect_error(con <- connect(""), NA)
+  dbDisconnect(con)
+
+  expect_error(con <- connect("file::memory:"), NA)
+  dbDisconnect(con)
+})
+
+
+
 
 context("data helpers")
 
@@ -50,4 +103,5 @@ test_that("gw code mapping works", {
   df$gwcode <- icews_to_gwcode(df$country, df$event_date)
   expect_equal(df$gwcode, rep(2L, 3))
 })
+
 

@@ -16,7 +16,7 @@ dr_icews <- function(db_path = NULL, raw_file_dir = NULL) {
   }
 
   # check option status
-  cat(sprintf("\nChecking ICEWS options...%s\n",
+  cat(sprintf("Checking ICEWS options...%s\n",
               ifelse(opts_are_set, "options are set", "")))
   opts <- get_icews_opts()
   msg <- format(opts)

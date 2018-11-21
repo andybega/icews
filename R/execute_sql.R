@@ -2,9 +2,17 @@
 #'
 #' @param x Name of one of the SQL files at inst/sql
 #' @template dbp
+#'
+#' @importFrom readr read_file
 execute_sql <- function(x, db_path) {
-  sql_str <- read_sql_statements(x)
+  # read from file
+  path <- system.file("sql", x, package = "icews")
+  str  <- read_file(path)
+
+  # parse and execute statements
+  sql_str <- read_sql_statements(str)
   execute_sql_statements(sql_str, db_path)
+
   invisible(sql_str)
 }
 
@@ -26,13 +34,9 @@ execute_sql_statements <- function(x, db_path) {
 #' Read one of the included SQL files at inst/sql and split it into a vector
 #' of separate SQL statements
 #'
-#' @param x Name of one of the SQL files at inst/sql
-#'
-#' @importFrom readr read_file
+#' @param x Path to a .sql file containing SQL statements (not queries)
 read_sql_statements <- function(x) {
-  path <- system.file("sql", x, package = "icews")
-  sql_str <- read_file(path)
-  sql_str <- strsplit(sql_str, "\n\n")[[1]]
+  sql_str <- strsplit(x, "\n\n")[[1]]
   # eliminate comment lines
   comment <- grepl("(/\\*)|(\\*/)|(--)", sql_str)
   sql_str <- sql_str[!comment]

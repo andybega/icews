@@ -182,7 +182,7 @@ sync_db_with_files <- function(raw_file_dir = find_raw(), db_path = find_db(),
   plan <- plan_database_sync(db_path, raw_file_dir)
 
   if (isTRUE(dryrun)) {
-    print_plan(plan)
+    print(plan)
     return(invisible(plan))
   }
 

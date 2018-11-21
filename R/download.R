@@ -69,7 +69,7 @@ download_data <- function(to_dir = find_raw(), update = TRUE, dryrun = FALSE) {
   }
 
   if (isTRUE(dryrun)) {
-    print_plan(plan)
+    print(plan)
     return(invisible(plan))
   }
 

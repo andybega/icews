@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Plan database sync — plan_database_sync • icews</title>
+<title>Plan class maker — create_plan • icews</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,10 +30,9 @@
 
 
 
-<meta property="og:title" content="Plan database sync — plan_database_sync" />
+<meta property="og:title" content="Plan class maker — create_plan" />
 
-<meta property="og:description" content="Plan database synchronization with local files, without downloading any
-new files" />
+<meta property="og:description" content="Plan class maker" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -119,30 +118,25 @@ new files" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Plan database sync</h1>
+    <h1>Plan class maker</h1>
     <small class="dont-index">Source: <a href='https://github.com/andybega/icews/blob/master/R/plan.R'><code>R/plan.R</code></a></small>
-    <div class="hidden name"><code>plan_database_sync.Rd</code></div>
+    <div class="hidden name"><code>create_plan.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Plan database synchronization with local files, without downloading any
-new files</p>
+    <p>Plan class maker</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>plan_database_sync</span>(<span class='kw'>db_path</span> <span class='kw'>=</span> <span class='fu'><a href='find_raw.html'>find_db</a></span>(), <span class='kw'>raw_file_dir</span> <span class='kw'>=</span> <span class='fu'><a href='find_raw.html'>find_raw</a></span>())</pre>
+    <pre class="usage"><span class='fu'>create_plan</span>(<span class='no'>x</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>db_path</th>
-      <td><p>Path to SQLite database file</p></td>
-    </tr>
-    <tr>
-      <th>raw_file_dir</th>
-      <td><p>Path to raw data file directory.</p></td>
+      <th>x</th>
+      <td><p>a tibble</p></td>
     </tr>
     </table>
     

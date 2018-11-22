@@ -30,6 +30,20 @@ test_that("local syn works", {
     row.names = c(NA, -1L),
     class = c("icews_plan", "tbl_df", "tbl", "data.frame"))
   expect_equal(plan, target)
-  unlink(dir(p$db_path))
-  unlink(file.path(p$raw_file_dir, "events.2018.sample.tab"))
+
+  clean_mock_environment(p)
+})
+
+test_that("plan_file_changes works", {
+  p <- setup_mock_environment(TRUE, FALSE, FALSE)
+
+  ff = system.file("testdata", "dvn_manifest.rds", package = "icews")
+
+  expect_error(
+    plan <- with_mock(
+      get_dvn_manifest = function() readRDS(ff),
+      plan_file_changes(p$raw_file_dir)
+    ),
+    NA
+  )
 })

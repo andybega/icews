@@ -71,4 +71,7 @@ populate_mock_db <- function(db_path) {
   invisible(db_path)
 }
 
-
+clean_mock_environment <- function(p) {
+  unlink(dir(p$db_path))
+  unlink(file.path(p$raw_file_dir, "events.2018.sample.tab"))
+}

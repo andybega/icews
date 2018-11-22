@@ -6,6 +6,19 @@ test_that("get_dvn_manifest captures API errors", {
 
 })
 
+test_that("list_local_files works", {
+  p <- setup_mock_raw(populate = FALSE)
+  expect_error(list_local_files(p), NA)
+  unlink(file.path(p, "events.2018.sample.tab"))
+})
+
+test_that("list_local_files complains about non-data files", {
+  p <- setup_mock_raw(populate = FALSE)
+  writeLines("", con = file.path(p, "empty.txt"))
+  expect_error(list_local_files(p), "unexpected non-data")
+  unlink(file.path(p, c("events.2018.sample.tab", "empty.txt")))
+})
+
 
 test_that("Labels are correctly parsed", {
   labels <- c("changes.txt", "events.1995.20150313082510.tab.zip")

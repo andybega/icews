@@ -36,7 +36,6 @@ test_that("local syn works", {
 
 test_that("plan_file_changes works", {
   p <- setup_mock_environment(TRUE, FALSE, FALSE)
-
   ff = system.file("testdata", "dvn_manifest.rds", package = "icews")
 
   expect_error(
@@ -46,4 +45,24 @@ test_that("plan_file_changes works", {
     ),
     NA
   )
+
+  clean_mock_environment(p)
 })
+
+
+test_that("plan_database_changes works", {
+  p <- setup_mock_environment(TRUE, TRUE, FALSE)
+  ff = system.file("testdata", "dvn_manifest.rds", package = "icews")
+
+  expect_error(
+    plan <- with_mock(
+      get_dvn_manifest = function() readRDS(ff),
+      plan_database_changes(p$db_path, p$raw_file_dir, keep_files = FALSE,
+                            use_local = TRUE)
+    ),
+    NA
+  )
+
+  clean_mock_environment(p)
+})
+

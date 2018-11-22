@@ -15,6 +15,8 @@ create_plan <- function(x) {
 #'
 #' @param x An object of class "icews_plan"
 #' @param ... Not used
+#'
+#' @importFrom rlang .data
 format.icews_plan <- function(x, ...) {
   plan <- x
 

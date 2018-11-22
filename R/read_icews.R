@@ -14,6 +14,7 @@
 read_icews <- function(path = NULL, n_max = NULL) {
   # check n_max is positive integer
   if (!is.null(n_max)) {
+    n_max <- as.integer(n_max)
     if (!is.integer(n_max) | n_max < 1) {
       stop("n_max must be a positive integer")
     }
@@ -32,11 +33,11 @@ read_icews <- function(path = NULL, n_max = NULL) {
     return(read_icews_raw(find_raw(), n_max))
   }
   # opts set; but db only
-  if (null_path & isTRUE(opts$keep_files)) {
+  if (null_path & isFALSE(opts$keep_files)) {
     return(read_icews_db(find_db(), n_max))
   }
   # path is set, figure out to what it goes
-  if (tools::file_ext(path)==".sqlite3") {
+  if (tools::file_ext(path)=="sqlite3") {
     return(read_icews_db(path, n_max))
   }
   if (any(grepl("^events.[0-9]{4}", dir(path)))) {
@@ -86,6 +87,7 @@ read_icews_db <- function(db_path, n_max = NULL) {
   sql   <- sprintf("SELECT * FROM events%s;", limit)
   events <- query_icews(sql, db_path)
   events$event_date <- as.Date(as.character(events$event_date), format = "%Y%m%d")
+  events <- as_tibble(events)
   events
 }
 

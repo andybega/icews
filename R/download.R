@@ -57,7 +57,6 @@ remove_file <- function(raw_file_path) {
 #' @export
 #' @import dataverse
 #' @import dplyr
-#' @importFrom rlang .data
 download_data <- function(to_dir = find_raw(), update = TRUE, dryrun = FALSE) {
 
 
@@ -163,7 +162,16 @@ normalize_column_names <- function(x) {
 #'
 #' @export
 list_local_files <- function(raw_file_dir = find_raw(), full_names = TRUE) {
-  dir(raw_file_dir, pattern = ".tab", full.names = full_names)
+  o <- dir(raw_file_dir, full.names = full_names)
+  # check it's all events.YYYY....tab files
+  offending <- !grepl("^events\\.[0-9]{4}\\.[0-9a-z]+\\.tab$", basename(o))
+  if (any(offending)) {
+    ff <- paste0("  ", basename(o)[offending], collapse = "  \n")
+    msg <- sprintf("unexpected non-data file(s) found in '%s':", raw_file_dir)
+    msg <- paste0(c(msg, ff), collapse = "\n")
+    stop(msg)
+  }
+  o
 }
 
 

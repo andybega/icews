@@ -22,3 +22,17 @@ test_that("Labels are correctly parsed", {
   expect_is(x, "data.frame")
   expect_equal(x$file, c("changes.txt", "events.1995.20150313082510.tab"))
 })
+
+test_that("get_local_state throws an error when non-event files are present", {
+  p <- setup_mock_raw(populate = TRUE)
+  writeLines("", con = file.path(p, "empty.txt"))
+  expect_error(get_local_state(p))
+  unlink(file.path(p, c("events.2018.sample.tab", "empty.txt")))
+})
+
+test_that("get_local_state works", {
+  p <- setup_mock_raw(populate = TRUE)
+  o <- get_local_state(p)
+  expect_equal(o$local_file, "events.2018.sample.tab")
+  unlink(file.path(p, "events.2018.sample.tab"))
+})

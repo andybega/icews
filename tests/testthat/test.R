@@ -12,6 +12,18 @@ test_that("column names are normalized", {
                c("event_id", "source_actor", "yearmonth"))
 })
 
+test_that("list_local_files works", {
+  p <- setup_mock_raw(populate = FALSE)
+  expect_error(list_local_files(p), NA)
+  unlink(file.path(p, "events.2018.sample.tab"))
+})
+
+test_that("list_local_files complains about non-data files", {
+  p <- setup_mock_raw(populate = FALSE)
+  writeLines("", con = file.path(p, "empty.txt"))
+  expect_error(list_local_files(p), "unexpected non-data")
+  unlink(file.path(p, c("events.2018.sample.tab", "empty.txt")))
+})
 
 test_that("option setter works", {
   opts <- get_icews_opts()
@@ -25,8 +37,8 @@ test_that("option setter works", {
 })
 
 test_that("state functions respect path arguments", {
-  # there should be nothing at ~/
-  expect_equal(nrow(get_local_state("~/")), 0)
+#
+  expect_equal(nrow(get_local_state(file.path(tempdir(), "foo"))), 0)
 })
 
 
@@ -65,24 +77,6 @@ test_that("execute_sql works", {
 
   expect_error(execute_sql("events.sql", ":memory:"), NA)
 })
-
-
-test_that("connect throws error for not existing DB", {
-  expect_error(con <- connect("foo"), "Could not find database file")
-})
-
-test_that("connect works with in memory test db", {
-  expect_error(con <- connect(":memory:"), NA)
-  dbDisconnect(con)
-
-  expect_error(con <- connect(""), NA)
-  dbDisconnect(con)
-
-  expect_error(con <- connect("file::memory:"), NA)
-  dbDisconnect(con)
-})
-
-
 
 
 context("data helpers")

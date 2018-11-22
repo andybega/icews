@@ -1,16 +1,6 @@
 
 context("Misc tests")
 
-test_that("column names are normalized", {
-  df <- data.frame(
-    `Event ID` = 1:5,
-    `Source Actor` = 1:5,
-    `yearmonth` = 1:5,
-    check.names = FALSE
-  )
-  expect_equal(colnames(normalize_column_names(df)),
-               c("event_id", "source_actor", "yearmonth"))
-})
 
 test_that("list_local_files works", {
   p <- setup_mock_raw(populate = FALSE)

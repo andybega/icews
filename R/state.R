@@ -26,7 +26,7 @@ parse_label <- function(label) {
     data_set = NA,
     version  = NA
   )
-  out$data_set[out$is_data] <- gsub(".[0-9]{14}.tab", "", out$file[out$is_data])
+  out$data_set[out$is_data] <- gsub("(.[0-9]{14})|(.tab)|(.sample)", "", out$file[out$is_data])
   out$version[out$is_data]  <- gsub("(events.[0-9]{4}.)|(.tab)", "", out$file[out$is_data])
   out
 }
@@ -115,13 +115,35 @@ get_dvn_manifest <- function(icews_doi = get_doi(), server = Sys.getenv("DATAVER
 get_local_state <- function(raw_file_dir = find_raw()) {
   files <- basename(list_local_files(raw_file_dir))
   state <- parse_label(files)
-  if (!isTRUE(all(state$is_data))) {
-    stop(sprintf("unexpected non-data files found in '%s'", raw_file_dir))
-  }
   state$label <- state$is_data <- NULL
   colnames(state) <- paste0("local_", colnames(state))
   state
 }
+
+#' List the raw data file paths
+#'
+#' Get a list of the paths for any local raw data ".tab" files.
+#'
+#' @param raw_file_dir Directory containing the raw event TSV files
+#' @param full_names Return the full path or only file name?
+#'
+#' @export
+list_local_files <- function(raw_file_dir = find_raw(), full_names = TRUE) {
+  o <- dir(raw_file_dir, full.names = full_names)
+  # check it's all events.YYYY....tab files
+  offending <- !grepl("^events\\.[0-9]{4}\\.[0-9a-z]+\\.tab$", basename(o))
+  if (any(offending)) {
+    ff <- paste0("  ", basename(o)[offending], collapse = "  \n")
+    msg <- sprintf("unexpected non-data file(s) found in '%s':", raw_file_dir)
+    msg <- paste0(c(msg, ff), collapse = "\n")
+    stop(msg)
+  }
+  o
+}
+
+
+
+
 
 
 

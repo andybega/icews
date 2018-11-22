@@ -14,6 +14,20 @@ test_that("read_icews input checking works", {
 
 })
 
+test_that("n_max in read_icews and variants works", {
+  p <- setup_mock_environment(TRUE, TRUE, TRUE)
+  opts <- unset_icews_opts()
+  set_icews_opts(dirname(p$raw_file_dir), TRUE, TRUE)
+
+  expect_equal(nrow(read_icews(n_max = 5L)), 5L)
+  expect_equal(nrow(read_icews_db(p$db_path, n_max = 5L)), 5L)
+  expect_equal(nrow(read_icews_raw(p$raw_file_dir, n_max = 5L)), 5L)
+
+  set_icews_opts(opts)
+  unlink(p$db_path)
+  unlink(file.path(p$raw_file_dir, "events.2018.sample.tab"))
+})
+
 test_that("read_icews respects paths",  {
   p_empty <- setup_mock_db(populate = FALSE)
   p_full  <- setup_mock_db(populate = TRUE)
@@ -32,18 +46,6 @@ test_that("read_icews respects paths",  {
   expect_equal(nrow(o_full), 5L)
 })
 
-test_that("read_events_tsv works", {
-
-  sample_tsv <- system.file("extdata", "events.2018.sample.tab", package = "icews")
-
-  expect_error(events <- read_events_tsv(sample_tsv), NA)
-  expect_true(names(events)[1]=="event_id")
-
-  expect_error(events <- read_events_tsv(sample_tsv, fix_names = FALSE), NA)
-  expect_true(names(events)[1]=="Event ID")
-
-})
-
 test_that("read_icews_raw works", {
 
   raw_file_dir <- setup_mock_raw(populate = TRUE)
@@ -54,6 +56,7 @@ test_that("read_icews_raw works", {
   expect_true(names(events)[1]=="Event ID")
 
 })
+
 
 test_that("read from local or db returns same column info and types", {
   p <- setup_mock_environment(pop_raw = TRUE, pop_db = TRUE)

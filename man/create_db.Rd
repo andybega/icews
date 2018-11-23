@@ -14,3 +14,4 @@ an alternative path for the database file.}
 \description{
 Initialize a local ICEWS database.
 }
+\keyword{internal}

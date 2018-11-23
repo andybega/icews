@@ -14,3 +14,4 @@ execute_sql_statements(x, db_path)
 \description{
 Execute a vector of SQL statements
 }
+\keyword{internal}

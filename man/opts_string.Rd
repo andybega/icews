@@ -12,3 +12,4 @@ opts_string(opts)
 \description{
 Format setup use case
 }
+\keyword{internal}

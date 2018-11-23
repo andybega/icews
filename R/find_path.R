@@ -1,6 +1,8 @@
 #' Generic path finder
 #'
 #' @param x The kind of path to find; "db", "raw", or "docs".
+#'
+#' @keywords internal
 find_path <- function(x) {
   data_dir <- getOption("icews.data_dir")
   if (!is.null(data_dir)) {

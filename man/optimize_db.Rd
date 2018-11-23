@@ -16,3 +16,4 @@ optimize_db(db_path, vacuum = TRUE, optimize = TRUE)
 \description{
 Call SQLite's database optimizer and vacuum
 }
+\keyword{internal}

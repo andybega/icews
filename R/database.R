@@ -47,6 +47,7 @@ query_icews <- function(query, db_path = find_db()) {
 #' Check and if needed setup database
 #'
 #' @param db_path Path to SQLite database file
+#' @keywords internal
 check_db_exists <- function(db_path) {
   if (file.exists(db_path)) {
     return(TRUE)
@@ -64,6 +65,8 @@ check_db_exists <- function(db_path) {
 #' @param events data.frame containing ICEWS events
 #' @param file Name of the TSV source file from which events came
 #' @param db_path Path to SQLite database file
+#'
+#' @keywords internal
 write_data_to_db <- function(events, file, db_path = find_db()) {
   con = connect(db_path)
   on.exit(DBI::dbDisconnect(con))
@@ -88,6 +91,8 @@ write_data_to_db <- function(events, file, db_path = find_db()) {
 #' @param db_path Path to SQLite database
 #'
 #' @importFrom DBI dbDisconnect
+#'
+#' @keywords internal
 ingest_from_file <- function(raw_file_path = find_raw(), db_path = find_db()) {
   events <- read_events_tsv(raw_file_path, fix_names = TRUE)
   write_data_to_db(events, basename(raw_file_path), db_path)
@@ -102,6 +107,8 @@ ingest_from_file <- function(raw_file_path = find_raw(), db_path = find_db()) {
 #'
 #' @param file The normalized filename, e.g. "events.1995.[...].tab"
 #' @param db_path Path to SQLite database file
+#'
+#' @keywords internal
 ingest_from_memory <- function(file, db_path) {
   file <- download_file(file, to_dir = tempdir())
   ingest_from_file(file, db_path)
@@ -119,6 +126,7 @@ ingest_from_memory <- function(file, db_path) {
 #' @seealso [purge_db()], [delete_events()]
 #'
 #' @md
+#' @keywords internal
 delete_events <- function(file, db_path) {
   con <- connect(db_path)
   on.exit(DBI::dbDisconnect(con))
@@ -176,6 +184,8 @@ remove_db <- function(db_path, directory = FALSE) {
 #' @param db_path Path to SQLite database file
 #' @param raw_file_dir Directory containing the raw event TSV files.
 #' @param dryrun List changes to be performed without taking any action.
+#'
+#' @export
 sync_db_with_files <- function(raw_file_dir = find_raw(), db_path = find_db(),
                                dryrun = FALSE) {
 
@@ -200,6 +210,8 @@ sync_db_with_files <- function(raw_file_dir = find_raw(), db_path = find_db(),
 #' @param db_path Path to database file
 #' @param vacuum Call "VACUUM" command?
 #' @param optimize Call "PRAGMA optimize"?
+#'
+#' @keywords internal
 optimize_db <- function(db_path, vacuum = TRUE, optimize = TRUE) {
   con <- connect(db_path)
   on.exit(DBI::dbDisconnect(con))
@@ -222,6 +234,8 @@ optimize_db <- function(db_path, vacuum = TRUE, optimize = TRUE) {
 #' List the indices currently in the "event" table in the database.
 #'
 #' @param db_path Path to SQLite database file
+#'
+#' @keywords internal
 list_indices <- function(db_path = find_db()) {
   con <- connect(db_path)
   on.exit(DBI::dbDisconnect(con))

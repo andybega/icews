@@ -12,3 +12,4 @@ create_event_table(db_path)
 \description{
 Create event table and indices
 }
+\keyword{internal}

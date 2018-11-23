@@ -18,6 +18,7 @@
 #'
 #' @md
 #' @import tibble
+#' @keywords internal
 parse_label <- function(label) {
   out <- tibble::tibble(
     label   = label,

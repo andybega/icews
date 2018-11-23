@@ -14,3 +14,4 @@ read_sql_statements(x)
 Read one of the included SQL files at inst/sql and split it into a vector
 of separate SQL statements
 }
+\keyword{internal}

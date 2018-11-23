@@ -14,3 +14,4 @@ execute_sql(x, db_path)
 \description{
 Execute one of the included SQL definition files at inst/sql
 }
+\keyword{internal}

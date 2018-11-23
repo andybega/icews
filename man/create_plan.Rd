@@ -12,3 +12,4 @@ create_plan(x)
 \description{
 Plan class maker
 }
+\keyword{internal}

@@ -15,3 +15,4 @@ used, i.e. all events are imported.}
 \description{
 Read data from DB
 }
+\keyword{internal}

@@ -12,3 +12,4 @@ list_indices(db_path = find_db())
 \description{
 List the indices currently in the "event" table in the database.
 }
+\keyword{internal}

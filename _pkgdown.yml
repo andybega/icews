@@ -33,6 +33,7 @@ reference:
       - list_source_files
       - get_db_state
       - read_icews
+      - sync_db_with_files
   - title: "Interacting with local raw data files"
     desc: >
       Working with local copies of the data files

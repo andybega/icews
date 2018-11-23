@@ -53,6 +53,7 @@ read_icews <- function(path = NULL, n_max = NULL) {
 #' @param ... Options passed to [read_events_tsv()].
 #'
 #' @md
+#' @keywords internal
 read_icews_raw <- function(raw_file_dir, n_max = NULL, ...) {
   data_files <- list_local_files(raw_file_dir)
   event_list <- list(NULL)
@@ -82,6 +83,8 @@ read_icews_raw <- function(raw_file_dir, n_max = NULL, ...) {
 #'
 #' @template dbp
 #' @template n_max
+#'
+#' @keywords internal
 read_icews_db <- function(db_path, n_max = NULL) {
   limit <- ifelse(is.infinite(n_max), "", paste0(" LIMIT ", n_max))
   sql   <- sprintf("SELECT * FROM events%s;", limit)

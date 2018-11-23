@@ -17,11 +17,20 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r, eval = TRUE}
+suppressPackageStartupMessages({
+  library("icews")
+})
+```
+
+
 This vignette gives an overview of the ICEWS event data: how each event record is structured, and some the relationship between different sets of information in the event records and columns. The latter is mainly for instances where superficial assumptions one might make, e.g. that "event_id" is a unique event ID, are wrong. 
 
 *Note: the package is inherently unfriendly to a completely replicable workflow, as it is setup with the intention that one will use R options set in .Rprofile at each session start. And in any case, it is not trivial to throw around 5 GB of data.*
 
 *One side effect is that several parts of this vignette incorporte results from the local data copy I have, but which is not included on GitHub or the package install. However, I have tried to make the code here as explicity and replicable as possible.*
+
+*The data used cover the beginning in 1995 to a last event date of `r  as.Date(as.character(query_icews("select max(event_date) from events;", "~/Dropbox/Work/VForecast/Data/icews_data/db/icews.sqlite3")[[1]]), format = "%Y%m%d")`.*
 
 ## Things to look out for
 
@@ -45,11 +54,52 @@ GROUP BY id_n;
 
 | id_n| instances|
 |----:|---------:|
-|    1|  17074435|
-|    2|    145312|
+|    1|  17,074,435|
+|    2|    145,312|
 
 In all cases, the duplicate events have distinct event dates. 
 
 ### Each actor can have multiple sectors, and they can change over time
 
 ### CAMEO codes are unique but have a nested hierarchical structure
+
+
+## Summary statistics
+
+### Total number of records
+
+```{r}
+bind_cols(
+  query_icews("select count(*) as n_unique_events from (select distinct(event_id) from events);"),
+  query_icews("select count(*) as n_rows from events;")
+) %>%
+  tidyr::gather(Measure, Value) %>%
+  knitr::kable(format.args = list(big.mark = ','))
+```
+
+|Measure         |    Value|
+|:---------------|--------:|
+|n_unique_events | 17,219,747|
+|n_rows          | 17,365,059|
+
+### Distinct locations
+
+The location information for the event (not actors) consists of country, province, district, city, latitude, longitude. 
+
+```{r}
+bind_cols(
+  query_icews("select count(*) as n_unique_locations from (select distinct latitude, longitude, country, province, district, city from events);"),
+  query_icews("select count(*) as n_unique_coords from (select distinct latitude, longitude from events);"),
+  query_icews("select count(*) as n_unique_countries from (select distinct country from events);")
+) %>%
+  tidyr::gather(Measure, Value) %>%
+  knitr::kable(format.args = list(big.mark = ','))
+```
+
+|Measure            |   Value|
+|:------------------|-------:|
+|n_unique_locations | 110,405|
+|n_unique_coords    | 109,557|
+|n_unique_countries |     252|
+
+Coordinates are not sufficient to distinguish each unique location once we take city, district, etc. into account. Nothing short of the full set of columns [country, province, district, city, latitude, longitude] uniquely identifies all distinct locations. 

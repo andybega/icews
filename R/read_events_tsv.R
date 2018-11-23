@@ -39,6 +39,8 @@ read_events_tsv <- function(file, fix_names = TRUE, ...) {
 #' Normalize column names
 #'
 #' @param x Tibble containing raw events
+#'
+#' @keywords internal
 normalize_column_names <- function(x) {
   cnames <- colnames(x)
   cnames <- tolower(cnames)

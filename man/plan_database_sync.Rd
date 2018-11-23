@@ -15,3 +15,4 @@ plan_database_sync(db_path = find_db(), raw_file_dir = find_raw())
 Plan database synchronization with local files, without downloading any
 new files
 }
+\keyword{internal}

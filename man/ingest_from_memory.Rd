@@ -15,3 +15,4 @@ ingest_from_memory(file, db_path)
 The "in memory" part is not working because I haven't figured out how to
 unzip a raw vector in memory.
 }
+\keyword{internal}

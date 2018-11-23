@@ -4,6 +4,7 @@
 #' @template dbp
 #'
 #' @importFrom readr read_file
+#' @keywords internal
 execute_sql <- function(x, db_path) {
   # read from file
   path <- system.file("sql", x, package = "icews")
@@ -20,6 +21,7 @@ execute_sql <- function(x, db_path) {
 #'
 #' @param x A vector containing SQL statements
 #' @template dbp
+#' @keywords internal
 execute_sql_statements <- function(x, db_path) {
   con <- connect(db_path)
   on.exit(DBI::dbDisconnect(con))
@@ -35,6 +37,7 @@ execute_sql_statements <- function(x, db_path) {
 #' of separate SQL statements
 #'
 #' @param x Path to a .sql file containing SQL statements (not queries)
+#' @keywords internal
 read_sql_statements <- function(x) {
   sql_str <- strsplit(x, "\n\n")[[1]]
   # eliminate comment lines

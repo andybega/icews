@@ -12,3 +12,4 @@ find_path(x)
 \description{
 Generic path finder
 }
+\keyword{internal}

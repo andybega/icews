@@ -42,6 +42,9 @@
   </a>
 </li>
 <li>
+  <a href="../articles/icews.html">Get started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -53,9 +56,6 @@
   <ul class="dropdown-menu" role="menu">
 <li>
       <a href="../articles/icews-event-data.html">ICEWS event data</a>
-    </li>
-    <li>
-      <a href="../articles/introduction-to-icews.html">Introduction to icews</a>
     </li>
     <li>
       <a href="../articles/speed-comparison-database-versus-file-based.html">Speed comparison database versus file-based</a>
@@ -88,7 +88,7 @@
       <h1>ICEWS event data</h1>
                         <h4 class="author">Andreas Beger</h4>
             
-            <h4 class="date">2018-11-22</h4>
+            <h4 class="date">2018-11-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/andybega/icews/blob/master/vignettes/icews-event-data.Rmd"><code>vignettes/icews-event-data.Rmd</code></a></small>
       <div class="hidden name"><code>icews-event-data.Rmd</code></div>
@@ -97,9 +97,13 @@
 
     
     
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">suppressPackageStartupMessages</span>({
+  <span class="kw">library</span>(<span class="st">"icews"</span>)
+})</code></pre></div>
 <p>This vignette gives an overview of the ICEWS event data: how each event record is structured, and some the relationship between different sets of information in the event records and columns. The latter is mainly for instances where superficial assumptions one might make, e.g. that “event_id” is a unique event ID, are wrong.</p>
 <p><em>Note: the package is inherently unfriendly to a completely replicable workflow, as it is setup with the intention that one will use R options set in .Rprofile at each session start. And in any case, it is not trivial to throw around 5 GB of data.</em></p>
 <p><em>One side effect is that several parts of this vignette incorporte results from the local data copy I have, but which is not included on GitHub or the package install. However, I have tried to make the code here as explicity and replicable as possible.</em></p>
+<p><em>The data used cover the beginning in 1995 to a last event date of 2018-09-30.</em></p>
 <div id="things-to-look-out-for" class="section level2">
 <h2 class="hasAnchor">
 <a href="#things-to-look-out-for" class="anchor"></a>Things to look out for</h2>
@@ -125,11 +129,11 @@
 <tbody>
 <tr class="odd">
 <td align="right">1</td>
-<td align="right">17074435</td>
+<td align="right">17,074,435</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
-<td align="right">145312</td>
+<td align="right">145,312</td>
 </tr>
 </tbody>
 </table>
@@ -144,6 +148,69 @@
 <a href="#cameo-codes-are-unique-but-have-a-nested-hierarchical-structure" class="anchor"></a>CAMEO codes are unique but have a nested hierarchical structure</h3>
 </div>
 </div>
+<div id="summary-statistics" class="section level2">
+<h2 class="hasAnchor">
+<a href="#summary-statistics" class="anchor"></a>Summary statistics</h2>
+<div id="total-number-of-records" class="section level3">
+<h3 class="hasAnchor">
+<a href="#total-number-of-records" class="anchor"></a>Total number of records</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">bind_cols</span>(
+  <span class="kw"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"select count(*) as n_unique_events from (select distinct(event_id) from events);"</span>),
+  <span class="kw"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"select count(*) as n_rows from events;"</span>)
+) <span class="op">%&gt;%</span>
+<span class="st">  </span>tidyr<span class="op">::</span><span class="kw"><a href="https://tidyr.tidyverse.org/reference/gather.html">gather</a></span>(Measure, Value) <span class="op">%&gt;%</span>
+<span class="st">  </span>knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(<span class="dt">format.args =</span> <span class="kw">list</span>(<span class="dt">big.mark =</span> <span class="st">','</span>))</code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">Measure</th>
+<th align="right">Value</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">n_unique_events</td>
+<td align="right">17,219,747</td>
+</tr>
+<tr class="even">
+<td align="left">n_rows</td>
+<td align="right">17,365,059</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="distinct-locations" class="section level3">
+<h3 class="hasAnchor">
+<a href="#distinct-locations" class="anchor"></a>Distinct locations</h3>
+<p>The location information for the event (not actors) consists of country, province, district, city, latitude, longitude.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">bind_cols</span>(
+  <span class="kw"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"select count(*) as n_unique_locations from (select distinct latitude, longitude, country, province, district, city from events);"</span>),
+  <span class="kw"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"select count(*) as n_unique_coords from (select distinct latitude, longitude from events);"</span>),
+  <span class="kw"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"select count(*) as n_unique_countries from (select distinct country from events);"</span>)
+) <span class="op">%&gt;%</span>
+<span class="st">  </span>tidyr<span class="op">::</span><span class="kw"><a href="https://tidyr.tidyverse.org/reference/gather.html">gather</a></span>(Measure, Value) <span class="op">%&gt;%</span>
+<span class="st">  </span>knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(<span class="dt">format.args =</span> <span class="kw">list</span>(<span class="dt">big.mark =</span> <span class="st">','</span>))</code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">Measure</th>
+<th align="right">Value</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">n_unique_locations</td>
+<td align="right">110,405</td>
+</tr>
+<tr class="even">
+<td align="left">n_unique_coords</td>
+<td align="right">109,557</td>
+</tr>
+<tr class="odd">
+<td align="left">n_unique_countries</td>
+<td align="right">252</td>
+</tr>
+</tbody>
+</table>
+<p>Coordinates are not sufficient to distinguish each unique location once we take city, district, etc. into account. Nothing short of the full set of columns [country, province, district, city, latitude, longitude] uniquely identifies all distinct locations.</p>
+</div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -152,6 +219,7 @@
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
 <li><a href="#things-to-look-out-for">Things to look out for</a></li>
+      <li><a href="#summary-statistics">Summary statistics</a></li>
       </ul>
 </div>
       </div>

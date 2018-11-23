@@ -17,3 +17,4 @@ used, i.e. all events are imported.}
 \description{
 Read data from raw files
 }
+\keyword{internal}

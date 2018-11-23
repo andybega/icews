@@ -7,6 +7,7 @@
 #'   an alternative path for the database file.
 #'
 #' @import dplyr
+#' @keywords internal
 create_db <- function(db_path = find_db()) {
   # Make sure we are not overwriting existing database
   if (file.exists(db_path)) {
@@ -32,6 +33,7 @@ create_db <- function(db_path = find_db()) {
 #' Create event table and indices
 #'
 #' @template dbp
+#' @keywords internal
 create_event_table <- function(db_path) {
   con <- connect(db_path)
   on.exit(DBI::dbDisconnect(con))

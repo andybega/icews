@@ -39,6 +39,8 @@ download_file <- function(file, to_dir) {
 #' Remove a data file
 #'
 #' @param raw_file_path Data file to be removed
+#'
+#' @keywords internal
 remove_file <- function(raw_file_path) {
   unlink(raw_file_path)
   invisible(NULL)

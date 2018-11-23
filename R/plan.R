@@ -6,6 +6,7 @@
 #' Plan class maker
 #'
 #' @param x a tibble
+#' @keywords internal
 create_plan <- function(x) {
   class(x) <- c("icews_plan", class(x))
   x
@@ -17,6 +18,8 @@ create_plan <- function(x) {
 #' @param ... Not used
 #'
 #' @importFrom rlang .data
+#' @method format icews_plan
+#' @keywords internal
 format.icews_plan <- function(x, ...) {
   plan <- x
 
@@ -77,6 +80,9 @@ format.icews_plan <- function(x, ...) {
 #'
 #' @param x A tibble containing the plan output
 #' @param ... Not used
+#'
+#' @method print icews_plan
+#' @keywords internal
 print.icews_plan <- function(x, ...) {
   str <- format(x)
   cat(paste0(str, collapse = ""))
@@ -87,6 +93,7 @@ print.icews_plan <- function(x, ...) {
 #' Plan file changes related to download/updating
 #'
 #' @param raw_file_dir Directory containing the raw event TSV files
+#' @keywords internal
 plan_file_changes <- function(raw_file_dir) {
 
   action <- NULL
@@ -134,6 +141,7 @@ plan_file_changes <- function(raw_file_dir) {
 #'
 #' @param db_path Path to SQLite database file
 #' @param raw_file_dir Path to raw data file directory.
+#' @keywords internal
 plan_database_sync <- function(db_path      = find_db(),
                                raw_file_dir = find_raw()) {
 
@@ -185,6 +193,7 @@ plan_database_sync <- function(db_path      = find_db(),
 #' @param use_local Use local files if available?
 #'
 #' @md
+#' @keywords internal
 plan_database_changes <- function(db_path      = find_db(),
                                   raw_file_dir = find_raw(),
                                   keep_files   = getOption("icews.keep_files"),
@@ -259,6 +268,7 @@ plan_database_changes <- function(db_path      = find_db(),
   full_plan
 }
 
+#' @keywords internal
 execute_plan <- function(plan, raw_file_dir, db_path) {
 
   need_action <- plan[plan$action!="none", ]

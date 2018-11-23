@@ -19,3 +19,4 @@ plan_database_changes(db_path = find_db(), raw_file_dir = find_raw(),
 \description{
 Plan database changes related to download/updating
 }
+\keyword{internal}

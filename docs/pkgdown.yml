@@ -3,6 +3,6 @@ pkgdown: 1.1.0
 pkgdown_sha: ~
 articles:
   icews-event-data: icews-event-data.html
-  introduction-to-icews: introduction-to-icews.html
+  icews: icews.html
   speed-comparison-database-versus-file-based: speed-comparison-database-versus-file-based.html
 

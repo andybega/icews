@@ -12,3 +12,4 @@ check_db_exists(db_path)
 \description{
 Check and if needed setup database
 }
+\keyword{internal}

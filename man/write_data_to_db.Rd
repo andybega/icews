@@ -16,3 +16,4 @@ write_data_to_db(events, file, db_path = find_db())
 \description{
 Adds some columns to events before writing to DB.
 }
+\keyword{internal}

@@ -30,7 +30,10 @@ This vignette gives an overview of the ICEWS event data: how each event record i
 
 *One side effect is that several parts of this vignette incorporte results from the local data copy I have, but which is not included on GitHub or the package install. However, I have tried to make the code here as explicity and replicable as possible.*
 
-*The data used cover the beginning in 1995 to a last event date of `r  as.Date(as.character(query_icews("select max(event_date) from events;", "~/Dropbox/Work/VForecast/Data/icews_data/db/icews.sqlite3")[[1]]), format = "%Y%m%d")`.*
+*The data used cover the beginning in 1995 to a last event date of 2018-09-30.*
+
+<!-- as.Date(as.character(query_icews("select max(event_date) from events;", "~/Dropbox/Work/VForecast/Data/icews_data/db/icews.sqlite3")[[1]]), format = "%Y%m%d") --> 
+
 
 ## Things to look out for
 
@@ -40,7 +43,7 @@ Below are a couple of gotchas that might lead to wrongly aggregated data.
 
 "Event ID" is not a unique ID, but together with "Event Date" it does appear to be unique. 
 
-```{r}
+```{r, eval = FALSE}
 query_icews("
 SELECT id_n, count(*) as instances
 FROM ( 
@@ -68,7 +71,7 @@ In all cases, the duplicate events have distinct event dates.
 
 ### Total number of records
 
-```{r}
+```{r, eval = FALSE}
 bind_cols(
   query_icews("select count(*) as n_unique_events from (select distinct(event_id) from events);"),
   query_icews("select count(*) as n_rows from events;")
@@ -86,7 +89,7 @@ bind_cols(
 
 The location information for the event (not actors) consists of country, province, district, city, latitude, longitude. 
 
-```{r}
+```{r, eval = FALSE}
 bind_cols(
   query_icews("select count(*) as n_unique_locations from (select distinct latitude, longitude, country, province, district, city from events);"),
   query_icews("select count(*) as n_unique_coords from (select distinct latitude, longitude from events);"),

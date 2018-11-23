@@ -104,6 +104,7 @@
 <p><em>Note: the package is inherently unfriendly to a completely replicable workflow, as it is setup with the intention that one will use R options set in .Rprofile at each session start. And in any case, it is not trivial to throw around 5 GB of data.</em></p>
 <p><em>One side effect is that several parts of this vignette incorporte results from the local data copy I have, but which is not included on GitHub or the package install. However, I have tried to make the code here as explicity and replicable as possible.</em></p>
 <p><em>The data used cover the beginning in 1995 to a last event date of 2018-09-30.</em></p>
+<!-- as.Date(as.character(query_icews("select max(event_date) from events;", "~/Dropbox/Work/VForecast/Data/icews_data/db/icews.sqlite3")[[1]]), format = "%Y%m%d") -->
 <div id="things-to-look-out-for" class="section level2">
 <h2 class="hasAnchor">
 <a href="#things-to-look-out-for" class="anchor"></a>Things to look out for</h2>

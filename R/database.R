@@ -79,6 +79,7 @@ write_data_to_db <- function(events, file, db_path = find_db()) {
   events$source_file  <- file
 
   DBI::dbWriteTable(con, "events", events, append = TRUE)
+  update_stats()
   invisible(TRUE)
 }
 
@@ -133,6 +134,8 @@ delete_events <- function(file, db_path) {
   sql <- sprintf("DELETE FROM events WHERE source_file=='%s';", file)
   res <- DBI::dbSendQuery(con, sql)
   DBI::dbClearResult(res)
+
+  update_stats()
   invisible(TRUE)
 }
 
@@ -240,5 +243,22 @@ list_indices <- function(db_path = find_db()) {
   con <- connect(db_path)
   on.exit(DBI::dbDisconnect(con))
   DBI::dbGetQuery(con, "PRAGMA index_list(events);")
+
+  invisible(NULL)
 }
 
+
+#' @keywords internal
+update_stats <- function(db_path = find_db()) {
+  con <- connect(db_path)
+  on.exit(DBI::dbDisconnect(con))
+
+  # Update source_files table
+  DBI::dbSendQuery(con, "DELETE FROM source_files;")
+  DBI::dbSendQuery(con, "INSERT INTO source_files (name) SELECT DISTINCT(source_file) AS name FROM events;")
+
+  # Update stats table
+  DBI::dbSendQuery(con, "UPDATE stats SET value = ( SELECT count(*) FROM events ) WHERE name=='events_n';")
+
+  invisible(NULL)
+}

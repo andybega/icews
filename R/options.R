@@ -47,7 +47,7 @@ setup_icews <- function(data_dir, use_db = TRUE, keep_files = FALSE, r_profile =
 
   # Create folders as neccessary
   if (use_db & !dir.exists(find_db())) {
-    dir.create(find_db())
+    dir.create(dirname(find_db()))
   }
   if ((!use_db | keep_files) & !dir.exists(find_raw())) {
     dir.create(find_raw())

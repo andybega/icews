@@ -71,7 +71,7 @@ dr_icews <- function(db_path = NULL, raw_file_dir = NULL) {
     # Check if DB file exists, if so check status
     if (!file.exists(db_path)) {
 
-      cat("Did not find database file; consider running \"update()\" to set up and sync database.\n")
+      cat("Did not find database file; consider running \"update_icews()\" to set up and sync database.\n")
 
     } else {
 

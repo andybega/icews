@@ -12,6 +12,7 @@ CREATE TABLE source_files (
 INSERT INTO source_files (name)
 SELECT DISTINCT(source_file) AS name FROM events;
 
+/*
 CREATE trigger update_source_files_after_insert AFTER INSERT ON events
 BEGIN
   DELETE FROM source_files;
@@ -32,3 +33,4 @@ BEGIN
   INSERT INTO source_files (name)
   SELECT DISTINCT(source_file) AS name FROM events;
 END;
+*/

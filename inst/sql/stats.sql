@@ -16,6 +16,7 @@ INSERT INTO stats VALUES ('events_n', NULL);
 UPDATE stats SET value = ( SELECT count(*) FROM events )
 WHERE name=='events_n';
 
+/*
 CREATE trigger update_events_n_after_insert AFTER INSERT ON events
 BEGIN
   UPDATE stats SET value = ( SELECT count(*) FROM events )
@@ -27,3 +28,4 @@ BEGIN
   UPDATE stats SET value = ( SELECT count(*) FROM events )
   WHERE name=='events_n';
 END;
+*/

@@ -19,7 +19,7 @@
 #' con <- connect()
 #' DBI::dbGetQuery(con, "SELECT count(*) AS n FROM events;")
 #' # or
-#' query("SELECT count(*) AS n FROM events;")
+#' query_icews("SELECT count(*) AS n FROM events;")
 #' # or
 #' tbl(con, "events") %>% summarize(n = n())
 #' ```

@@ -27,7 +27,7 @@ test_that("connect works with in memory test db", {
 
 test_that("ingest_from_file works", {
 
-  db_path <- setup_mock_db(init = TRUE, populate = FALSE)
+  db_path  <- setup_mock_db(init = TRUE, populate = FALSE)
   tsv_path <- tsv_sample_path()
 
   expect_error(ingest_from_file(tsv_path, db_path), NA)

@@ -9,7 +9,7 @@ library("rmarkdown")
 # Before syncing to Github
 devtools::load_all()
 devtools::document()
-render("README.Rmd")
+rmarkdown::render("README.Rmd")
 devtools::test()
 devtools::check()
 pkgdown::build_site()

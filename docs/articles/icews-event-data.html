@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">icews</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -100,6 +100,8 @@
     
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/message">suppressPackageStartupMessages</a></span>({
   <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"icews"</span>)
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"dplyr"</span>)
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"tidyr"</span>)
 })</code></pre></div>
 <p>This vignette gives an overview of the ICEWS event data: how each event record is structured, and some the relationship between different sets of information in the event records and columns. The latter is mainly for instances where superficial assumptions one might make, e.g. that “event_id” is a unique event ID, are wrong.</p>
 <p><em>Note: the package is inherently unfriendly to a completely replicable workflow, as it is setup with the intention that one will use R options set in .Rprofile at each session start. And in any case, it is not trivial to throw around 5 GB of data.</em></p>
@@ -122,7 +124,7 @@
 <span class="st">      GROUP BY event_id</span>
 <span class="st">     )</span>
 <span class="st">GROUP BY id_n;</span>
-<span class="st">"</span>) <span class="op">%&gt;%</span><span class="st"> </span>knitr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>()</code></pre></div>
+<span class="st">"</span>) <span class="op">%&gt;%</span><span class="st"> </span>knitr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(<span class="dt">format.args =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">big.mark =</span> <span class="st">','</span>))</code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="right">id_n</th>
@@ -156,7 +158,7 @@
 <div id="total-number-of-records" class="section level3">
 <h3 class="hasAnchor">
 <a href="#total-number-of-records" class="anchor"></a>Total number of records</h3>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">bind_cols</span>(
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_cols</a></span>(
   <span class="kw"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"select count(*) as n_unique_events from (select distinct(event_id) from events);"</span>),
   <span class="kw"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"select count(*) as n_rows from events;"</span>)
 ) <span class="op">%&gt;%</span>
@@ -183,7 +185,7 @@
 <h3 class="hasAnchor">
 <a href="#distinct-locations" class="anchor"></a>Distinct locations</h3>
 <p>The location information for the event (not actors) consists of country, province, district, city, latitude, longitude.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">bind_cols</span>(
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_cols</a></span>(
   <span class="kw"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"select count(*) as n_unique_locations from (select distinct latitude, longitude, country, province, district, city from events);"</span>),
   <span class="kw"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"select count(*) as n_unique_coords from (select distinct latitude, longitude from events);"</span>),
   <span class="kw"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"select count(*) as n_unique_countries from (select distinct country from events);"</span>)

@@ -1,4 +1,4 @@
-# icews 0.1.0.9000 (2018-02-12)
+# icews 0.2.0 (2018-02-12)
 
 Major rewrite of the download and synchronization code, with some **breaking changes**.
 

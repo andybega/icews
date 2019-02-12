@@ -34,3 +34,32 @@ BEGIN
   SELECT DISTINCT(source_file) AS name FROM events;
 END;
 */
+
+
+/*
+    With the daily update repository, there can be source files from which no
+    events are added to the DB because all events are already present. To avoid
+    re-ingesting these files every time an update is run, because they are not
+    in the stats source file column, keep track of them in a separate table.
+*/
+
+CREATE TABLE null_source_files (
+  name TEXT PRIMARY KEY
+);
+
+CREATE trigger update_source_files_after_null_ingest AFTER INSERT ON null_source_files
+BEGIN
+  INSERT INTO source_files (name)
+  SELECT name FROM null_source_files EXCEPT SELECT name FROM source_files;
+END;
+
+/*
+    Also update source_files when the table is destroyed/recreated with
+    update_stats()
+*/
+
+CREATE trigger add_null_ingests_to_source_files AFTER INSERT ON source_files
+BEGIN
+  INSERT INTO source_files (name)
+  SELECT name FROM null_source_files EXCEPT SELECT name FROM source_files;
+END;

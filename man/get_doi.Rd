@@ -7,7 +7,7 @@
 get_doi()
 }
 \description{
-Contains the DVN DOI for ICEWS
+Contains the DVN DOIs for ICEWS
 }
 \examples{
 get_doi()

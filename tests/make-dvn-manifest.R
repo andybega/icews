@@ -3,6 +3,6 @@
 dontrun <- function() {
 
   foo <- get_dvn_manifest()
-  saveRDS("inst/testdata/dvn_manifest.rds")
+  saveRDS(foo, "inst/testdata/dvn_manifest.rds")
 
 }

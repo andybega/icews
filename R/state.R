@@ -21,12 +21,17 @@
 #' @keywords internal
 parse_label <- function(label) {
   out <- tibble::tibble(
-    label   = label,
-    file    = gsub(".zip", "", label),
-    is_data = grepl(".tab", label),
+    label   = as.character(label),
+    file    = ifelse(substring(label, nchar(label) - 7)==".tab.zip",
+                     gsub(".zip", "", label),
+                     gsub(".zip", ".tab", label)),
+    is_data = grepl("(\\.tab)|(icews-events\\.zip)", label),
     data_set = NA,
     version  = NA
   )
+  # if label is empty, file turns to logical, which causes test errors when
+  # trying to merge character to logical down the line
+  out$file <- as.character(out$file)
   out$data_set[out$is_data] <- gsub("(.[0-9]{14})|(.tab)|(.sample)", "", out$file[out$is_data])
   out$version[out$is_data]  <- gsub("(events.[0-9]{4}.)|(.tab)", "", out$file[out$is_data])
   out
@@ -85,16 +90,32 @@ parse_label <- function(label) {
 #' @import tibble
 get_dvn_manifest <- function(icews_doi = get_doi(), server = Sys.getenv("DATAVERSE_SERVER")) {
   dvn_files  <- tryCatch(
-    dataverse::get_dataset(icews_doi, server = server),
+    tibble(repo = c("historic", "daily"),
+           content = list(
+             dataverse::get_dataset(icews_doi$historic, server = server),
+             dataverse::get_dataset(icews_doi$daily, server = server)
+           )),
     error = function(e) {
       stop("Something went wrong in 'dataverse' or the Dataverse API, try again. Original error message:\n", e$message)
     })
 
-  file_list <- tibble::tibble(
-    label = dvn_files$files$label,
-    category = unlist(dvn_files$files$categories),
-    description = dvn_files$files$description
+  file_list <- bind_rows(
+    tibble::tibble(
+      repo = "historic",
+      label = dvn_files$content[[1]]$files$label,
+      category = unlist(dvn_files$content[[1]]$files$categories),
+      description = dvn_files$content[[1]]$files$description
+    ),
+    tibble::tibble(
+      repo = "daily",
+      label = dvn_files$content[[2]]$files$label,
+      category = "Data",
+      description = dvn_files$content[[2]]$files$description
+    )
   )
+
+  # filter out known corrupt file
+  file_list <- file_list[!file_list$label=="20181006-icews-events.zip", ]
 
   data_file_list <- parse_label(file_list$label)
   data_file_list <- subset(data_file_list, is_data)
@@ -131,8 +152,10 @@ get_local_state <- function(raw_file_dir = find_raw()) {
 #' @export
 list_local_files <- function(raw_file_dir = find_raw(), full_names = TRUE) {
   o <- dir(raw_file_dir, full.names = full_names)
-  # check it's all events.YYYY....tab files
-  offending <- !grepl("^events\\.[0-9]{4}\\.[0-9a-z]+\\.tab$", basename(o))
+  # check it's all events.YYYY....tab or YYYYMMDD-icews-events.zip files
+  good1 <- grepl("^events\\.[0-9]{4}\\.[0-9a-z]+\\.tab$", basename(o))
+  good2 <- grepl("^[0-9]{8}[0-9a-z\\-]+\\.tab$", basename(o))
+  offending <- !good1 & !good2
   if (any(offending)) {
     ff <- paste0("  ", basename(o)[offending], collapse = "  \n")
     msg <- sprintf("unexpected non-data file(s) found in '%s':", raw_file_dir)

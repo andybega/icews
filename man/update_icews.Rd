@@ -4,7 +4,7 @@
 \alias{update_icews}
 \title{Update database and files}
 \usage{
-update_icews(dryrun = FALSE, use_db = getOption("icews.use_db"),
+update_icews(dryrun = TRUE, use_db = getOption("icews.use_db"),
   keep_files = getOption("icews.keep_files"), db_path = find_db(),
   raw_file_dir = find_raw())
 }

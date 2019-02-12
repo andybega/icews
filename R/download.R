@@ -7,6 +7,7 @@
 #'
 #' @param file Name of the file on DVN to download. If zipped.
 #' @param to_dir Destination directory.
+#' @param repo Which repo is the file in? ("historic" or "daily")
 #'
 #' @details
 #' To get a list of files available for download, see [get_dvn_manifest].
@@ -18,10 +19,15 @@
 #' @importFrom utils unzip
 #' @export
 #' @md
-download_file <- function(file, to_dir) {
 
-  icews_doi <- get_doi()
-  f <- get_file(file, icews_doi)
+download_file <- function(file, to_dir, repo = "historic") {
+
+  # override default repo if certain filename is detected
+  if (repo=="historic" & grepl("[0-9]{8}\\-icews\\-events\\.zip", file)) {
+    repo = "daily"
+  }
+
+  f <- get_file(file, get_doi()[[repo]])
 
   # Decide how to handle based on whether extraction is needed
   if (tools::file_ext(file)=="zip") {
@@ -61,7 +67,6 @@ remove_file <- function(raw_file_path) {
 #' @import dataverse
 #' @import dplyr
 download_data <- function(to_dir = find_raw(), update = TRUE, dryrun = FALSE) {
-
 
   plan <- plan_file_changes(to_dir)
 

@@ -4,12 +4,14 @@
 \alias{download_file}
 \title{Download a single file from DVN}
 \usage{
-download_file(file, to_dir)
+download_file(file, to_dir, repo = "historic")
 }
 \arguments{
 \item{file}{Name of the file on DVN to download. If zipped.}
 
 \item{to_dir}{Destination directory.}
+
+\item{repo}{Which repo is the file in? ("historic" or "daily")}
 }
 \value{
 Silently returns the downloaded file name.

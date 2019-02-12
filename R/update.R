@@ -42,7 +42,7 @@
 #'
 #' @export
 #' @md
-update_icews <- function(dryrun = FALSE,
+update_icews <- function(dryrun = TRUE,
                          use_db     = getOption("icews.use_db"),
                          keep_files = getOption("icews.keep_files"),
                          db_path = find_db(), raw_file_dir = find_raw()) {

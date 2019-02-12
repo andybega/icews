@@ -78,6 +78,35 @@ write_data_to_db <- function(events, file, db_path = find_db()) {
   events$event_date <- as.integer(format(events$event_date, "%Y%m%d"))
   events$source_file  <- file
 
+  # Daily file check
+  # To ingest daily files, check and potentially subset event set to avoid
+  # adding duplicate events to DB
+  # In case there are events in the to-be-added set with a date before the
+  # last event date in DB, explicitly check all event IDs to eliminate
+  # duplicates
+  if (grepl("[0-9]{8}\\-icews\\-events.tab", file)) {
+    max_date_in_db <- query_icews(
+      "select max(event_date) from events;",
+      db_path = get("db_path", envir = parent.frame()))[[1]]
+    if (max(events$event_date) <= max_date_in_db) {
+
+      DBI::dbWriteTable(con, "temp", events[, "event_id"], temporary = TRUE)
+      safe_ids <- DBI::dbGetQuery(con, "SELECT event_id FROM temp EXCEPT SELECT event_id FROM events;")[[1]]
+
+      # it can be the case that all events are already in DB, if so then
+      # update the source file stats table so we don't look at this file again
+      # in future updates, then exit the function
+      # (updates in 'null_source_files' trigger a 'source_files' table update)
+      if (length(safe_ids)==0) {
+        addition <- data.frame(name = file)
+        DBI::dbWriteTable(con, "null_source_files", addition, append = TRUE)
+        return(invisible(TRUE))
+      }
+
+      events <- events[events$event_id %in% safe_ids, ]
+    }
+  }
+
   DBI::dbWriteTable(con, "events", events, append = TRUE)
   update_stats(db_path)
   invisible(TRUE)

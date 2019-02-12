@@ -4,17 +4,36 @@ stop()
 library("devtools")
 library("usethis")
 library("pkgdown")
+library("rmarkdown")
 
 # Before syncing to Github
+devtools::load_all()
 devtools::document()
+render("README.Rmd")
 devtools::test()
 devtools::check()
 pkgdown::build_site()
 
 
-check_win()
+# For CRAN:
+
+devtools::build()
+
+check_win_release()
 check_win_devel()
 
+# commit to git for travis
+# https://travis-ci.org
+
+#   once emails are in and travis is done:
+#
+#   Update cran-comments.md
+
+R.Version()$version.string
+
+devtools::spell_check()
+devtools::check_rhub()
+devtools::release()
 
 #
 #   Figure out which indices to build

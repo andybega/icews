@@ -20,22 +20,26 @@ knitr::opts_chunk$set(
 [![Travis build status](https://travis-ci.org/andybega/icews.svg?branch=master)](https://travis-ci.org/andybega/icews)
 [![Coverage status](https://codecov.io/gh/andybega/icews/branch/master/graph/badge.svg)](https://codecov.io/github/andybega/icews?branch=master)
 
-Get the ICEWS event data from the Dataverse repo at [https://doi.org/10.7910/DVN/28075](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/28075).
+Get the ICEWS event data from the Dataverse repos at [https://doi.org/10.7910/DVN/28075](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/28075) (historic data) and [https://doi.org/10.7910/DVN/QI2T9A](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/QI2T9A) (daily updates from late 2018 on).
 
-The package provides these major features:
+The icews package provides these major features:
 
 - get the ICEWS event data without having to deal with Dataverse
 - use raw data files (tab-separated variables, .tsv) or a database (SQLite3) or both as the storage backend
 - set options so that in future R sessions icews knows where your data lives
 - icews keeps the local data in sync with the latest versions on Dataverse
 
+*Note about stability:*
+
+*This package is young. The core functionality of the package involves downloading and keeping track of potentially 10+GB of files and data. I have not found a good way to test that thoroughly. There are probably bugs and errors that pop up on a fresh run without any downloaded data already in place. Please file bug reports or email me (adbeger@gmail.com)!*
+
 ## Installation
 
-Not on CRAN, so you will have to install via devtools:
+Not on CRAN, so you will have to install via remotes or devtools:
 
 ```{r github-install, eval = FALSE}
-library("devtools")
-install_github("andybega/icews")
+library("remotes")
+remotes::install_github("andybega/icews")
 ```
 
 
@@ -51,18 +55,24 @@ library("usethis")
 
 setup_icews(data_dir = "/where/should/data/be", use_db = TRUE, keep_files = TRUE,
             r_profile = TRUE)
+# this will give instructions for what to add to .Rprofile so that settings
+# persist between R sessions
 
-update_icews()
+update_icews(dryrun = TRUE)
+# Should list proposed downloads, ingests, etc.
+update_icews(dryrun = FALSE)
 # Wait until all is done; like 45 minutes or more the first time around
 
+# To get the data:
 con <- connect()
 DBI::dbGetQuery(con, "SELECT count(*) AS n FROM events;")
 # or
 query_icews("SELECT count(*) AS n FROM events;")
 # or
-tbl(con, "events") %>% summarize(n = n())
+con <- connect()
+dplyr::tbl(con, "events") %>% summarize(n = n())
 # or, 
-# read all 16+ million rows into memory
+# read all 17+ million rows into memory
 events <- read_icews()
 ```
 
@@ -75,7 +85,7 @@ dir.create("~/Downloads/icews")
 download_data("~/Downloads/icews")
 ```
 
-This will conventiently also re-use and update any files already in the same directory. E.g. the monthly data updates currently come in a file with the pattern "events.2018.yyyymmddhhmmss.tab", where the "yyyymmddhhmmss" part changes. The downloader can identify this and will replace the old with the new file. 
+This will conventiently also re-use and update any files already in the same directory. Zipped files will be unzipped. E.g. the monthly data updates currently come in a file with the pattern "events.2018.yyyymmddhhmmss.tab", where the "yyyymmddhhmmss" part changes. The downloader can identify this and will replace the old with the new file. 
 
 Just in case, you can do a dry run that will not actually make any changes:
 
@@ -128,7 +138,7 @@ To setup and populate a database with the current version on DVN, use this comma
 
 ```{r, eval = FALSE}
 # assumes setup_icews with use_db = TRUE has already been called
-update_icews()
+update_icews(dryrun = FALSE)
 ```
 
 This will download any data files needed from DVN, and create and populate a SQLite database with them. The events will be in a table called "events". To connect, use `connect()`; this returns a RSQLite database connection. From then on, it can be used like this:

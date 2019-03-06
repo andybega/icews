@@ -1,9 +1,9 @@
 
 
 
-#' Download a single file from DVN
+#' Download a single file from Dataverse
 #'
-#' Download a single file from the ICEWS DVN repository and unzip if neccessary
+#' Download a single file from the ICEWS Dataverse repository and unzip if neccessary
 #'
 #' @param file Name of the file on DVN to download. If zipped.
 #' @param to_dir Destination directory.

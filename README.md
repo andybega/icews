@@ -4,7 +4,7 @@ icews
 
 [![CRAN status](https://www.r-pkg.org/badges/version/icews)](https://cran.r-project.org/package=icews) [![Travis build status](https://travis-ci.org/andybega/icews.svg?branch=master)](https://travis-ci.org/andybega/icews) [![Coverage status](https://codecov.io/gh/andybega/icews/branch/master/graph/badge.svg)](https://codecov.io/github/andybega/icews?branch=master)
 
-Get the ICEWS event data from the Dataverse repos at [https://doi.org/10.7910/DVN/28075](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/28075) (historic data) and [https://doi.org/10.7910/DVN/QI2T9A](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/QI2T9A) (daily updates from late 2018 on).
+Get the ICEWS event data from the Harvard Dataverse repos at [https://doi.org/10.7910/DVN/28075](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/28075) (historic data) and [https://doi.org/10.7910/DVN/QI2T9A](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/QI2T9A) (daily updates from late 2018 on).
 
 The icews package provides these major features:
 
@@ -30,7 +30,7 @@ remotes::install_github("andybega/icews")
 Usage
 -----
 
-**tl;dr**: get a SQLite database with the current events on DVN with this code; otherwise read below for more details.
+**tl;dr**: get a SQLite database with the current events on Dataverse with this code; otherwise read below for more details.
 
 ``` r
 library("icews")
@@ -117,16 +117,16 @@ options(icews.use_db     = TRUE)
 options(icews.keep_files = TRUE)
 ```
 
-### Use a SQLite database that keeps in sync with DVN
+### Use a SQLite database that keeps in sync with Dataverse
 
-To setup and populate a database with the current version on DVN, use this command:
+To setup and populate a database with the current version on Dataverse, use this command:
 
 ``` r
 # assumes setup_icews with use_db = TRUE has already been called
 update_icews(dryrun = FALSE)
 ```
 
-This will download any data files needed from DVN, and create and populate a SQLite database with them. The events will be in a table called "events". To connect, use `connect()`; this returns a RSQLite database connection. From then on, it can be used like this:
+This will download any data files needed from Dataverse, and create and populate a SQLite database with them. The events will be in a table called "events". To connect, use `connect()`; this returns a RSQLite database connection. From then on, it can be used like this:
 
 ``` r
 library("DBI")

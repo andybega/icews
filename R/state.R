@@ -4,7 +4,7 @@
 
 #' Parse a data file label
 #'
-#' Parse the DVN file label to identify whether it contains data and if so which
+#' Parse the Dataverse file label to identify whether it contains data and if so which
 #' event set and file version.
 #'
 #' @param label character string

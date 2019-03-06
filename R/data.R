@@ -1,6 +1,6 @@
 #' Get ICEWS dataverse DOI
 #'
-#' Contains the DVN DOIs for ICEWS
+#' Contains the Harvard Dataverse DOIs for ICEWS
 #'
 #' @examples
 #' get_doi()

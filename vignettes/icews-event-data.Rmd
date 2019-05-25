@@ -22,6 +22,7 @@ suppressPackageStartupMessages({
   library("icews")
   library("dplyr")
   library("tidyr")
+  library("stringr")
 })
 ```
 
@@ -108,3 +109,21 @@ bind_cols(
 |n_unique_countries |     252|
 
 Coordinates are not sufficient to distinguish each unique location once we take city, district, etc. into account. Nothing short of the full set of columns [country, province, district, city, latitude, longitude] uniquely identifies all distinct locations. 
+
+```{r sectors}
+sectors <- query_icews("select source_sectors, target_sectors from events limit 1e5;")
+
+sectors_long <- sectors %>%
+  tidyr::gather(direction, sector) %>%
+  mutate(direction = str_replace(direction, "_sectors", "")) %>%
+  filter(!is.na(sector)) %>%
+  separate_rows(sector) %>%
+  mutate(sector = str_trim(sector)) %>%
+  filter(sector != "")
+
+sectors <- sectors_long %>%
+  group_by(sector) %>%
+  summarize(in_n_events = n()) %>%
+  arrange(in_n_events)
+```
+

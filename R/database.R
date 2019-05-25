@@ -88,6 +88,9 @@ write_data_to_db <- function(events, file, db_path = find_db()) {
     max_date_in_db <- query_icews(
       "select max(event_date) from events;",
       db_path = get("db_path", envir = parent.frame()))[[1]]
+    # if fresh DB and first time setup, set arbitrary large int date instead of NA
+    if (is.na(max_date_in_db)) max_date_in_db <- 21001231
+
     if (min(events$event_date) <= max_date_in_db) {
 
       DBI::dbWriteTable(con, "temp", events[, "event_id"], temporary = TRUE)

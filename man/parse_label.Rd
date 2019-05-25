@@ -20,7 +20,7 @@ A data frame with components:
 }
 }
 \description{
-Parse the DVN file label to identify whether it contains data and if so which
+Parse the Dataverse file label to identify whether it contains data and if so which
 event set and file version.
 }
 \keyword{internal}

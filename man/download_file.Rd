@@ -2,7 +2,7 @@
 % Please edit documentation in R/download.R
 \name{download_file}
 \alias{download_file}
-\title{Download a single file from DVN}
+\title{Download a single file from Dataverse}
 \usage{
 download_file(file, to_dir, repo = "historic")
 }
@@ -17,7 +17,7 @@ download_file(file, to_dir, repo = "historic")
 Silently returns the downloaded file name.
 }
 \description{
-Download a single file from the ICEWS DVN repository and unzip if neccessary
+Download a single file from the ICEWS Dataverse repository and unzip if neccessary
 }
 \details{
 To get a list of files available for download, see \link{get_dvn_manifest}.

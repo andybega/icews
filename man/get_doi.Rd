@@ -7,7 +7,7 @@
 get_doi()
 }
 \description{
-Contains the DVN DOIs for ICEWS
+Contains the Harvard Dataverse DOIs for ICEWS
 }
 \examples{
 get_doi()

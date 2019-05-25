@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">icews</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9001</span>
       </span>
     </div>
 
@@ -89,7 +89,7 @@
       <h1>ICEWS event data</h1>
                         <h4 class="author">Andreas Beger</h4>
             
-            <h4 class="date">2019-02-12</h4>
+            <h4 class="date">2019-05-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/andybega/icews/blob/master/vignettes/icews-event-data.Rmd"><code>vignettes/icews-event-data.Rmd</code></a></small>
       <div class="hidden name"><code>icews-event-data.Rmd</code></div>
@@ -102,6 +102,7 @@
   <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"icews"</span>)
   <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"dplyr"</span>)
   <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"tidyr"</span>)
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"stringr"</span>)
 })</code></pre></div>
 <p>This vignette gives an overview of the ICEWS event data: how each event record is structured, and some the relationship between different sets of information in the event records and columns. The latter is mainly for instances where superficial assumptions one might make, e.g. that “event_id” is a unique event ID, are wrong.</p>
 <p><em>Note: the package is inherently unfriendly to a completely replicable workflow, as it is setup with the intention that one will use R options set in .Rprofile at each session start. And in any case, it is not trivial to throw around 5 GB of data.</em></p>
@@ -213,6 +214,20 @@
 </tbody>
 </table>
 <p>Coordinates are not sufficient to distinguish each unique location once we take city, district, etc. into account. Nothing short of the full set of columns [country, province, district, city, latitude, longitude] uniquely identifies all distinct locations.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sectors &lt;-<span class="st"> </span><span class="kw"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"select source_sectors, target_sectors from events limit 1e5;"</span>)
+
+sectors_long &lt;-<span class="st"> </span>sectors <span class="op">%&gt;%</span>
+<span class="st">  </span>tidyr<span class="op">::</span><span class="kw"><a href="https://tidyr.tidyverse.org/reference/gather.html">gather</a></span>(direction, sector) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">direction =</span> <span class="kw"><a href="https://stringr.tidyverse.org/reference/str_replace.html">str_replace</a></span>(direction, <span class="st">"_sectors"</span>, <span class="st">""</span>)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/NA">is.na</a></span>(sector)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="https://tidyr.tidyverse.org/reference/separate_rows.html">separate_rows</a></span>(sector) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">sector =</span> <span class="kw"><a href="https://stringr.tidyverse.org/reference/str_trim.html">str_trim</a></span>(sector)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(sector <span class="op">!=</span><span class="st"> ""</span>)
+
+sectors &lt;-<span class="st"> </span>sectors_long <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(sector) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="dt">in_n_events =</span> <span class="kw"><a href="https://dplyr.tidyverse.org/reference/n.html">n</a></span>()) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(in_n_events)</code></pre></div>
 </div>
 </div>
   </div>

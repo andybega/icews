@@ -32,6 +32,7 @@ Suggests:
     ggplot2,
     knitr,
     rmarkdown,
+    stringr,
     testthat,
     tictoc,
     tidyr,

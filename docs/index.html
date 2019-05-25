@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">icews</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9001</span>
       </span>
     </div>
 
@@ -95,7 +95,7 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#icews" class="anchor"></a>icews</h1></div>
 
-<p>Get the ICEWS event data from the Dataverse repos at <a href="https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/28075">https://doi.org/10.7910/DVN/28075</a> (historic data) and <a href="https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/QI2T9A">https://doi.org/10.7910/DVN/QI2T9A</a> (daily updates from late 2018 on).</p>
+<p>Get the ICEWS event data from the Harvard Dataverse repos at <a href="https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/28075">https://doi.org/10.7910/DVN/28075</a> (historic data) and <a href="https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/QI2T9A">https://doi.org/10.7910/DVN/QI2T9A</a> (daily updates from late 2018 on).</p>
 <p>The icews package provides these major features:</p>
 <ul>
 <li>get the ICEWS event data without having to deal with Dataverse</li>
@@ -115,7 +115,7 @@ remotes<span class="op">::</span><span class="kw"><a href="https://www.rdocument
 <div id="usage" class="section level2">
 <h2 class="hasAnchor">
 <a href="#usage" class="anchor"></a>Usage</h2>
-<p><strong>tl;dr</strong>: get a SQLite database with the current events on DVN with this code; otherwise read below for more details.</p>
+<p><strong>tl;dr</strong>: get a SQLite database with the current events on Dataverse with this code; otherwise read below for more details.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"icews"</span>)
 <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"DBI"</span>)
 <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"dplyr"</span>)
@@ -176,13 +176,13 @@ events &lt;-<span class="st"> </span><span class="kw"><a href="reference/read_ic
 <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/options">options</a></span>(<span class="dt">icews.use_db     =</span> <span class="ot">TRUE</span>)
 <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/options">options</a></span>(<span class="dt">icews.keep_files =</span> <span class="ot">TRUE</span>)</code></pre></div>
 </div>
-<div id="use-a-sqlite-database-that-keeps-in-sync-with-dvn" class="section level3">
+<div id="use-a-sqlite-database-that-keeps-in-sync-with-dataverse" class="section level3">
 <h3 class="hasAnchor">
-<a href="#use-a-sqlite-database-that-keeps-in-sync-with-dvn" class="anchor"></a>Use a SQLite database that keeps in sync with DVN</h3>
-<p>To setup and populate a database with the current version on DVN, use this command:</p>
+<a href="#use-a-sqlite-database-that-keeps-in-sync-with-dataverse" class="anchor"></a>Use a SQLite database that keeps in sync with Dataverse</h3>
+<p>To setup and populate a database with the current version on Dataverse, use this command:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># assumes setup_icews with use_db = TRUE has already been called</span>
 <span class="kw"><a href="reference/update_icews.html">update_icews</a></span>(<span class="dt">dryrun =</span> <span class="ot">FALSE</span>)</code></pre></div>
-<p>This will download any data files needed from DVN, and create and populate a SQLite database with them. The events will be in a table called “events”. To connect, use <code><a href="reference/connect.html">connect()</a></code>; this returns a RSQLite database connection. From then on, it can be used like this:</p>
+<p>This will download any data files needed from Dataverse, and create and populate a SQLite database with them. The events will be in a table called “events”. To connect, use <code><a href="reference/connect.html">connect()</a></code>; this returns a RSQLite database connection. From then on, it can be used like this:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"DBI"</span>)
 <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"dplyr"</span>)
 

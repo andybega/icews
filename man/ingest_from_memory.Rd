@@ -7,7 +7,7 @@
 ingest_from_memory(file, db_path)
 }
 \arguments{
-\item{file}{The normalized filename, e.g. "events.1995.[...].tab"}
+\item{file}{The normalized filename, e.g. "events.1995.\link{...}.tab"}
 
 \item{db_path}{Path to SQLite database file}
 }

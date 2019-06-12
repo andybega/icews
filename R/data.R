@@ -35,9 +35,9 @@ get_doi <- function() {
 #' }
 #'
 #' @source
-#' \url{http://eventdata.parusanalytics.com/data.dir/cameo.html}
+#' <http://eventdata.parusanalytics.com/data.dir/cameo.html>
 #'
-#' \url{https://doi.org/10.7910/DVN/28075}
+#' <https://doi.org/10.7910/DVN/28075>
 #'
 "cameo_codes"
 
@@ -47,9 +47,9 @@ get_doi <- function() {
 #' List mapping CAMEO codes to Goldstein scores
 #'
 #' @source
-#' \url{http://eventdata.parusanalytics.com/data.dir/cameo.html}
+#' <http://eventdata.parusanalytics.com/data.dir/cameo.html>
 #'
-#' \url{https://doi.org/10.7910/DVN/28075}
+#' <https://doi.org/10.7910/DVN/28075>
 #'
 #' @examples
 #' data(goldstein_mappings)
@@ -62,7 +62,7 @@ get_doi <- function() {
 #' 3 June 2018.
 #'
 #' @source
-#' \url{https://doi.org/10.7910/DVN/28075}
+#' <https://doi.org/10.7910/DVN/28075>
 #'
 #' @examples
 #' data("icews_sample")

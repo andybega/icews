@@ -22,8 +22,8 @@
 #' @export
 #' @md
 download_docs <- function(docs_dir = find_docs(), quiet = TRUE) {
-  remote_state <- get_dvn_manifest()
-  remote_docs  <- remote_state$files[remote_state$files$category=="Documentation", ]
+  manifest <- get_dvn_manifest()
+  remote_docs  <- manifest$file_list[manifest$file_list$category=="Documentation", ]
   if (!quiet) {
     cat(sprintf("Downloading %s file(s) to '%s'\n", nrow(remote_docs), docs_dir))
   }

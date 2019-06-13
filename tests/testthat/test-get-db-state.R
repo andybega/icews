@@ -9,5 +9,5 @@ test_that("list_source_files works", {
 test_that("get_db_state works", {
   p <- setup_mock_db(populate = TRUE)
   expect_error(o <- get_db_state(p), NA)
-  expect_equal(o$db_file, "events.2018.sample.tab")
+  expect_equal(o$file_name, "events.2018.sample.tab")
 })

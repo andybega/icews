@@ -37,7 +37,7 @@ test_that("get_local_state works", {
 
   p <- setup_mock_raw(populate = TRUE)
   o <- get_local_state(p)
-  expect_equal(o$local_file_name, "events.2018.sample.tab")
+  expect_equal(o$file_name, "events.2018.sample.tab")
   unlink(file.path(p, "events.2018.sample.tab"))
 
 })

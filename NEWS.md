@@ -1,5 +1,7 @@
 # icews 0.2.0.9000
 
+- Fix an update error due to a duplicate filename ("20190309-icews-events.zip") on dataverse (#45). The non-unique dataverse file label is now converted to a unique local file name (see `normalize_label()`) by appending "part1", "part2", etc. as needed. This local file name is used to track state between the local downloaded files and/or database and dataverse. Download now occurs through the integer file ID instead of the file label. 
+
 # icews 0.2.0 (2018-02-12)
 
 Major rewrite of the download and synchronization code, with some **breaking changes**.

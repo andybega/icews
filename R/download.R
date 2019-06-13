@@ -5,9 +5,15 @@
 #'
 #' Download a single file from the ICEWS Dataverse repository and unzip if neccessary
 #'
-#' @param file Name of the file on DVN to download. If zipped.
+#' @param file Name (label) of the file on DVN to download. If zipped, it will
+#'   automatically be unzipped.
 #' @param to_dir Destination directory.
 #' @param repo Which repo is the file in? ("historic" or "daily")
+#' @param file_id Optionally, integer file ID. If this is specified, it will
+#'   preferentially be used over the file name to download the file. This is
+#'   needed for duplicate file names.
+#' @param new_name Optionally, a new file name for the file. Useful for
+#'   duplicate files.
 #'
 #' @details
 #' To get a list of files available for download, see [get_dvn_manifest].
@@ -19,15 +25,18 @@
 #' @importFrom utils unzip
 #' @export
 #' @md
+download_file <- function(file, to_dir, repo = "historic", file_id = NULL, new_name = NULL) {
 
-download_file <- function(file, to_dir, repo = "historic") {
+  if (length(file) > 1) stop("I'm not vectorized")
 
   # override default repo if certain filename is detected
   if (repo=="historic" & grepl("[0-9]{8}\\-icews\\-events\\.zip", file)) {
     repo = "daily"
   }
 
-  f <- get_file(file, get_doi()[[repo]])
+  file_ref <- if (!is.null(file_id)) file_id else file
+
+  f <- get_file(file_ref, get_doi()[[repo]])
 
   # Decide how to handle based on whether extraction is needed
   if (tools::file_ext(file)=="zip") {
@@ -39,6 +48,11 @@ download_file <- function(file, to_dir, repo = "historic") {
     con <- file.path(to_dir, fname)
     writeBin(as.vector(f), con)
   }
+
+  if (!is.null(new_name) & new_name != basename(con)) {
+    file.rename(con, file.path(to_dir, new_name))
+  }
+
   return(invisible(con))
 }
 
@@ -52,46 +66,6 @@ remove_file <- function(raw_file_path) {
   invisible(NULL)
 }
 
-#' Download ICEWS data files
-#'
-#' Download the ICEWS event data from Dataverse
-#'
-#' @param to_dir Path to directory where data files will be downloaded to.
-#' @param update Update files for which a newer version if available? This will
-#'   delete the old file version(s). If FALSE, it will download the new version
-#'   but leave the old version in place. There thus will be duplicate event sets.
-#' @param dryrun Conducts a dry run listing proposed changes, without actually
-#'   downloading or deleting anything.
-#'
-#' @export
-#' @import dataverse
-#' @import dplyr
-download_data <- function(to_dir = find_raw(), update = TRUE, dryrun = FALSE) {
-
-  plan <- plan_file_changes(to_dir)
-
-  if (!isTRUE(update)) {
-    state$action <- ifelse(plan$action=="remove", "none", plan$action)
-    state$action <- factor(plan$action, levels = c("none", "download", "remove"))
-  }
-
-  if (isTRUE(dryrun)) {
-    print(plan)
-    return(invisible(plan))
-  }
-
-  execute_plan(plan, raw_file_dir = to_dir, db_path = NULL)
-
-  cat("File download/sync done\n")
-  invisible(TRUE)
-}
-
-#' @rdname download_data
-#' @export
-download_icews <- function(to_dir = find_raw(), update = TRUE, dryrun = FALSE) {
-  .Deprecated("download_data")
-  download_data(to_dir, update, dryrun)
-}
 
 
 #' Purge file downloads

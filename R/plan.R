@@ -25,7 +25,7 @@ format.icews_plan <- function(x, ...) {
 
   nothing_to_do_msg <- "All files are current with the DVN versions, nothing to download\n"
 
-  local_files    <- length(unique(plan$file[plan$in_local]))
+  local_files    <- length(unique(plan$file_name[plan$in_local]))
   download_files <- sum(plan$where=="file system" & plan$action=="download")
   remove_files   <- sum(plan$where=="file system" & plan$action=="remove")
 
@@ -64,7 +64,7 @@ format.icews_plan <- function(x, ...) {
                         delete = "Delete records from",
                         ingest_from_file = "Ingest records from",
                         ingest_from_memory = "Ingest records from")
-        file   = ifelse(.data$action=="download", .data$dvn_label, .data$file)
+        file   = ifelse(.data$action=="download", .data$dvn_file_label, .data$file_name)
         data.frame(msg = sprintf("%-19s '%s'\n", action, file), stringsAsFactors = FALSE)
       })
     plan_msg <- c("\nPlan:\n", msgs$msg)
@@ -88,31 +88,55 @@ print.icews_plan <- function(x, ...) {
   cat(paste0(str, collapse = ""))
 }
 
+
+# Applied functions -------------------------------------------------------
+
+
+#' Identify dataset contained in file
+#'
+#' Identify which time period is nominally covered by a file. This is kept
+#' around from prior version of the package, in case it becomes useful again.
+#' E.g. to allow for time range specific downloading.
+#'
+#' @param x a normalized file name
+#'
+#' @keywords internal
+parse_dataset <- function(x) {
+  data_set <- rep(NA_character_, length(x))
+  is_data_mask <- is_data_file(x)
+  out <- gsub("(.[0-9]{14})|(events.)|(-icews-events)|(.tab)|(.sample)", "", x[is_data_mask])
+  data_set[is_data_mask] <- out
+  data_set
+}
+
+
 #' Plan file changes
 #'
 #' Plan file changes related to download/updating
 #'
 #' @param raw_file_dir Directory containing the raw event TSV files
 #' @keywords internal
-plan_file_changes <- function(raw_file_dir) {
+plan_file_changes <- function(raw_file_dir = find_raw()) {
 
   action <- NULL
 
-  dvn_state <- get_dvn_manifest()$data_files
-  colnames(dvn_state) <- paste0("dvn_", colnames(dvn_state))
-  local_state <- get_local_state(raw_file_dir)
+  dvn_state   <- get_dvn_state()
+  local_state <- get_local_state(raw_file_dir) %>%
+    # add a dummy indicator to ID which is local available
+    mutate(in_local = TRUE)
 
   file_state <- dplyr::full_join(dvn_state, local_state,
-                                 by = c("dvn_file" = "local_file")) %>%
-    dplyr::mutate(data_set = ifelse(is.na(dvn_data_set), local_data_set, dvn_data_set)) %>%
-    dplyr::rename(file = dvn_file) %>%
+                                 by = "file_name") %>%
     dplyr::mutate(action = NA_character_,
                   # Note where the action is to be performed
                   where  = "file system",
-                  on_dvn = !is.na(dvn_version),
-                  in_local = !is.na(local_version)) %>%
-    dplyr::select(file, action, where, data_set, on_dvn, in_local, dvn_label) %>%
-    dplyr::arrange(data_set, file)
+                  on_dvn = !is.na(dvn_file_id),
+                  in_local = ifelse(is.na(in_local), FALSE, in_local),
+                  data_set = parse_dataset(file_name)) %>%
+    dplyr::select(file_name, action, where, on_dvn, in_local,
+                  dvn_repo, dvn_file_label, dvn_file_id,
+                  data_set) %>%
+    dplyr::arrange(data_set, file_name)
 
   # Determine any actions that need to be performed
   full_plan <- file_state %>%
@@ -145,20 +169,22 @@ plan_file_changes <- function(raw_file_dir) {
 plan_database_sync <- function(db_path      = find_db(),
                                raw_file_dir = find_raw()) {
 
-  local_state <- get_local_state(raw_file_dir)
-  db_state    <- get_db_state(db_path)
+  local_state <- get_local_state(raw_file_dir) %>%
+    mutate(in_local = TRUE)
+  db_state    <- get_db_state(db_path) %>%
+    mutate(in_db = TRUE)
 
   full_plan <- dplyr::full_join(local_state, db_state,
-                                by = c("local_file" = "db_file")) %>%
-    dplyr::mutate(data_set = ifelse(is.na(local_data_set), db_data_set, local_data_set)) %>%
-    dplyr::rename(file = local_file) %>%
+                                by = "file_name") %>%
     dplyr::mutate(action = NA_character_,
                   # Note where the action is to be performed
                   where  = "in database",
-                  in_local = !is.na(local_version),
-                  in_db    = !is.na(db_version)) %>%
-    dplyr::select(file, action, where, data_set, in_local, in_db) %>%
-    dplyr::arrange(data_set, file)
+                  in_local = ifelse(is.na(in_local), FALSE, in_local),
+                  in_db    = ifelse(is.na(in_db), FALSE, in_db),
+                  data_set = parse_dataset(file_name)) %>%
+    dplyr::select(file_name, action, where, in_local, in_db,
+                  data_set) %>%
+    dplyr::arrange(data_set, file_name)
 
   # Determine DB actions that need to be performed;
   full_plan <- full_plan %>%
@@ -199,21 +225,23 @@ plan_database_changes <- function(db_path      = find_db(),
                                   keep_files   = getOption("icews.keep_files"),
                                   use_local    = TRUE) {
 
-  dvn_state <- get_dvn_manifest()$data_files
-  colnames(dvn_state) <- paste0("dvn_", colnames(dvn_state))
-  db_state  <- get_db_state(db_path)
+  dvn_state <- get_dvn_state() %>%
+    mutate(on_dvn = TRUE)
+  db_state  <- get_db_state(db_path) %>%
+    mutate(in_db = TRUE)
 
   file_state <- dplyr::full_join(dvn_state, db_state,
-                                 by = c("dvn_file" = "db_file")) %>%
-    dplyr::mutate(data_set = ifelse(is.na(dvn_data_set), db_data_set, dvn_data_set)) %>%
-    dplyr::rename(file = dvn_file) %>%
+                                 by = "file_name") %>%
     dplyr::mutate(action = NA_character_,
                   # Note where the action is to be performed
                   where  = "in database",
-                  on_dvn = !is.na(dvn_version),
-                  in_db = !is.na(db_version)) %>%
-    dplyr::select(file, action, where, data_set, on_dvn, in_db, dvn_label) %>%
-    dplyr::arrange(data_set, file)
+                  on_dvn = ifelse(is.na(on_dvn), FALSE, on_dvn),
+                  in_db  = ifelse(is.na(in_db), FALSE, in_db),
+                  data_set = parse_dataset(file_name)) %>%
+    dplyr::select(file_name, action, where, on_dvn, in_db,
+                  data_set,
+                  dvn_repo, dvn_file_label, dvn_file_id,) %>%
+    dplyr::arrange(data_set, file_name)
 
   if (isTRUE(use_local) | isTRUE(keep_files)) {
     local_plan <- plan_file_changes(raw_file_dir) %>%
@@ -221,11 +249,11 @@ plan_database_changes <- function(db_path      = find_db(),
       mutate(action = as.character(action))
     full_plan  <- dplyr::bind_rows(local_plan, file_state) %>%
       # fill in missing in_db, in_local values from row binding
-      dplyr::group_by(file) %>%
+      dplyr::group_by(file_name) %>%
       dplyr::mutate(in_db    = TRUE %in% in_db,
                     in_local = TRUE %in% in_local) %>%
       ungroup() %>%
-      select(file, action, where, data_set, on_dvn, in_db, everything()) %>%
+      select(file_name, action, where, data_set, on_dvn, in_db, everything()) %>%
       arrange(data_set, action)
   } else {
     # use a dummy plan with no planned actions as stand in when not using
@@ -291,32 +319,33 @@ execute_plan <- function(plan, raw_file_dir, db_path) {
     task <- need_action[i, ]
 
     if (task$action=="download") {
-      cat(sprintf("Downloading '%s'\n", task$dvn_label))
-      f <- download_file(task$dvn_label, raw_file_dir)
+      cat(sprintf("Downloading '%s'\n", task$dvn_file_label))
+      f <- download_file(task$dvn_file_label, raw_file_dir, task$dvn_repo,
+                         task$dvn_file_id, task$file_name)
       next
     }
 
     if (task$action=="remove") {
-      cat(sprintf("Removing '%s'\n", task$file))
-      remove_file(file.path(raw_file_dir, task$file))
+      cat(sprintf("Removing '%s'\n", task$file_name))
+      remove_file(file.path(raw_file_dir, task$file_name))
       next
     }
 
     if (task$action=="delete") {
-      cat(sprintf("Deleting DB records from '%s'\n", task$file))
-      delete_events(task$file, db_path)
+      cat(sprintf("Deleting DB records from '%s'\n", task$file_name))
+      delete_events(task$file_name, db_path)
       next
     }
 
     if (task$action=="ingest_from_file") {
-      cat(sprintf("Ingesting records from '%s'\n", task$file))
-      ingest_from_file(file.path(raw_file_dir, task$file), db_path)
+      cat(sprintf("Ingesting records from '%s'\n", task$file_name))
+      ingest_from_file(file.path(raw_file_dir, task$file_name), db_path)
       next
     }
 
     if (task$action=="ingest_from_memory") {
-      cat(sprintf("Ingesting records from '%s'\n", task$file))
-      ingest_from_memory(task$file, db_path)
+      cat(sprintf("Ingesting records from '%s'\n", task$file_name))
+      ingest_from_memory(task$file_name, db_path)
       next
     }
 

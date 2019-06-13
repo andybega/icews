@@ -236,7 +236,7 @@ plan_database_changes <- function(db_path      = find_db(),
                   where  = "in database",
                   on_dvn = !is.na(dvn_version),
                   in_db = !is.na(db_version)) %>%
-    dplyr::select(file, action, where, data_set, on_dvn, in_db, dvn_label) %>%
+    dplyr::select(file, action, where, data_set, on_dvn, in_db, dvn_file_label) %>%
     dplyr::arrange(data_set, file)
 
   if (isTRUE(use_local) | isTRUE(keep_files)) {
@@ -315,32 +315,33 @@ execute_plan <- function(plan, raw_file_dir, db_path) {
     task <- need_action[i, ]
 
     if (task$action=="download") {
-      cat(sprintf("Downloading '%s'\n", task$dvn_label))
-      f <- download_file(task$dvn_label, raw_file_dir)
+      cat(sprintf("Downloading '%s'\n", task$dvn_file_label))
+      f <- download_file(task$dvn_file_label, raw_file_dir, task$dvn_repo,
+                         task$dvn_file_id, task$file_name)
       next
     }
 
     if (task$action=="remove") {
-      cat(sprintf("Removing '%s'\n", task$file))
-      remove_file(file.path(raw_file_dir, task$file))
+      cat(sprintf("Removing '%s'\n", task$file_name))
+      remove_file(file.path(raw_file_dir, task$file_name))
       next
     }
 
     if (task$action=="delete") {
-      cat(sprintf("Deleting DB records from '%s'\n", task$file))
-      delete_events(task$file, db_path)
+      cat(sprintf("Deleting DB records from '%s'\n", task$file_name))
+      delete_events(task$file_name, db_path)
       next
     }
 
     if (task$action=="ingest_from_file") {
-      cat(sprintf("Ingesting records from '%s'\n", task$file))
-      ingest_from_file(file.path(raw_file_dir, task$file), db_path)
+      cat(sprintf("Ingesting records from '%s'\n", task$file_name))
+      ingest_from_file(file.path(raw_file_dir, task$file_name), db_path)
       next
     }
 
     if (task$action=="ingest_from_memory") {
-      cat(sprintf("Ingesting records from '%s'\n", task$file))
-      ingest_from_memory(task$file, db_path)
+      cat(sprintf("Ingesting records from '%s'\n", task$file_name))
+      ingest_from_memory(task$file_name, db_path)
       next
     }
 

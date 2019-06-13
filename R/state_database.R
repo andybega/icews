@@ -5,9 +5,10 @@
 #' @export
 get_db_state <- function(db_path = find_db()) {
   db_files <- list_source_files(db_path)
-  state <- parse_label(db_files)
-  state$label <- state$is_data <- NULL
-  colnames(state) <- paste0("db_", colnames(state))
+
+  state <- tibble(
+    file_name = db_files
+  )
   state
 }
 

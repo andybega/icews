@@ -169,20 +169,22 @@ plan_file_changes <- function(raw_file_dir = find_raw()) {
 plan_database_sync <- function(db_path      = find_db(),
                                raw_file_dir = find_raw()) {
 
-  local_state <- get_local_state(raw_file_dir)
-  db_state    <- get_db_state(db_path)
+  local_state <- get_local_state(raw_file_dir) %>%
+    mutate(in_local = TRUE)
+  db_state    <- get_db_state(db_path) %>%
+    mutate(in_db = TRUE)
 
   full_plan <- dplyr::full_join(local_state, db_state,
-                                by = c("local_file" = "db_file")) %>%
-    dplyr::mutate(data_set = ifelse(is.na(local_data_set), db_data_set, local_data_set)) %>%
-    dplyr::rename(file = local_file) %>%
+                                by = "file_name") %>%
     dplyr::mutate(action = NA_character_,
                   # Note where the action is to be performed
                   where  = "in database",
-                  in_local = !is.na(local_version),
-                  in_db    = !is.na(db_version)) %>%
-    dplyr::select(file, action, where, data_set, in_local, in_db) %>%
-    dplyr::arrange(data_set, file)
+                  in_local = ifelse(is.na(in_local), FALSE, in_local),
+                  in_db    = ifelse(is.na(in_db), FALSE, in_db),
+                  data_set = parse_dataset(file_name)) %>%
+    dplyr::select(file_name, action, where, in_local, in_db,
+                  data_set) %>%
+    dplyr::arrange(data_set, file_name)
 
   # Determine DB actions that need to be performed;
   full_plan <- full_plan %>%
@@ -223,21 +225,23 @@ plan_database_changes <- function(db_path      = find_db(),
                                   keep_files   = getOption("icews.keep_files"),
                                   use_local    = TRUE) {
 
-  dvn_state <- get_dvn_manifest()$data_files
-  colnames(dvn_state) <- paste0("dvn_", colnames(dvn_state))
-  db_state  <- get_db_state(db_path)
+  dvn_state <- get_dvn_state() %>%
+    mutate(on_dvn = TRUE)
+  db_state  <- get_db_state(db_path) %>%
+    mutate(in_db = TRUE)
 
   file_state <- dplyr::full_join(dvn_state, db_state,
-                                 by = c("dvn_file" = "db_file")) %>%
-    dplyr::mutate(data_set = ifelse(is.na(dvn_data_set), db_data_set, dvn_data_set)) %>%
-    dplyr::rename(file = dvn_file) %>%
+                                 by = "file_name") %>%
     dplyr::mutate(action = NA_character_,
                   # Note where the action is to be performed
                   where  = "in database",
-                  on_dvn = !is.na(dvn_version),
-                  in_db = !is.na(db_version)) %>%
-    dplyr::select(file, action, where, data_set, on_dvn, in_db, dvn_file_label) %>%
-    dplyr::arrange(data_set, file)
+                  on_dvn = ifelse(is.na(on_dvn), FALSE, on_dvn),
+                  in_db  = ifelse(is.na(in_db), FALSE, in_db),
+                  data_set = parse_dataset(file_name)) %>%
+    dplyr::select(file_name, action, where, on_dvn, in_db,
+                  data_set,
+                  dvn_repo, dvn_file_label, dvn_file_id,) %>%
+    dplyr::arrange(data_set, file_name)
 
   if (isTRUE(use_local) | isTRUE(keep_files)) {
     local_plan <- plan_file_changes(raw_file_dir) %>%
@@ -245,11 +249,11 @@ plan_database_changes <- function(db_path      = find_db(),
       mutate(action = as.character(action))
     full_plan  <- dplyr::bind_rows(local_plan, file_state) %>%
       # fill in missing in_db, in_local values from row binding
-      dplyr::group_by(file) %>%
+      dplyr::group_by(file_name) %>%
       dplyr::mutate(in_db    = TRUE %in% in_db,
                     in_local = TRUE %in% in_local) %>%
       ungroup() %>%
-      select(file, action, where, data_set, on_dvn, in_db, everything()) %>%
+      select(file_name, action, where, data_set, on_dvn, in_db, everything()) %>%
       arrange(data_set, action)
   } else {
     # use a dummy plan with no planned actions as stand in when not using

@@ -2,7 +2,7 @@
 
 dontrun <- function() {
 
-  foo <- get_dvn_manifest()
-  saveRDS(foo, "inst/testdata/dvn_manifest.rds")
+  manifest <- get_dvn_manifest()
+  saveRDS(manifest, "inst/testdata/dvn_manifest.rds")
 
 }

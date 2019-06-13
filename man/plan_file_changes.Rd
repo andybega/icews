@@ -4,7 +4,7 @@
 \alias{plan_file_changes}
 \title{Plan file changes}
 \usage{
-plan_file_changes(raw_file_dir)
+plan_file_changes(raw_file_dir = find_raw())
 }
 \arguments{
 \item{raw_file_dir}{Directory containing the raw event TSV files}

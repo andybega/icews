@@ -25,7 +25,7 @@ format.icews_plan <- function(x, ...) {
 
   nothing_to_do_msg <- "All files are current with the DVN versions, nothing to download\n"
 
-  local_files    <- length(unique(plan$file[plan$in_local]))
+  local_files    <- length(unique(plan$file_name[plan$in_local]))
   download_files <- sum(plan$where=="file system" & plan$action=="download")
   remove_files   <- sum(plan$where=="file system" & plan$action=="remove")
 
@@ -64,7 +64,7 @@ format.icews_plan <- function(x, ...) {
                         delete = "Delete records from",
                         ingest_from_file = "Ingest records from",
                         ingest_from_memory = "Ingest records from")
-        file   = ifelse(.data$action=="download", .data$dvn_label, .data$file)
+        file   = ifelse(.data$action=="download", .data$dvn_file_label, .data$file_name)
         data.frame(msg = sprintf("%-19s '%s'\n", action, file), stringsAsFactors = FALSE)
       })
     plan_msg <- c("\nPlan:\n", msgs$msg)
@@ -88,31 +88,55 @@ print.icews_plan <- function(x, ...) {
   cat(paste0(str, collapse = ""))
 }
 
+
+# Applied functions -------------------------------------------------------
+
+
+#' Identify dataset contained in file
+#'
+#' Identify which time period is nominally covered by a file. This is kept
+#' around from prior version of the package, in case it becomes useful again.
+#' E.g. to allow for time range specific downloading.
+#'
+#' @param x a normalized file name
+#'
+#' @keywords internal
+parse_dataset <- function(x) {
+  data_set <- rep(NA_character_, length(x))
+  is_data_mask <- is_data_file(x)
+  out <- gsub("(.[0-9]{14})|(events.)|(-icews-events)|(.tab)|(.sample)", "", x[is_data_mask])
+  data_set[is_data_mask] <- out
+  data_set
+}
+
+
 #' Plan file changes
 #'
 #' Plan file changes related to download/updating
 #'
 #' @param raw_file_dir Directory containing the raw event TSV files
 #' @keywords internal
-plan_file_changes <- function(raw_file_dir) {
+plan_file_changes <- function(raw_file_dir = find_raw()) {
 
   action <- NULL
 
-  dvn_state <- get_dvn_manifest()$data_files
-  colnames(dvn_state) <- paste0("dvn_", colnames(dvn_state))
-  local_state <- get_local_state(raw_file_dir)
+  dvn_state   <- get_dvn_state()
+  local_state <- get_local_state(raw_file_dir) %>%
+    # add a dummy indicator to ID which is local available
+    mutate(in_local = TRUE)
 
   file_state <- dplyr::full_join(dvn_state, local_state,
-                                 by = c("dvn_file" = "local_file")) %>%
-    dplyr::mutate(data_set = ifelse(is.na(dvn_data_set), local_data_set, dvn_data_set)) %>%
-    dplyr::rename(file = dvn_file) %>%
+                                 by = "file_name") %>%
     dplyr::mutate(action = NA_character_,
                   # Note where the action is to be performed
                   where  = "file system",
-                  on_dvn = !is.na(dvn_version),
-                  in_local = !is.na(local_version)) %>%
-    dplyr::select(file, action, where, data_set, on_dvn, in_local, dvn_label) %>%
-    dplyr::arrange(data_set, file)
+                  on_dvn = !is.na(dvn_file_id),
+                  in_local = ifelse(is.na(in_local), FALSE, in_local),
+                  data_set = parse_dataset(file_name)) %>%
+    dplyr::select(file_name, action, where, on_dvn, in_local,
+                  dvn_repo, dvn_file_label, dvn_file_id,
+                  data_set) %>%
+    dplyr::arrange(data_set, file_name)
 
   # Determine any actions that need to be performed
   full_plan <- file_state %>%

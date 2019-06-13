@@ -7,7 +7,7 @@ get_local_state <- function(raw_file_dir = find_raw()) {
   files <- basename(list_local_files(raw_file_dir))
 
   state <- tibble(
-    local_file_name = files
+    file_name = files
   )
   state
 }

@@ -2,45 +2,10 @@
 #   Functions related to determining the local vs DVN state
 #
 
-#' Parse a data file label
-#'
-#' Parse the Dataverse file label to identify whether it contains data and if so which
-#' event set and file version.
-#'
-#' @param label character string
-#'
-#' @return A data frame with components:
-#' - label
-#' - file
-#' - is_date: TRUE or FALSE
-#' - dataset
-#' - version
-#'
-#' @md
-#' @import tibble
-#' @keywords internal
-parse_label <- function(label) {
-  out <- tibble::tibble(
-    label   = as.character(label),
-    file    = ifelse(substring(label, nchar(label) - 7)==".tab.zip",
-                     gsub(".zip", "", label),
-                     gsub(".zip", ".tab", label)),
-    is_data = grepl("(\\.tab)|(icews-events\\.zip)", label),
-    data_set = NA,
-    version  = NA
-  )
-  # if label is empty, file turns to logical, which causes test errors when
-  # trying to merge character to logical down the line
-  out$file <- as.character(out$file)
-  out$data_set[out$is_data] <- gsub("(.[0-9]{14})|(.tab)|(.sample)", "", out$file[out$is_data])
-  out$version[out$is_data]  <- gsub("(events.[0-9]{4}.)|(.tab)", "", out$file[out$is_data])
-  out
-}
-
 #' Get DVN/local file/database state
 #'
-#' Determine what data files, event sets, and version are currently on dataverse,
-#' in the local files, or in the local database.
+#' Determine what data files are currently on dataverse, in the local files,
+#' or in the local database.
 #'
 #' @rdname state
 #'
@@ -60,24 +25,21 @@ parse_label <- function(label) {
 #'   local even sets have been superseded by a new version in dataverse, by
 #'   using
 #'
-#' @return For `get_local_state` and `get_db_state`, a tibble with columns:
-#'   - db/local_file: the full source data file name, e.g. "events.1995.20150313082510.tab".
-#'   - db/local_data_set: the event set contained in the file, e.g. "events.1995".
-#'   - db/local_version: the version of the file/event set, e.g. "20150313082510"
+#' @return
+#'   For `get_dvn_manifest`, a tibble with the following columns:
+#'   - dvn_repo: "historic" or "daily", see [get_doi()]
+#'   - dvn_file_label: the file label on dataverse, possibly non-unique
+#'   - dvn_file_id: the integer file ID on dataverse
+#'   - file_name: the normalized, unique file name, see [normalize_label()]
 #'
-#'   For `get_dvn_manifest`, a list of length 3, containing:
-#'   - data_files: a tibble similar to those returned by `get_local_state` and
-#'     `get_db_state`, with an additional column for the file label on dataverse
-#'     since some files are zipped, i.e. ending with ".tab.zip" instead of ".tab".
-#'   - files: a summary list of all files on DVN, consisting of the data files
-#'     but also documentation and metadata files.
-#'   - dataverse_dataset: an object of class "dataverse_dataset", returned by
-#'     [dataverse::get_dataset()].
+#'  For `get_local_state` and `get_db_state`, a tibble with columns:
+#'   - file_name: the full source data file name, e.g.
+#'     "events.1995.20150313082510.tab"; see [normalize_label()]
 #'
 #' @examples
 #' \dontrun{
 #' # Remote (DVN) state
-#' get_dvn_manifest()
+#' get_dvn_state()
 #' # Local file state
 #' get_local_state()
 #' # Database state
@@ -88,6 +50,41 @@ parse_label <- function(label) {
 #' @export
 #' @import dataverse
 #' @import tibble
+get_dvn_state <- function(icews_doi = get_doi(), server = Sys.getenv("DATAVERSE_SERVER")) {
+  dvn_manifest <- get_dvn_manifest()
+
+  # we only need this for data files
+  file_list    <- dvn_manifest$file_list %>%
+    dplyr::filter(category=="Data") %>%
+    dplyr::arrange(id)
+  dict <- tibble(
+    dvn_repo = file_list$repo,
+    dvn_file_label = file_list$label,
+    dvn_file_id    = file_list$id
+  )
+  dict$file_name <- normalize_label(dict$dvn_file_label)
+
+  dict
+}
+
+
+#' List dataverse files
+#'
+#' Get a listing of files on dataverse
+#'
+#' @param icews_doi DOI of the main ICEWS repo on Dataverse, see [get_doi()]
+#' @param server For unit tests only; default is set to [dataverse::get_dataset()] default.
+#'
+#' @return A list of length 2, containing:
+#'
+#'   - file_list: a summary list of all files on DVN, consisting of the data files
+#'     but also documentation and metadata files.
+#'   - dataverse_dataset: a list tibble with two columns:
+#'       + `repo`: "daily" or "historic"`
+#'       + `content`: objects of class "dataverse_dataset", returned by
+#'         [dataverse::get_dataset()].
+#'
+#' @export
 get_dvn_manifest <- function(icews_doi = get_doi(), server = Sys.getenv("DATAVERSE_SERVER")) {
   dvn_files  <- tryCatch(
     tibble(repo = c("historic", "daily"),
@@ -103,12 +100,14 @@ get_dvn_manifest <- function(icews_doi = get_doi(), server = Sys.getenv("DATAVER
     tibble::tibble(
       repo = "historic",
       label = dvn_files$content[[1]]$files$label,
+      id = dvn_files$content[[1]]$files$id,
       category = unlist(dvn_files$content[[1]]$files$categories),
       description = dvn_files$content[[1]]$files$description
     ),
     tibble::tibble(
       repo = "daily",
       label = dvn_files$content[[2]]$files$label,
+      id = dvn_files$content[[2]]$files$id,
       category = "Data",
       description = dvn_files$content[[2]]$files$description
     )
@@ -117,22 +116,38 @@ get_dvn_manifest <- function(icews_doi = get_doi(), server = Sys.getenv("DATAVER
   # filter out known corrupt file
   file_list <- file_list[!file_list$label=="20181006-icews-events.zip", ]
 
-  data_file_list <- parse_label(file_list$label)
-  data_file_list <- subset(data_file_list, is_data)
-  data_file_list$is_data <- NULL
-
   list(
-    files             = file_list,
-    data_files        = data_file_list,
-    dataverse_dataset = dvn_files
+    file_list          = file_list,
+    dataverse_datasets = dvn_files
   )
 }
 
 
+#' Normalize a data file label
+#'
+#' Normalize the dataverse file label, i.e. substitute ".tab" for zipped files
+#' and alter duplicate file names
+#'
+#' @param x character string, DVN file label
+#'
+#' @return A character vector with normalized file names.
+#'
+#' @import tibble
+#' @keywords internal
+normalize_label <- function(x) {
 
+  x <- as.character(x)
+  x <- gsub(".tab.zip", ".tab", x)
+  x <- gsub(".zip", ".tab", x)
 
+  # fix known duplicate file label (fix manually because i want future
+  # occurrences of duplicates to trip errors)
+  idx <- x=="20190309-icews-events.tab"
+  mod <- x[idx]
+  mod <- gsub(".tab", "", mod)
+  mod <- paste0(mod, "-part", 1:length(mod), ".tab")
+  x[idx] <- mod
 
-
-
-
+  x
+}
 

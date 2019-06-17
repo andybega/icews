@@ -82,7 +82,7 @@ dr_icews <- function(db_path = NULL, raw_file_dir = NULL) {
       }
       if (nrow(local_state) > 0) {
         db_source_files <- list_source_files(db_path)
-        file_diffs <- setdiff(db_source_files, local_state$local_file)
+        file_diffs <- setdiff(db_source_files, local_state$file_name)
         if (length(file_diffs) > 0) {
           cat("Local files and database source files don't match, consider running\n`update()` or `sync_db_with_files()`\n")
         }

@@ -4,10 +4,10 @@
 \alias{ingest_from_file}
 \title{Ingest a raw events file}
 \usage{
-ingest_from_file(raw_file_path = find_raw(), db_path = find_db())
+ingest_from_file(raw_file_path = NULL, db_path = find_db())
 }
 \arguments{
-\item{raw_file_path}{Directory containing the raw event TSV files.}
+\item{raw_file_path}{Path to a TSV file with events.}
 
 \item{db_path}{Path to SQLite database}
 }

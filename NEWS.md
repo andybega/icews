@@ -1,6 +1,10 @@
 # icews 0.2.0.9000
 
-- Fix an update error due to a duplicate filename ("20190309-icews-events.zip") on dataverse (#45). The non-unique dataverse file label is now converted to a unique local file name (see `normalize_label()`) by appending "part1", "part2", etc. as needed. This local file name is used to track state between the local downloaded files and/or database and dataverse. Download now occurs through the integer file ID instead of the file label. 
+Addresses various relatively minor issues that are still related to the big issue with new non-standard file names in the daily DVN repo. 
+
+- Fix an update error due to a duplicate filename ("20190309-icews-events.zip") on dataverse (#45). The non-unique dataverse file label is now converted to a unique local file name (see `normalize_label()`) by appending "part1", "part2", etc. as needed. This local file name is used to track state between the local downloaded files and/or database and dataverse. Download now occurs through the integer file ID instead of the file label.
+- Fix ingest file to DB problem with duplicate events (#46). A regex in `write_data_to_db` did not recognize a data file ending with "-1.tab" as a daily data file, and thus skipped the duplicate events check that is done for daily data files only.
+- Fix missing source files in DB state (#47). Source files that all duplicate events, i.e. no events that will end up in the "events" table, are saved in "null_source_files". This was not being used to update the main "source_files" table on which the state is based on. 
 
 # icews 0.2.0 (2018-02-12)
 

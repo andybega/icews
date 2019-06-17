@@ -290,8 +290,6 @@ update_stats <- function(db_path = find_db()) {
   DBI::dbClearResult(rs)
   rs <- DBI::dbSendQuery(con, "INSERT INTO source_files (name) SELECT DISTINCT(source_file) AS name FROM events;")
   DBI::dbClearResult(rs)
-  rs <- DBI::dbSendQuery(con, "INSERT INTO source_files (name) SELECT DISTINCT(name) AS name FROM null_source_files;")
-  DBI::dbClearResult(rs)
 
   # Update stats table
   rs <- DBI::dbSendQuery(con, "UPDATE stats SET value = ( SELECT count(*) FROM events ) WHERE name=='events_n';")

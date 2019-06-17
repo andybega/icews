@@ -84,7 +84,7 @@ write_data_to_db <- function(events, file, db_path = find_db()) {
   # In case there are events in the to-be-added set with a date before the
   # last event date in DB, explicitly check all event IDs to eliminate
   # duplicates
-  if (grepl("[0-9]{8}\\-icews\\-events.tab", file)) {
+  if (isTRUE(is_daily_file(file))) {
     max_date_in_db <- query_icews(
       "select max(event_date) from events;",
       db_path = get("db_path", envir = parent.frame()))[[1]]

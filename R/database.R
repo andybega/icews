@@ -120,13 +120,13 @@ write_data_to_db <- function(events, file, db_path = find_db()) {
 #'
 #' Ingest a raw data file into the database
 #'
-#' @param raw_file_path Directory containing the raw event TSV files.
+#' @param raw_file_path Path to a TSV file with events.
 #' @param db_path Path to SQLite database
 #'
 #' @importFrom DBI dbDisconnect
 #'
 #' @keywords internal
-ingest_from_file <- function(raw_file_path = find_raw(), db_path = find_db()) {
+ingest_from_file <- function(raw_file_path = NULL, db_path = find_db()) {
   events <- read_events_tsv(raw_file_path, fix_names = TRUE)
   write_data_to_db(events, basename(raw_file_path), db_path)
   invisible(TRUE)
@@ -289,6 +289,8 @@ update_stats <- function(db_path = find_db()) {
   rs <- DBI::dbSendQuery(con, "DELETE FROM source_files;")
   DBI::dbClearResult(rs)
   rs <- DBI::dbSendQuery(con, "INSERT INTO source_files (name) SELECT DISTINCT(source_file) AS name FROM events;")
+  DBI::dbClearResult(rs)
+  rs <- DBI::dbSendQuery(con, "INSERT INTO source_files (name) SELECT DISTINCT(name) AS name FROM null_source_files;")
   DBI::dbClearResult(rs)
 
   # Update stats table

@@ -24,6 +24,6 @@ get_db_state <- function(db_path = find_db()) {
 list_source_files <- function(db_path = find_db()) {
   con <- connect(db_path)
   on.exit(DBI::dbDisconnect(con))
-  source_files <- DBI::dbGetQuery(con, "SELECT name FROM source_files;")
+  source_files <- DBI::dbGetQuery(con, "SELECT name FROM source_files ORDER BY name;")
   source_files$name
 }

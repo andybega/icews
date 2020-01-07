@@ -36,7 +36,7 @@ download_file <- function(file, to_dir, repo = "historic", file_id = NULL, new_n
 
   file_ref <- if (!is.null(file_id)) file_id else file
 
-  f <- get_file(file_ref, get_doi()[[repo]])
+  f <- dataverse::get_file(file = file_ref, dataset = get_doi()[[repo]])
 
   # Decide how to handle based on whether extraction is needed
   if (tools::file_ext(file)=="zip") {

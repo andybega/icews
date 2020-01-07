@@ -1,21 +1,39 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
 icews
 =====
 
-[![CRAN status](https://www.r-pkg.org/badges/version/icews)](https://cran.r-project.org/package=icews) [![Travis build status](https://travis-ci.org/andybega/icews.svg?branch=master)](https://travis-ci.org/andybega/icews) [![Coverage status](https://codecov.io/gh/andybega/icews/branch/master/graph/badge.svg)](https://codecov.io/github/andybega/icews?branch=master)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/icews)](https://cran.r-project.org/package=icews)
+[![Travis build
+status](https://travis-ci.org/andybega/icews.svg?branch=master)](https://travis-ci.org/andybega/icews)
+[![Coverage
+status](https://codecov.io/gh/andybega/icews/branch/master/graph/badge.svg)](https://codecov.io/github/andybega/icews?branch=master)
 
-Get the ICEWS event data from the Harvard Dataverse repos at [https://doi.org/10.7910/DVN/28075](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/28075) (historic data) and [https://doi.org/10.7910/DVN/QI2T9A](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/QI2T9A) (daily updates from late 2018 on).
+Get the ICEWS event data from the Harvard Dataverse repos at
+[https://doi.org/10.7910/DVN/28075](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/28075)
+(historic data) and
+[https://doi.org/10.7910/DVN/QI2T9A](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/QI2T9A)
+(daily updates from late 2018 on).
 
 The icews package provides these major features:
 
 -   get the ICEWS event data without having to deal with Dataverse
--   use raw data files (tab-separated variables, .tsv) or a database (SQLite3) or both as the storage backend
--   set options so that in future R sessions icews knows where your data lives
--   icews keeps the local data in sync with the latest versions on Dataverse
+-   use raw data files (tab-separated variables, .tsv) or a database
+    (SQLite3) or both as the storage backend
+-   set options so that in future R sessions icews knows where your data
+    lives
+-   icews keeps the local data in sync with the latest versions on
+    Dataverse
 
 *Note about stability:*
 
-*This package is young. The core functionality of the package involves downloading and keeping track of potentially 10+GB of files and data. I have not found a good way to test that thoroughly. There are probably bugs and errors that pop up on a fresh run without any downloaded data already in place. Please file bug reports or email me (<adbeger@gmail.com>)!*
+*This package is young. The core functionality of the package involves
+downloading and keeping track of potentially 10+GB of files and data. I
+have not found a good way to test that thoroughly. There are probably
+bugs and errors that pop up on a fresh run without any downloaded data
+already in place. Please file bug reports or email me
+(<a href="mailto:adbeger@gmail.com" class="email">adbeger@gmail.com</a>)!*
 
 Installation
 ------------
@@ -27,10 +45,16 @@ library("remotes")
 remotes::install_github("andybega/icews")
 ```
 
+The **icews** package relies on the R [**dataverse**
+client](https://github.com/IQSS/dataverse-client-r). Note that this
+package requires a dataverse API token to correctly work. See the
+package README.
+
 Usage
 -----
 
-**tl;dr**: get a SQLite database with the current events on Dataverse with this code; otherwise read below for more details.
+**tl;dr**: get a SQLite database with the current events on Dataverse
+with this code; otherwise read below for more details.
 
 ``` r
 library("icews")
@@ -63,16 +87,24 @@ events <- read_icews()
 
 ### Files only
 
-In the most simple use case, you can use the package to download the ICEWS event data, which comes in several tab-serparated value (TSV) files, without having to deal with Dataverse.
+In the most simple use case, you can use the package to download the
+ICEWS event data, which comes in several tab-serparated value (TSV)
+files, without having to deal with Dataverse.
 
 ``` r
 dir.create("~/Downloads/icews")
 download_data("~/Downloads/icews")
 ```
 
-This will conventiently also re-use and update any files already in the same directory. Zipped files will be unzipped. E.g. the monthly data updates currently come in a file with the pattern "events.2018.yyyymmddhhmmss.tab", where the "yyyymmddhhmmss" part changes. The downloader can identify this and will replace the old with the new file.
+This will conventiently also re-use and update any files already in the
+same directory. Zipped files will be unzipped. E.g. the monthly data
+updates currently come in a file with the pattern
+“events.2018.yyyymmddhhmmss.tab”, where the “yyyymmddhhmmss” part
+changes. The downloader can identify this and will replace the old with
+the new file.
 
-Just in case, you can do a dry run that will not actually make any changes:
+Just in case, you can do a dry run that will not actually make any
+changes:
 
 ``` r
 download_data("~/Downloads/icews", dryrun = TRUE)
@@ -89,24 +121,33 @@ Download 'events.1996.20150313082528.tab.zip'
 Remove   'events.1996.20140313082528.tab'
 ```
 
-The events come in (zipped) tab-seperated files. To load all of these into memory in a big combined data frame with about 16 million rows (~2.5Gb):
+The events come in (zipped) tab-seperated files. To load all of these
+into memory in a big combined data frame with about 16 million rows
+(\~2.5Gb):
 
 ``` r
 events <- read_icews("~/Downloads/icews")
 ```
 
-Beyond this basic usage, the goal is to abstract as many little pains away as possible. To that end:
+Beyond this basic usage, the goal is to abstract as many little pains
+away as possible. To that end:
 
 ### Persist the data directory location
 
-The package can keep track of the data location via variables stored in the package options. The easiest way is to add these to an ".Rprofile" file so that they are available each time R starts up.
+The package can keep track of the data location via variables stored in
+the package options. The easiest way is to add these to an “.Rprofile”
+file so that they are available each time R starts up.
 
 ``` r
 setup_icews(data_dir = "/where/should/data/be", use_db = TRUE, 
             keep_files = TRUE, r_profile = TRUE)
 ```
 
-This will open the ".Rprofile" file and tell you what to add to it (requires [usethis](https://cran.r-project.org/package=usethis) to be installed). From now on the package knows where your data lives, and most of the functions can be called without specifying any directory or path arguments.
+This will open the “.Rprofile” file and tell you what to add to it
+(requires [usethis](https://cran.r-project.org/package=usethis) to be
+installed). From now on the package knows where your data lives, and
+most of the functions can be called without specifying any directory or
+path arguments.
 
 This sets three variables:
 
@@ -119,14 +160,18 @@ options(icews.keep_files = TRUE)
 
 ### Use a SQLite database that keeps in sync with Dataverse
 
-To setup and populate a database with the current version on Dataverse, use this command:
+To setup and populate a database with the current version on Dataverse,
+use this command:
 
 ``` r
 # assumes setup_icews with use_db = TRUE has already been called
 update_icews(dryrun = FALSE)
 ```
 
-This will download any data files needed from Dataverse, and create and populate a SQLite database with them. The events will be in a table called "events". To connect, use `connect()`; this returns a RSQLite database connection. From then on, it can be used like this:
+This will download any data files needed from Dataverse, and create and
+populate a SQLite database with them. The events will be in a table
+called “events”. To connect, use `connect()`; this returns a RSQLite
+database connection. From then on, it can be used like this:
 
 ``` r
 library("DBI")
@@ -147,7 +192,8 @@ DBI::dbDisconnect(con)
 
 ### Bonus: CAMEO codes
 
-Also included is a dictionary of the CAMEO code for event types. This includes quad and penta category mappings as well.
+Also included is a dictionary of the CAMEO code for event types. This
+includes quad and penta category mappings as well.
 
 ``` r
 data("cameo_codes")

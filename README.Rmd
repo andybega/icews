@@ -42,6 +42,7 @@ library("remotes")
 remotes::install_github("andybega/icews")
 ```
 
+The **icews** package relies on the R [**dataverse** client](https://github.com/IQSS/dataverse-client-r). Note that this package requires a dataverse API token to correctly work. See the package README. 
 
 ## Usage
 

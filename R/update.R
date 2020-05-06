@@ -92,5 +92,5 @@ update_icews <- function(dryrun = TRUE,
   execute_plan(plan, raw_file_dir = raw_file_dir, db_path = db_path)
 
   cat("File and/or database update done\n")
-  invisible(TRUE)
+  invisible(plan)
 }

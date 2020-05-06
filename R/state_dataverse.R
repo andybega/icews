@@ -118,8 +118,9 @@ get_dvn_manifest <- function(icews_doi = get_doi(), server = Sys.getenv("DATAVER
       repo = "historic",
       label = dvn_files$content[[1]]$files$label,
       id = dvn_files$content[[1]]$files$id,
-      category = unlist(fix_null_content(dvn_files$content[[1]]$files$categories,
-                                         dvn_files$content[[1]]$files$label)),
+      category = unlist(fix_null_categories(
+        dvn_files$content[[1]]$files$categories,
+        dvn_files$content[[1]]$files$label)),
       description = dvn_files$content[[1]]$files$description
     ),
     weekly
@@ -133,7 +134,7 @@ get_dvn_manifest <- function(icews_doi = get_doi(), server = Sys.getenv("DATAVER
 
 
 # change null values in categories list to explicit null (#55)
-fix_null_category <- function(content_list, label) {
+fix_null_categories <- function(content_list, label) {
   data_content <- stringr::str_detect(label, "events.[0-9]{4}.+\\.tab")
   for (i in seq_along(content_list)) {
     if (is.null(content_list[[i]])) {

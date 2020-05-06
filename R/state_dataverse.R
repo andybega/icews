@@ -96,30 +96,55 @@ get_dvn_manifest <- function(icews_doi = get_doi(), server = Sys.getenv("DATAVER
       stop("Something went wrong in 'dataverse' or the Dataverse API, try again. Original error message:\n", e$message)
     })
 
+  # handle 0 length weekly update repo (#54, #56)
+  if (nrow(dvn_files$content[[2]]$files)==0) {
+    weekly <- tibble(repo = character(),
+                     label = character(),
+                     id = numeric(),
+                     category = character(),
+                     description = character())
+  } else {
+    weekly <- tibble::tibble(
+      repo        = rep("daily", nrow_weekly),
+      label       = dvn_files$content[[2]]$files$label,
+      id          = dvn_files$content[[2]]$files$id,
+      category    = rep("Data", nrow_weekly),
+      description = dvn_files$content[[2]]$files$description
+    )
+  }
+
   file_list <- bind_rows(
     tibble::tibble(
       repo = "historic",
       label = dvn_files$content[[1]]$files$label,
       id = dvn_files$content[[1]]$files$id,
-      category = unlist(dvn_files$content[[1]]$files$categories),
+      category = unlist(fix_null_content(dvn_files$content[[1]]$files$categories,
+                                         dvn_files$content[[1]]$files$label)),
       description = dvn_files$content[[1]]$files$description
     ),
-    tibble::tibble(
-      repo = "daily",
-      label = dvn_files$content[[2]]$files$label,
-      id = dvn_files$content[[2]]$files$id,
-      category = "Data",
-      description = dvn_files$content[[2]]$files$description
-    )
+    weekly
   )
-
-  # filter out known corrupt file
-  file_list <- file_list[!file_list$label=="20181006-icews-events.zip", ]
 
   list(
     file_list          = file_list,
     dataverse_datasets = dvn_files
   )
+}
+
+
+# change null values in categories list to explicit null (#55)
+fix_null_category <- function(content_list, label) {
+  data_content <- stringr::str_detect(label, "events.[0-9]{4}.+\\.tab")
+  for (i in seq_along(content_list)) {
+    if (is.null(content_list[[i]])) {
+      if (isTRUE(data_content[[i]])) {
+        content_list[[i]] <- "Data"
+      } else {
+        content_list[[i]] <- "Missing (NULL)"
+      }
+    }
+  }
+  content_list
 }
 
 

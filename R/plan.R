@@ -147,6 +147,13 @@ plan_file_changes <- function(raw_file_dir = find_raw()) {
         TRUE ~ "none"),
       action = factor(action, levels =  c("none", "download", "remove")))
 
+  # ad hoc fix for missing events.2017 file on dataverse (#57)
+  missing_on_dvn <- !any(stringr::str_detect(dvn_state$dvn_file_label, "events\\.2017"))
+  in_local <- 2017 %in% full_plan$data_set
+  if (missing_on_dvn & in_local) {
+    full_plan[full_plan$data_set==2017, ][["action"]] <- "none"
+  }
+
   # Clean up file state so it is easier to read
   lvls <- c("none", "download", "delete", "ingest_from_file",
             "ingest_from_memory", "remove")
@@ -286,6 +293,14 @@ plan_database_changes <- function(db_path      = find_db(),
     ) %>%
     dplyr::ungroup()
 
+  # ad hoc fix for missing events.2017 file on dataverse (#57)
+  missing_on_dvn <- !any(stringr::str_detect(dvn_state$dvn_file_label, "events\\.2017"))
+  in_local <- 2017 %in% full_plan$data_set
+  if (missing_on_dvn & in_local) {
+    fix <- full_plan$data_set==2017 & full_plan$where=="in database" & full_plan$action=="delete"
+    if (any(fix)) full_plan[fix, ][["action"]] <- "none"
+  }
+
   # Clean up file state so it is easier to read
   lvls <- c("none", "download", "delete", "ingest_from_file",
             "ingest_from_memory", "remove")
@@ -320,8 +335,9 @@ execute_plan <- function(plan, raw_file_dir, db_path) {
 
     if (task$action=="download") {
       cat(sprintf("Downloading '%s'\n", task$dvn_file_label))
-      f <- download_file(task$dvn_file_label, raw_file_dir, task$dvn_repo,
-                         task$dvn_file_id, task$file_name)
+      f <- download_file(file = task$dvn_file_label, to_dir = raw_file_dir,
+                         repo = task$dvn_repo, file_id = task$dvn_file_id,
+                         new_name = task$file_name)
       next
     }
 

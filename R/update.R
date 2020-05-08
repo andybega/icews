@@ -28,6 +28,9 @@
 #' If "use_db" is false, then regardless of the "keep_files" value, only the
 #' raw data files will be downloaded. This is equivalent to [download_data()].
 #'
+#' You can manually replicate what `update_icews()` does by calling
+#' [download_data()], followed by [sync_db_with_files()].
+#'
 #' @examples
 #' \dontrun{
 #' # assuming this is the first time the package is used:

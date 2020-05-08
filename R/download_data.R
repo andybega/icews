@@ -10,6 +10,13 @@
 #'   downloading or deleting anything.
 #'
 #' @details
+#' `download_data()` will check both ICEWS dataverse repos (both the weekly and
+#' yearly data repos) and download the data files it finds to the location of
+#' the raw data directory ([find_raw()]). By default, with "update = TRUE", it
+#' will replace existing files with updated versions if they are available, e.g.
+#' if in the raw data directory there is an "events.2017.\[date1\].tab" file
+#' but on dataverse there is a "events.2017.\[date2\].tab" file, it will
+#' download the new version and delete the old version once that is done.
 #'
 #' @export
 #' @import dataverse

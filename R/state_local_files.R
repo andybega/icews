@@ -33,10 +33,10 @@ list_local_files <- function(raw_file_dir = find_raw(), full_names = TRUE) {
   o
 }
 
-#' Daily data file?
+#' Weekly data file?
 #'
 #' @keywords internal
-is_daily_file <- function(x) {
+is_weekly_file <- function(x) {
   grepl("^[0-9]{8}[0-9a-z\\-]+\\.tab$", basename(x))
 }
 
@@ -44,7 +44,7 @@ is_daily_file <- function(x) {
 is_data_file <- function(x) {
   # check it's all events.YYYY....tab or YYYYMMDD-icews-events.zip files
   good1 <- grepl("^events\\.[0-9]{4}\\.[0-9a-z]+\\.tab$", basename(x))
-  good2 <- is_daily_file(x)
+  good2 <- is_weekly_file(x)
 
   good1 | good2
 }

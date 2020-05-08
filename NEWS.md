@@ -1,5 +1,8 @@
 # icews 0.2.0.9000
 
+- The path finders (`find_raw()`, `find_docs()`, and `find_db()`) now also take
+and optional argument that is combined with the base path returned using `base::file.path()`. This makes it easier to get the full path for files within the data directories. 
+
 Addresses various relatively minor issues that are still related to the big issue with new non-standard file names in the daily DVN repo. 
 
 - Fix an update error due to a duplicate filename ("20190309-icews-events.zip") on dataverse (#45). The non-unique dataverse file label is now converted to a unique local file name (see `normalize_label()`) by appending "part1", "part2", etc. as needed. This local file name is used to track state between the local downloaded files and/or database and dataverse. Download now occurs through the integer file ID instead of the file label.

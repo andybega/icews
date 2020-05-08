@@ -213,12 +213,27 @@ plan_database_sync <- function(db_path      = find_db(),
   full_plan$action = factor(full_plan$action, levels = lvls)
   full_plan <- full_plan[order(full_plan$data_set, full_plan$action), ]
 
-  # Sort the plan so that we remove DB records before trying to ingest new
-  # records. Because each file can contain events prior to it's nominal coverage
-  # (e.g. the old daily event files sometimes contained events prior to the
-  # day they were for) delete all DB records before trying to ingest new files.
+  # Sort the plan. Needed:
+  #
+  #   - Remove all DB records before trying to ingest new records. Because each
+  #     file can contain events prior to it's nominal coverage (e.g. the weekly
+  #     event files sometimes contained events prior to the weeky they are for)
+  #     delete all DB records before trying to ingest new files. This caused
+  #     a problem (see #54) when trying to update from the old setup in which
+  #     there were yearly and daily files, and the new (2020-05) setup in which
+  #     there are yearly and weekly files, with new yearly files after ICEWS
+  #     started updating again that cover some periods previously covered by
+  #     daily files.
+  #   - Ingest yearly files before weekly files. There is existing code in
+  #     `write_data_to_db()` that checks, for weekly files, whether any events
+  #     are duplicates, and if so, doesn't write them. It is better to
+  #     preferentially source records from the yearly files because the weekly
+  #     files will eventually be superseded by a yearly file and we don't want
+  #     lingering old file references hanging around.
   full_plan <- full_plan %>%
-    arrange(action, where, file_name)
+    mutate(weekly_file = is_weekly_file(file_name)) %>%
+    arrange(action, where, weekly_file, file_name) %>%
+    select(-weekly_file)
 
   full_plan <- create_plan(full_plan)
   full_plan
@@ -318,12 +333,27 @@ plan_database_changes <- function(db_path      = find_db(),
   full_plan$action = factor(full_plan$action, levels = lvls)
   full_plan <- full_plan[order(full_plan$data_set, full_plan$action), ]
 
-  # Sort the plan so that we remove DB records before trying to ingest new
-  # records. Because each file can contain events prior to it's nominal coverage
-  # (e.g. the old daily event files sometimes contained events prior to the
-  # day they were for) delete all DB records before trying to ingest new files.
+  # Sort the plan. Needed:
+  #
+  #   - Remove all DB records before trying to ingest new records. Because each
+  #     file can contain events prior to it's nominal coverage (e.g. the weekly
+  #     event files sometimes contained events prior to the weeky they are for)
+  #     delete all DB records before trying to ingest new files. This caused
+  #     a problem (see #54) when trying to update from the old setup in which
+  #     there were yearly and daily files, and the new (2020-05) setup in which
+  #     there are yearly and weekly files, with new yearly files after ICEWS
+  #     started updating again that cover some periods previously covered by
+  #     daily files.
+  #   - Ingest yearly files before weekly files. There is existing code in
+  #     `write_data_to_db()` that checks, for weekly files, whether any events
+  #     are duplicates, and if so, doesn't write them. It is better to
+  #     preferentially source records from the yearly files because the weekly
+  #     files will eventually be superseded by a yearly file and we don't want
+  #     lingering old file references hanging around.
   full_plan <- full_plan %>%
-    arrange(action, where, file_name)
+    mutate(weekly_file = is_weekly_file(file_name)) %>%
+    arrange(action, where, weekly_file, file_name) %>%
+    select(-weekly_file)
 
   full_plan <- create_plan(full_plan)
   full_plan

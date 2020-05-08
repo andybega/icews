@@ -6,14 +6,18 @@
 \alias{find_docs}
 \title{Find locations}
 \usage{
-find_raw()
+find_raw(...)
 
-find_db()
+find_db(...)
 
-find_docs()
+find_docs(...)
+}
+\arguments{
+\item{...}{additional elements that will be combined with the base path
+using \code{\link[base:file.path]{base::file.path()}}}
 }
 \description{
-If the optiosn have been set (see \code{\link[=setup_icews]{setup_icews()}}), \code{find_raw} will return
+If the options have been set (see \code{\link[=setup_icews]{setup_icews()}}), \code{find_raw} will return
 the path to the raw data file directory, \code{find_db} the database file path,
 and \code{find_docs} the directory containing documentation files.
 }
@@ -22,6 +26,12 @@ and \code{find_docs} the directory containing documentation files.
 find_raw()
 find_docs()
 find_db()
+
+# additional elements will be combined with the base path, which makes it
+# easier to get the full path for the contents of the data directory:
+file_list <- dir(find_raw())
+find_raw(file_list[1])
+events <- read_events_tsv(find_raw(file_list[1]))
 }
 
 }

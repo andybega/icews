@@ -4,10 +4,13 @@
 \alias{find_path}
 \title{Generic path finder}
 \usage{
-find_path(x)
+find_path(x, ...)
 }
 \arguments{
 \item{x}{The kind of path to find; "db", "raw", or "docs".}
+
+\item{...}{additional elements to be combined with the file path using
+\code{\link[base:file.path]{base::file.path()}}}
 }
 \description{
 Generic path finder

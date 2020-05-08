@@ -46,6 +46,9 @@ temporary files before ingestion. This saves about 5GB of space as of late
 
 If "use_db" is false, then regardless of the "keep_files" value, only the
 raw data files will be downloaded. This is equivalent to \code{\link[=download_data]{download_data()}}.
+
+You can manually replicate what \code{update_icews()} does by calling
+\code{\link[=download_data]{download_data()}}, followed by \code{\link[=sync_db_with_files]{sync_db_with_files()}}.
 }
 \examples{
 \dontrun{

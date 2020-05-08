@@ -9,8 +9,7 @@
 \usage{
 get_db_state(db_path = find_db())
 
-get_dvn_state(icews_doi = get_doi(),
-  server = Sys.getenv("DATAVERSE_SERVER"))
+get_dvn_state(icews_doi = get_doi(), server = Sys.getenv("DATAVERSE_SERVER"))
 
 get_local_state(raw_file_dir = find_raw())
 }

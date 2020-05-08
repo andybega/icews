@@ -4,7 +4,9 @@
 \name{goldstein_mappings}
 \alias{goldstein_mappings}
 \title{CAMEO event Goldstein scores}
-\format{An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 312 rows and 5 columns.}
+\format{
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 312 rows and 5 columns.
+}
 \source{
 \url{http://eventdata.parusanalytics.com/data.dir/cameo.html}
 

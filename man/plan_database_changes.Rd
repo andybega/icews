@@ -4,8 +4,12 @@
 \alias{plan_database_changes}
 \title{Plan database changes}
 \usage{
-plan_database_changes(db_path = find_db(), raw_file_dir = find_raw(),
-  keep_files = getOption("icews.keep_files"), use_local = TRUE)
+plan_database_changes(
+  db_path = find_db(),
+  raw_file_dir = find_raw(),
+  keep_files = getOption("icews.keep_files"),
+  use_local = TRUE
+)
 }
 \arguments{
 \item{db_path}{Path to SQLite database file}

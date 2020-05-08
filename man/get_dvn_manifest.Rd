@@ -4,8 +4,10 @@
 \alias{get_dvn_manifest}
 \title{List dataverse files}
 \usage{
-get_dvn_manifest(icews_doi = get_doi(),
-  server = Sys.getenv("DATAVERSE_SERVER"))
+get_dvn_manifest(
+  icews_doi = get_doi(),
+  server = Sys.getenv("DATAVERSE_SERVER")
+)
 }
 \arguments{
 \item{icews_doi}{DOI of the main ICEWS repo on Dataverse, see \code{\link[=get_doi]{get_doi()}}}

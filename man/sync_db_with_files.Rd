@@ -4,8 +4,11 @@
 \alias{sync_db_with_files}
 \title{Synchronize DB with raw files}
 \usage{
-sync_db_with_files(raw_file_dir = find_raw(), db_path = find_db(),
-  dryrun = FALSE)
+sync_db_with_files(
+  raw_file_dir = find_raw(),
+  db_path = find_db(),
+  dryrun = FALSE
+)
 }
 \arguments{
 \item{raw_file_dir}{Directory containing the raw event TSV files.}

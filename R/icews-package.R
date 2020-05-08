@@ -42,7 +42,7 @@ globalVariables(c("category",
                   "action", "file_name", "data_set", "where",
                   "on_dvn", "in_db", "in_local",
                   "dvn_repo", "dvn_file_label", "dvn_file_id"
-                  ))
+))
 
 
 .onLoad <- function(libname, pkgname) {
@@ -56,3 +56,8 @@ globalVariables(c("category",
   msg <- format(opts)
   packageStartupMessage(paste0(msg, collapse = "\n"))
 }
+
+## usethis namespace: start
+#' @importFrom lifecycle deprecate_soft
+## usethis namespace: end
+NULL

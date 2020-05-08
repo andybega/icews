@@ -4,8 +4,7 @@
 \alias{download_file}
 \title{Download a single file from Dataverse}
 \usage{
-download_file(file, to_dir, repo = "historic", file_id = NULL,
-  new_name = NULL)
+download_file(file, to_dir, repo = "historic", file_id = NULL, new_name = NULL)
 }
 \arguments{
 \item{file}{Name (label) of the file on DVN to download. If zipped, it will

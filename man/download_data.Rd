@@ -22,3 +22,8 @@ downloading or deleting anything.}
 \description{
 Download the ICEWS event data from Dataverse
 }
+\details{
+
+
+Use \code{download_data()} instead of `download_icews()``
+}

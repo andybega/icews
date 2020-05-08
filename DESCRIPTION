@@ -26,7 +26,8 @@ Imports:
     readr,
     rlang,
     RSQLite,
-    tibble
+    tibble,
+    lifecycle
 Suggests:
     covr,
     ggplot2,
@@ -41,5 +42,6 @@ VignetteBuilder:
     knitr
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
 Roxygen: list(markdown = TRUE)
+RdMacros: lifecycle

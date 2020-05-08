@@ -4,7 +4,8 @@
 \name{cameo_codes}
 \alias{cameo_codes}
 \title{CAMEO code dictionary}
-\format{Data frame
+\format{
+Data frame
 \describe{
 \item{cameo_code}{CAMEO code; the codes need to remain as a character. Coercing
 to integer will create ambiguity, e.g. '010 / Make statement' and
@@ -21,7 +22,8 @@ to integer will create ambiguity, e.g. '010 / Make statement' and
 cooperation/conflict.}
 \item{penta_category}{Derived from quad category, but root code '01' statements
 in their own category, as these usually make up the bulk of events.}
-}}
+}
+}
 \source{
 \url{http://eventdata.parusanalytics.com/data.dir/cameo.html}
 

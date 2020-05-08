@@ -6,8 +6,7 @@
 \alias{get_icews_opts}
 \title{Setup ICEWS options}
 \usage{
-setup_icews(data_dir, use_db = TRUE, keep_files = FALSE,
-  r_profile = TRUE)
+setup_icews(data_dir, use_db = TRUE, keep_files = FALSE, r_profile = TRUE)
 
 unset_icews_opts()
 

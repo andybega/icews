@@ -9,6 +9,8 @@
 #' @param dryrun Conducts a dry run listing proposed changes, without actually
 #'   downloading or deleting anything.
 #'
+#' @details
+#'
 #' @export
 #' @import dataverse
 #' @import dplyr
@@ -34,8 +36,11 @@ download_data <- function(to_dir = find_raw(), update = TRUE, dryrun = FALSE) {
 }
 
 #' @rdname download_data
+#'
+#' @details
+#' Use `download_data()` instead of `download_icews()``
 #' @export
 download_icews <- function(to_dir = find_raw(), update = TRUE, dryrun = FALSE) {
-  .Deprecated("download_data")
+  lifecycle::deprecate_soft("0.2.0", "download_icews()", "download_data()")
   download_data(to_dir, update, dryrun)
 }

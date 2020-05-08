@@ -4,7 +4,9 @@
 \name{icews_sample}
 \alias{icews_sample}
 \title{ICEWS event data sample}
-\format{An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 4993 rows and 22 columns.}
+\format{
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 4993 rows and 22 columns.
+}
 \source{
 \url{https://doi.org/10.7910/DVN/28075}
 }

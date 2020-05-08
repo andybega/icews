@@ -97,7 +97,8 @@ get_dvn_manifest <- function(icews_doi = get_doi(), server = Sys.getenv("DATAVER
     })
 
   # handle 0 length weekly update repo (#54, #56)
-  if (nrow(dvn_files$content[[2]]$files)==0) {
+  nrow_weekly <- nrow(dvn_files$content[[2]]$files)
+  if (nrow_weekly==0) {
     weekly <- tibble(repo = character(),
                      label = character(),
                      id = numeric(),

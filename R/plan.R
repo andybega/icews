@@ -178,6 +178,8 @@ plan_database_sync <- function(db_path      = find_db(),
 
   local_state <- get_local_state(raw_file_dir) %>%
     mutate(in_local = TRUE)
+  # if there were any errros on a previous update, the DB state may be old
+  update_stats(db_path)
   db_state    <- get_db_state(db_path) %>%
     mutate(in_db = TRUE)
 
@@ -211,6 +213,13 @@ plan_database_sync <- function(db_path      = find_db(),
   full_plan$action = factor(full_plan$action, levels = lvls)
   full_plan <- full_plan[order(full_plan$data_set, full_plan$action), ]
 
+  # Sort the plan so that we remove DB records before trying to ingest new
+  # records. Because each file can contain events prior to it's nominal coverage
+  # (e.g. the old daily event files sometimes contained events prior to the
+  # day they were for) delete all DB records before trying to ingest new files.
+  full_plan <- full_plan %>%
+    arrange(action, where, file_name)
+
   full_plan <- create_plan(full_plan)
   full_plan
 }
@@ -234,6 +243,8 @@ plan_database_changes <- function(db_path      = find_db(),
 
   dvn_state <- get_dvn_state() %>%
     mutate(on_dvn = TRUE)
+  # if there were any errros on a previous update, the DB state may be old
+  update_stats(db_path)
   db_state  <- get_db_state(db_path) %>%
     mutate(in_db = TRUE)
 
@@ -306,6 +317,13 @@ plan_database_changes <- function(db_path      = find_db(),
             "ingest_from_memory", "remove")
   full_plan$action = factor(full_plan$action, levels = lvls)
   full_plan <- full_plan[order(full_plan$data_set, full_plan$action), ]
+
+  # Sort the plan so that we remove DB records before trying to ingest new
+  # records. Because each file can contain events prior to it's nominal coverage
+  # (e.g. the old daily event files sometimes contained events prior to the
+  # day they were for) delete all DB records before trying to ingest new files.
+  full_plan <- full_plan %>%
+    arrange(action, where, file_name)
 
   full_plan <- create_plan(full_plan)
   full_plan

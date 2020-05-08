@@ -57,10 +57,10 @@ Usage
 with this code; otherwise read below for more details.
 
 ``` r
+Sys.setenv(DATAVERSE_SERVER = "dataverse.harvard.edu")
 library("icews")
 library("DBI")
 library("dplyr")
-library("usethis")
 
 setup_icews(data_dir = "/where/should/data/be", use_db = TRUE, keep_files = TRUE,
             r_profile = TRUE)
@@ -92,6 +92,9 @@ ICEWS event data, which comes in several tab-serparated value (TSV)
 files, without having to deal with Dataverse.
 
 ``` r
+Sys.setenv(DATAVERSE_SERVER = "dataverse.harvard.edu")
+library("icews")
+
 dir.create("~/Downloads/icews")
 download_data("~/Downloads/icews")
 ```

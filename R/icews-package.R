@@ -39,7 +39,7 @@
 "_PACKAGE"
 globalVariables(c("cameo_codes", "goldstein_mappings"))
 globalVariables(c("category",
-                  "action", "file_name", "data_set", "where",
+                  "action", "file_name", "data_set", "where", "weekly_file",
                   "on_dvn", "in_db", "in_local",
                   "dvn_repo", "dvn_file_label", "dvn_file_id"
 ))
@@ -52,7 +52,7 @@ globalVariables(c("category",
 
   # Check that the installed dataverse version has the bug fix references in
   # #51.
-  if (packageVersion("dataverse") < "0.2.1.9001") {
+  if (utils::packageVersion("dataverse") < "0.2.1.9001") {
     msg <- paste0(c(
       strwrap("There is bug in the dataverse R package prior to version 0.2.1.9001 that breaks file downloading. Please check on CRAN if a newer version is available or install the development version from GitHub using:"),
       "  remotes::install_github(\"IQSS/dataverse-client-r\")"

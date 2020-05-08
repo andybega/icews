@@ -49,10 +49,10 @@ The **icews** package relies on the R [**dataverse** client](https://github.com/
 **tl;dr**: get a SQLite database with the current events on Dataverse with this code; otherwise read below for more details. 
 
 ```{r, eval = FALSE}
+Sys.setenv(DATAVERSE_SERVER = "dataverse.harvard.edu")
 library("icews")
 library("DBI")
 library("dplyr")
-library("usethis")
 
 setup_icews(data_dir = "/where/should/data/be", use_db = TRUE, keep_files = TRUE,
             r_profile = TRUE)
@@ -82,6 +82,9 @@ events <- read_icews()
 In the most simple use case, you can use the package to download the ICEWS event data, which comes in several tab-serparated value (TSV) files, without having to deal with Dataverse. 
 
 ```{r, eval = FALSE}
+Sys.setenv(DATAVERSE_SERVER = "dataverse.harvard.edu")
+library("icews")
+
 dir.create("~/Downloads/icews")
 download_data("~/Downloads/icews")
 ```

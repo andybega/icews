@@ -36,7 +36,17 @@ download_file <- function(file, to_dir, repo = "historic", file_id = NULL, new_n
 
   file_ref <- if (!is.null(file_id)) file_id else file
 
-  f <- dataverse::get_file(file = file_ref, dataset = get_doi()[[repo]])
+  # I keep getting 404 errors with this, but can manually run the API query
+  # using the code contained within. Do that as a temp workaround. See (#58)
+  # f <- dataverse::get_file(file = file_ref, dataset = get_doi()[[repo]],
+  #                          format = NULL)
+  if (is.null(file_id)) stop("temp workaround for #58 needs integer file ID")
+  key = Sys.getenv("DATAVERSE_KEY")
+  server = Sys.getenv("DATAVERSE_SERVER")
+  u <- paste0(dataverse:::api_url(server), "access/datafile/", file_id)
+  r <- httr::GET(u, httr::add_headers(`X-Dataverse-key` = key))
+  httr::stop_for_status(r)
+  f <- httr::content(r, as = "raw")
 
   # Decide how to handle based on whether extraction is needed
   if (tools::file_ext(file)=="zip") {

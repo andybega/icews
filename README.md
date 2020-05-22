@@ -5,10 +5,10 @@ icews
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/icews)](https://cran.r-project.org/package=icews)
-[![Travis build
-status](https://travis-ci.org/andybega/icews.svg?branch=master)](https://travis-ci.org/andybega/icews)
-[![Coverage
-status](https://codecov.io/gh/andybega/icews/branch/master/graph/badge.svg)](https://codecov.io/github/andybega/icews?branch=master)
+[![R build
+status](https://github.com/andybega/icews/workflows/R-CMD-check/badge.svg)](https://github.com/andybega/icews/actions)
+[![Codecov test
+coverage](https://codecov.io/gh/andybega/icews/branch/master/graph/badge.svg)](https://codecov.io/gh/andybega/icews?branch=master)
 
 Get the ICEWS event data from the Harvard Dataverse repos at
 [https://doi.org/10.7910/DVN/28075](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/28075)

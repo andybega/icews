@@ -13,3 +13,4 @@
 scratchpad.R
 
 devel
+^\.github$

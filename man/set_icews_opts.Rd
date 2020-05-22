@@ -18,3 +18,4 @@ Set ICEWS option values
 \seealso{
 \code{\link[=setup_icews]{setup_icews()}}
 }
+\keyword{internal}

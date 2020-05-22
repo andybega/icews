@@ -15,12 +15,12 @@ reference:
     contents:
       - setup_icews
       - get_icews_opts
-      - set_icews_opts
       - unset_icews_opts
   - title: "Interacting with DVN"
     desc: >
       Working with DVN
     contents:
+      - get_doi
       - get_dvn_manifest
       - download_file
   - title: "Interacting with the database"
@@ -56,7 +56,6 @@ reference:
     desc: >
       Package data, including a sample of the ICEWS event data.
     contents:
-      - get_doi
       - cameo_codes
       - goldstein_mappings
       - icews_sample

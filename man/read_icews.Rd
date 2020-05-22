@@ -14,7 +14,16 @@ NULL (default), the global options will be used instead.}
 used, i.e. all events are imported.}
 }
 \description{
-Read the entire ICEWS event data into memory. This takes up several (2-3 in 2018) GB.
+Read the entire ICEWS event data into memory. This takes up several GB;
+approximately 3GB in mid-2020.
+}
+\examples{
+\dontrun{
+# Both of these work, but reading from files should be quicker
+from_files <- read_icews(find_raw())
+from_db    <- read_icews(find_db())
+}
+
 }
 \seealso{
 \code{\link[=query_icews]{query_icews()}}, \code{\link[=read_events_tsv]{read_events_tsv()}}

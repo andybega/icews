@@ -78,8 +78,7 @@ setup_icews <- function(data_dir, use_db = TRUE, keep_files = FALSE, r_profile =
 #'
 #' @seealso [setup_icews()]
 #' @md
-#'
-#' @export
+#' @keywords internal
 set_icews_opts <- function(x, ...) {
   UseMethod("set_icews_opts", x)
 }

@@ -18,41 +18,43 @@ knitr::opts_chunk$set(
 
 Generally, in-memory calculations are much faster than calculations via SQL, but they come at the cost of loading several GB into memory, which on my laptop takes about 2 minutes. 
 
-```{r}
-library("icews")
+_(The values in this note were last updated on 2020-05-22. Since the SQL queries take several minutes to run, and depend on a working local database and files that are not available on CI, the code cells are mostly not evaluated when rendering this vignette.)_
 
-library("tidyr")
-library("tictoc")
+```{r}
+library(icews)
+library(dplyr)
+library(tidyr)
+library(tictoc)
 ```
 
 # Read into memory
 
 ```{r, results='hold', eval=FALSE}
 tic()
-events <- read_icews_db(find_db())
+events <- read_icews(find_db())
 nrow(events)
 format(object.size(events), "Gb")
 toc()
 ```
 
 ```
-#> [1] 17365059
-#> [1] "2.7 Gb"
-#> 274.15 sec elapsed
+#> [1] 18465057
+#> [1] "2.9 Gb"
+#> 165.218 sec elapsed
 ```
 
 ```{r, results='hold', eval=FALSE}
 tic()
-events <- read_icews_raw(find_raw(), progress = FALSE)
+events <- read_icews(find_raw())
 nrow(events)
 format(object.size(events), "Gb")
 toc()
 ```
 
 ```
-#> [1] 17365059
-#> [1] "2.6 Gb"
-#> 144.995 sec elapsed
+#> [1] 18465057
+#> [1] "2.8 Gb"
+#> 155.476 sec elapsed
 ```
 
 # Country-year event counts
@@ -68,8 +70,10 @@ toc()
 ```
 
 ```
-#> 1.057 sec elapsed
+#> 2.313 sec elapsed
 ```
+
+And here by querying the database:
 
 ```{r, eval=FALSE}
 tic()
@@ -79,29 +83,40 @@ toc()
 ```
 
 ```
-#> 528.075 sec elapsed
+#> 740.567 sec elapsed
 ```
+
+Equivalent results, but much faster:
 
 ```{r, eval=FALSE}
 tic()
 cy_total_db <- query_icews(
-  "SELECT count(*) AS total FROM events GROUP BY year, country;")
+  "SELECT count() AS total FROM events GROUP BY year, country;")
 toc()
 ```
 
 ```
-#> 68.513 sec elapsed
+#> 52.795 sec elapsed
 ```
+
+This is an equivalent SQL query but using **dplyr**'s behind the scenes construction:
 
 ```{r, eval=FALSE}
 tic()
 cy_total_db <- tbl(connect(), "events") %>% 
-  group_by(country, year) %>% 
-  summarize(events = n())
+  group_by(year, country) %>% 
+  summarize(events = n()) %>%
+  collect()
 toc()
 ```
 
+```r
+#> 54.855 sec elapsed
+```
+
 # Column cardinality
+
+Usually SQL indices work better on columns that have high cardinality.
 
 ```{r, eval=FALSE}
 col_vals <- query_icews("
@@ -129,8 +144,12 @@ select count(*) as rows,
        count(distinct(year)) as year,
        count(distinct(yearmonth)) as yearmonth,
        count(distinct(source_file)) as source_file
-from events;") %>%
-  tidyr::gather(Column, Unique_values) %>%
+from events;") 
+
+col_vals <- col_vals %>%
+  tidyr::pivot_longer(rows:source_file, 
+                      names_to = "Column", 
+                      values_to = "Unique_values") %>%
   arrange(Unique_values, Column) 
 
 col_vals %>%
@@ -140,26 +159,28 @@ col_vals %>%
 |Column          | Unique_values|
 |:---------------|-------------:|
 |sentence_number |             6|
-|source_file     |            24|
-|year            |            24|
+|year            |            26|
+|source_file     |            29|
 |intensity       |            41|
-|source_country  |           249|
+|source_country  |           250|
 |target_country  |           250|
 |country         |           251|
 |cameo_code      |           273|
 |event_text      |           273|
-|yearmonth       |           285|
 |publisher       |           290|
-|province        |          5166|
-|event_date      |          8674|
-|district        |          9881|
-|target_name     |         73399|
-|source_name     |         75780|
-|latitude        |         85686|
-|city            |         88217|
-|longitude       |         89652|
-|target_sectors  |        200290|
-|source_sectors  |        248443|
-|story_id        |       8450555|
-|event_id        |      17219747|
-|rows            |      17365059|
+|yearmonth       |           305|
+|province        |          5263|
+|event_date      |          9269|
+|district        |         10055|
+|target_name     |         74604|
+|source_name     |         76982|
+|latitude        |         88440|
+|city            |         91348|
+|longitude       |         92562|
+|target_sectors  |        222589|
+|source_sectors  |        276177|
+|story_id        |       9040119|
+|event_id        |      18319702|
+|rows            |      18465014|
+
+No indices are created by default, but if you prefer working with the events in a SQLite database and doing certain queries frequently then it may make sense to create some. There are plenty of tutorials online on how to create good indices (for example [_Use the index, Luke!_](https://use-the-index-luke.com)), and you can always preface a query you are developing with `EXPLAIN QUERY PLAN [query]` (see [here](https://www.sqlite.org/eqp.html) for details).

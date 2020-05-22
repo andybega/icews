@@ -1,0 +1,59 @@
+---
+title: "Database internals"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Database internals}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This note describes the database internals. In addition to the main `events` table, there are other tables that impact how the updating process works. 
+
+```{r setup}
+library(icews)
+```
+
+SQLite has a special `sqlite_master` table that describes the schema. This can be queried to find out what objects are present in the database, e.g.:
+
+```{r, eval=FALSE}
+query_icews("select * from sqlite_master;")
+```
+
+With the default setup, four tables should be present:
+
+- `events`: contains the actual ICEWS events
+- `stats`: statistics for the event table; this currently only contains the total number of rows/events in the `events` table, and is used by `dr_icews()` when showing the total number of events in the database (if using the database option)
+- `source_files` and `null_source_files`: these tables are related to the raw data files (.tab) that have been ingested into the database. If a raw source file only contains duplicate events^[Specifically, records that share both event ID and event date.], no events are ingested into the database and the `events` table contains no reference to this file. To avoid an attempt to re-download and re-ingest the file at a future update, it is in this case instead added to the `null_sources_files` table, which is taken into account when resolving the various states (dataverse, database, files).
+
+Note that no indices are created by default for the `events` table. Usually it makes sense to add some to speed up common querys. For example, I have locally added indices for country, year, and yearmonth. 
+
+# Create table statements
+
+The package installation includes SQL scripts that create these tables. These can be accessed an printed from R like below.
+
+## Events
+
+```{r, class.output = "sql", comment = ''}
+cat(readLines(system.file("sql/events.sql", package = "icews")), sep = "\n")
+```
+
+## Stats table
+
+```{r, class.output = "sql", comment = ''}
+cat(readLines(system.file("sql/stats.sql", package = "icews")), sep = "\n")
+```
+
+## Source and null source file tables
+
+```{r, class.output = "sql", comment = ''}
+cat(readLines(system.file("sql/source_files.sql", package = "icews")), sep = "\n")
+```
+
+

@@ -1,12 +1,20 @@
 #' Read ICEWS events into memory
 #'
-#' Read the entire ICEWS event data into memory. This takes up several (2-3 in 2018) GB.
+#' Read the entire ICEWS event data into memory. This takes up several GB;
+#' approximately 3GB in mid-2020.
 #'
 #' @param path Either path to SQLite database file or raw file directory. If
 #'   NULL (default), the global options will be used instead.
 #' @template n_max
 #'
 #' @seealso [query_icews()], [read_events_tsv()]
+#'
+#' @examples
+#' \dontrun{
+#' # Both of these work, but reading from files should be quicker
+#' from_files <- read_icews(find_raw())
+#' from_db    <- read_icews(find_db())
+#' }
 #'
 #' @export
 #' @import dplyr

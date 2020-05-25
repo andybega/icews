@@ -12,7 +12,7 @@ automatically be unzipped.}
 
 \item{to_dir}{Destination directory.}
 
-\item{repo}{Which repo is the file in? ("historic" or "daily")}
+\item{repo}{Which repo is the file in? ("historic" or "weekly")}
 
 \item{file_id}{Optionally, integer file ID. If this is specified, it will
 preferentially be used over the file name to download the file. This is

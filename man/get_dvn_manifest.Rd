@@ -21,7 +21,7 @@ A list of length 2, containing:
 but also documentation and metadata files.
 \item dataverse_dataset: a list tibble with two columns:
 \itemize{
-\item \code{repo}: "daily" or "historic"`
+\item \code{repo}: "weekly" or "historic"`
 \item \code{content}: objects of class "dataverse_dataset", returned by
 \code{\link[dataverse:get_dataset]{dataverse::get_dataset()}}.
 }

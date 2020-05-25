@@ -8,7 +8,7 @@
 #' @param file Name (label) of the file on DVN to download. If zipped, it will
 #'   automatically be unzipped.
 #' @param to_dir Destination directory.
-#' @param repo Which repo is the file in? ("historic" or "daily")
+#' @param repo Which repo is the file in? ("historic" or "weekly")
 #' @param file_id Optionally, integer file ID. If this is specified, it will
 #'   preferentially be used over the file name to download the file. This is
 #'   needed for duplicate file names.
@@ -31,7 +31,7 @@ download_file <- function(file, to_dir, repo = "historic", file_id = NULL, new_n
 
   # override default repo if certain filename is detected
   if (repo=="historic" & grepl("[0-9]{8}\\-icews\\-events\\.zip", file)) {
-    repo = "daily"
+    repo = "weekly"
   }
 
   file_ref <- if (!is.null(file_id)) file_id else file

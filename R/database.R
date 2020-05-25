@@ -78,8 +78,8 @@ write_data_to_db <- function(events, file, db_path = find_db()) {
   events$event_date <- as.integer(format(events$event_date, "%Y%m%d"))
   events$source_file  <- file
 
-  # Daily file check
-  # To ingest daily files, check and potentially subset event set to avoid
+  # Weekly file check
+  # To ingest weekly files, check and potentially subset event set to avoid
   # adding duplicate events to DB
   # In case there are events in the to-be-added set with a date before the
   # last event date in DB, explicitly check all event IDs to eliminate

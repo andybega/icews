@@ -8,7 +8,7 @@
 #' @export
 get_doi <- function() {
   list(historic = "doi:10.7910/DVN/28075",
-       daily = "doi:10.7910/DVN/QI2T9A")
+       weekly = "doi:10.7910/DVN/QI2T9A")
 }
 
 #' CAMEO code dictionary

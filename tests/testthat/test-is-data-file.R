@@ -1,5 +1,5 @@
 
-context("is data file, is daily file")
+context("is data file, is weeky file")
 
 test_that("is_data_file recognizes main patterns", {
   expect_true(is_data_file("events.2013.20150313084929.tab"))
@@ -14,7 +14,7 @@ test_that("is_data_file recognizes exceptions", {
 
 })
 
-test_that("is daily file differentiates annual from daily", {
+test_that("is weeky file differentiates annual from weeky", {
 
   expect_false(is_weekly_file("events.2013.20150313084929.tab"))
   expect_true(is_weekly_file("20181004-icews-events.tab"))

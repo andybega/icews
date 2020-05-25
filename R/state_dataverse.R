@@ -27,7 +27,7 @@
 #'
 #' @return
 #'   For `get_dvn_manifest`, a tibble with the following columns:
-#'   - dvn_repo: "historic" or "daily", see [get_doi()]
+#'   - dvn_repo: "historic" or "weekly", see [get_doi()]
 #'   - dvn_file_label: the file label on dataverse, possibly non-unique
 #'   - dvn_file_id: the integer file ID on dataverse
 #'   - file_name: the normalized, unique file name, see [normalize_label()]
@@ -80,17 +80,17 @@ get_dvn_state <- function(icews_doi = get_doi(), server = Sys.getenv("DATAVERSE_
 #'   - file_list: a summary list of all files on DVN, consisting of the data files
 #'     but also documentation and metadata files.
 #'   - dataverse_dataset: a list tibble with two columns:
-#'       + `repo`: "daily" or "historic"`
+#'       + `repo`: "weekly" or "historic"`
 #'       + `content`: objects of class "dataverse_dataset", returned by
 #'         [dataverse::get_dataset()].
 #'
 #' @export
 get_dvn_manifest <- function(icews_doi = get_doi(), server = Sys.getenv("DATAVERSE_SERVER")) {
   dvn_files  <- tryCatch(
-    tibble(repo = c("historic", "daily"),
+    tibble(repo = c("historic", "weekly"),
            content = list(
              dataverse::get_dataset(icews_doi$historic, server = server),
-             dataverse::get_dataset(icews_doi$daily, server = server)
+             dataverse::get_dataset(icews_doi$weekly, server = server)
            )),
     error = function(e) {
       stop("Something went wrong in 'dataverse' or the Dataverse API, try again. Original error message:\n", e$message)
@@ -106,7 +106,7 @@ get_dvn_manifest <- function(icews_doi = get_doi(), server = Sys.getenv("DATAVER
                      description = character())
   } else {
     weekly <- tibble::tibble(
-      repo        = rep("daily", nrow_weekly),
+      repo        = rep("weekly", nrow_weekly),
       label       = dvn_files$content[[2]]$files$label,
       id          = dvn_files$content[[2]]$files$id,
       category    = rep("Data", nrow_weekly),

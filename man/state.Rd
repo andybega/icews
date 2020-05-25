@@ -25,7 +25,7 @@ get_local_state(raw_file_dir = find_raw())
 \value{
 For \code{get_dvn_manifest}, a tibble with the following columns:
 \itemize{
-\item dvn_repo: "historic" or "daily", see \code{\link[=get_doi]{get_doi()}}
+\item dvn_repo: "historic" or "weekly", see \code{\link[=get_doi]{get_doi()}}
 \item dvn_file_label: the file label on dataverse, possibly non-unique
 \item dvn_file_id: the integer file ID on dataverse
 \item file_name: the normalized, unique file name, see \code{\link[=normalize_label]{normalize_label()}}

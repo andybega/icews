@@ -55,8 +55,8 @@ format.icews_plan <- function(x, ...) {
   )
   if (any(plan$action!="none")) {
     msgs <- plan %>%
-      dplyr::filter(action!="none") %>%
-      dplyr::mutate(action = as.character(action)) %>%
+      dplyr::filter(.data$action!="none") %>%
+      dplyr::mutate(action = as.character(.data$action)) %>%
       dplyr::rowwise() %>%
       dplyr::do({
         action = switch(.data$action,
@@ -130,22 +130,22 @@ plan_file_changes <- function(raw_file_dir = find_raw()) {
     dplyr::mutate(action = NA_character_,
                   # Note where the action is to be performed
                   where  = "file system",
-                  on_dvn = !is.na(dvn_file_id),
-                  in_local = ifelse(is.na(in_local), FALSE, in_local),
-                  data_set = parse_dataset(file_name)) %>%
-    dplyr::select(file_name, action, where, on_dvn, in_local,
-                  dvn_repo, dvn_file_label, dvn_file_id,
-                  data_set) %>%
-    dplyr::arrange(data_set, file_name)
+                  on_dvn = !is.na(.data$dvn_file_id),
+                  in_local = ifelse(is.na(.data$in_local), FALSE, .data$in_local),
+                  data_set = parse_dataset(.data$file_name)) %>%
+    dplyr::select(.data$file_name, .data$action, .data$where, .data$on_dvn,
+                  .data$in_local, .data$dvn_repo, .data$dvn_file_label,
+                  .data$dvn_file_id, .data$data_set) %>%
+    dplyr::arrange(.data$data_set, .data$file_name)
 
   # Determine any actions that need to be performed
   full_plan <- file_state %>%
     dplyr::mutate(
       action = dplyr::case_when(
-        in_local==FALSE ~ "download",
-        on_dvn==FALSE   ~ "remove",
+        .data$in_local==FALSE ~ "download",
+        .data$on_dvn==FALSE   ~ "remove",
         TRUE ~ "none"),
-      action = factor(action, levels =  c("none", "download", "remove")))
+      action = factor(.data$action, levels =  c("none", "download", "remove")))
 
   # ad hoc fix for missing events.2017 file on dataverse (#57)
   missing_on_dvn <- !any(stringr::str_detect(dvn_state$dvn_file_label, "events\\.2017"))
@@ -188,21 +188,21 @@ plan_database_sync <- function(db_path      = find_db(),
     dplyr::mutate(action = NA_character_,
                   # Note where the action is to be performed
                   where  = "in database",
-                  in_local = ifelse(is.na(in_local), FALSE, in_local),
-                  in_db    = ifelse(is.na(in_db), FALSE, in_db),
-                  data_set = parse_dataset(file_name)) %>%
-    dplyr::select(file_name, action, where, in_local, in_db,
-                  data_set) %>%
-    dplyr::arrange(data_set, file_name)
+                  in_local = ifelse(is.na(.data$in_local), FALSE, .data$in_local),
+                  in_db    = ifelse(is.na(.data$in_db), FALSE, .data$in_db),
+                  data_set = parse_dataset(.data$file_name)) %>%
+    dplyr::select(.data$file_name, .data$action, .data$where, .data$in_local,
+                  .data$in_db, .data$data_set) %>%
+    dplyr::arrange(.data$data_set, .data$file_name)
 
   # Determine DB actions that need to be performed;
   full_plan <- full_plan %>%
-    dplyr::group_by(data_set) %>%
+    dplyr::group_by(.data$data_set) %>%
     dplyr::mutate(
       action = dplyr::case_when(
-        where=="in database" & in_local  & in_db   ~ "none",
-        where=="in database" & !in_local & in_db   ~ "delete",
-        where=="in database" & in_local  & !in_db  ~ "ingest_from_file",
+        where=="in database" & .data$in_local  & .data$in_db   ~ "none",
+        where=="in database" & !.data$in_local & .data$in_db   ~ "delete",
+        where=="in database" & .data$in_local  & !.data$in_db  ~ "ingest_from_file",
         TRUE ~ action)
     ) %>%
     dplyr::ungroup()
@@ -231,9 +231,9 @@ plan_database_sync <- function(db_path      = find_db(),
   #     files will eventually be superseded by a yearly file and we don't want
   #     lingering old file references hanging around.
   full_plan <- full_plan %>%
-    mutate(weekly_file = is_weekly_file(file_name)) %>%
-    arrange(action, where, weekly_file, file_name) %>%
-    select(-weekly_file)
+    mutate(weekly_file = is_weekly_file(.data$file_name)) %>%
+    arrange(.data$action, .data$where, .data$weekly_file, .data$file_name) %>%
+    select(-.data$weekly_file)
 
   full_plan <- create_plan(full_plan)
   full_plan
@@ -268,26 +268,27 @@ plan_database_changes <- function(db_path      = find_db(),
     dplyr::mutate(action = NA_character_,
                   # Note where the action is to be performed
                   where  = "in database",
-                  on_dvn = ifelse(is.na(on_dvn), FALSE, on_dvn),
-                  in_db  = ifelse(is.na(in_db), FALSE, in_db),
-                  data_set = parse_dataset(file_name)) %>%
-    dplyr::select(file_name, action, where, on_dvn, in_db,
-                  data_set,
-                  dvn_repo, dvn_file_label, dvn_file_id,) %>%
-    dplyr::arrange(data_set, file_name)
+                  on_dvn = ifelse(is.na(.data$on_dvn), FALSE, .data$on_dvn),
+                  in_db  = ifelse(is.na(.data$in_db), FALSE, .data$in_db),
+                  data_set = parse_dataset(.data$file_name)) %>%
+    dplyr::select(.data$file_name, .data$action, .data$where, .data$on_dvn,
+                  .data$in_db, .data$data_set,
+                  .data$dvn_repo, .data$dvn_file_label, .data$dvn_file_id,) %>%
+    dplyr::arrange(.data$data_set, .data$file_name)
 
   if (isTRUE(use_local) | isTRUE(keep_files)) {
     local_plan <- plan_file_changes(raw_file_dir) %>%
       # to avoid factor/char merge warning
-      mutate(action = as.character(action))
+      mutate(action = as.character(.data$action))
     full_plan  <- dplyr::bind_rows(local_plan, file_state) %>%
       # fill in missing in_db, in_local values from row binding
-      dplyr::group_by(file_name) %>%
-      dplyr::mutate(in_db    = TRUE %in% in_db,
-                    in_local = TRUE %in% in_local) %>%
+      dplyr::group_by(.data$file_name) %>%
+      dplyr::mutate(in_db    = TRUE %in% .data$in_db,
+                    in_local = TRUE %in% .data$in_local) %>%
       ungroup() %>%
-      select(file_name, action, where, data_set, on_dvn, in_db, everything()) %>%
-      arrange(data_set, action)
+      select(.data$file_name, .data$action, .data$where, .data$data_set,
+             .data$on_dvn, .data$in_db, everything()) %>%
+      arrange(.data$data_set, .data$action)
   } else {
     # use a dummy plan with no planned actions as stand in when not using
     # local files
@@ -295,7 +296,7 @@ plan_database_changes <- function(db_path      = find_db(),
       mutate(action   = NA_character_,
              where    = "file system",
              in_local = FALSE) %>%
-      select(file, action, data_set, everything())
+      select(.data$file, .data$action, .data$data_set, everything())
   }
 
   # adjust for discard files option
@@ -308,13 +309,13 @@ plan_database_changes <- function(db_path      = find_db(),
 
   # Determine DB actions that need to be performed;
   full_plan <- full_plan %>%
-    dplyr::group_by(data_set) %>%
+    dplyr::group_by(.data$data_set) %>%
     dplyr::mutate(
       action = dplyr::case_when(
-        is.na(action) & on_dvn  & in_db  ~ "none",
-        is.na(action) & !on_dvn & in_db  ~ "delete",
-        is.na(action) & on_dvn  & !in_db & ("download" %in% action | in_local) ~ "ingest_from_file",
-        is.na(action) & on_dvn  & !in_db & !("download" %in% action | in_local) ~ "ingest_from_memory",
+        is.na(.data$action) & .data$on_dvn  & .data$in_db  ~ "none",
+        is.na(.data$action) & !.data$on_dvn & .data$in_db  ~ "delete",
+        is.na(.data$action) & .data$on_dvn  & !.data$in_db & ("download" %in% .data$action | .data$in_local) ~ "ingest_from_file",
+        is.na(.data$action) & .data$on_dvn  & !.data$in_db & !("download" %in% .data$action | .data$in_local) ~ "ingest_from_memory",
         TRUE ~ action)
     ) %>%
     dplyr::ungroup()
@@ -351,9 +352,9 @@ plan_database_changes <- function(db_path      = find_db(),
   #     files will eventually be superseded by a yearly file and we don't want
   #     lingering old file references hanging around.
   full_plan <- full_plan %>%
-    mutate(weekly_file = is_weekly_file(file_name)) %>%
-    arrange(action, where, weekly_file, file_name) %>%
-    select(-weekly_file)
+    mutate(weekly_file = is_weekly_file(.data$file_name)) %>%
+    arrange(.data$action, .data$where, .data$weekly_file, .data$file_name) %>%
+    select(-.data$weekly_file)
 
   full_plan <- create_plan(full_plan)
   full_plan

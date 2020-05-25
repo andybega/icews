@@ -55,7 +55,7 @@ get_dvn_state <- function(icews_doi = get_doi(), server = Sys.getenv("DATAVERSE_
 
   # we only need this for data files
   file_list    <- dvn_manifest$file_list %>%
-    dplyr::filter(category=="Data") %>%
+    dplyr::filter(.data$category=="Data") %>%
     dplyr::arrange(id)
   dict <- tibble(
     dvn_repo = file_list$repo,

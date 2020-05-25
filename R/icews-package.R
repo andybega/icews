@@ -38,12 +38,6 @@
 #' @md
 "_PACKAGE"
 globalVariables(c("cameo_codes", "goldstein_mappings"))
-globalVariables(c("category",
-                  "action", "file_name", "data_set", "where", "weekly_file",
-                  "on_dvn", "in_db", "in_local",
-                  "dvn_repo", "dvn_file_label", "dvn_file_id"
-))
-
 
 .onLoad <- function(libname, pkgname) {
   if (is.null(getOption("icews.debug")))  {

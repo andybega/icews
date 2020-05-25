@@ -103,10 +103,10 @@
     
 <p>This note describes the database internals. In addition to the main <code>events</code> table, there are other tables that impact how the updating process works.</p>
 <div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">icews</span>)
-<span class="co">#&gt; Warning in fun(libname, pkgname): There is bug in the dataverse R package prior to version 0.2.1.9001</span>
-<span class="co">#&gt; that breaks file downloading. Please check on CRAN if a newer version</span>
-<span class="co">#&gt; is available or install the development version from GitHub using:</span>
-<span class="co">#&gt;   remotes::install_github("IQSS/dataverse-client-r")</span>
+<span class="co">#&gt; Warning in fun(libname, pkgname): The R dataverse client requires the DATAVERSE_SERVER environment</span>
+<span class="co">#&gt; variable to be set. See &lt;https://github.com/IQSS/dataverse-client-r&gt;.</span>
+<span class="co">#&gt; Please run:</span>
+<span class="co">#&gt; Sys.setenv(DATAVERSE_SERVER = "dataverse.harvard.edu")</span>
 <span class="co">#&gt; Options not set, consider running 'setup_icews()'</span>
 <span class="co">#&gt; data_dir: NULL</span>
 <span class="co">#&gt; use_db: NULL</span>

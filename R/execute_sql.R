@@ -39,7 +39,7 @@ execute_sql_statements <- function(x, db_path) {
 #' @param x Path to a .sql file containing SQL statements (not queries)
 #' @keywords internal
 read_sql_statements <- function(x) {
-  sql_str <- strsplit(x, "\n\n")[[1]]
+  sql_str <- strsplit(x, "(\n\n)|(\r\n\r\n)")[[1]]
   # eliminate comment lines
   comment <- grepl("(/\\*)|(\\*/)|(--)", sql_str)
   sql_str <- sql_str[!comment]

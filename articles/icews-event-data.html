@@ -94,7 +94,7 @@
       <h1 data-toc-skip>ICEWS event data</h1>
                         <h4 class="author">Andreas Beger</h4>
             
-            <h4 class="date">2020-05-26</h4>
+            <h4 class="date">2020-06-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/andybega/icews/blob/master/vignettes/icews-event-data.Rmd"><code>vignettes/icews-event-data.Rmd</code></a></small>
       <div class="hidden name"><code>icews-event-data.Rmd</code></div>
@@ -235,7 +235,7 @@ GROUP BY id_n;
 
 <span class="no">sectors</span> <span class="kw">&lt;-</span> <span class="no">sectors_long</span> <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="no">sector</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="kw">in_n_events</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/n.html">n</a></span>()) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="kw">in_n_events</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>()) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(<span class="no">in_n_events</span>)</pre></body></html></div>
 </div>
 </div>

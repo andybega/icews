@@ -95,7 +95,7 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#icews" class="anchor"></a>icews</h1></div>
 
-<p>Get the ICEWS event data from the Harvard Dataverse repos at <a href="https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/28075">https://doi.org/10.7910/DVN/28075</a> (historic data) and <a href="https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/QI2T9A">https://doi.org/10.7910/DVN/QI2T9A</a> (daily updates from late 2018 on).</p>
+<p>Get the ICEWS event data from the Harvard Dataverse repos at <a href="https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/28075">https://doi.org/10.7910/DVN/28075</a> (historic data) and <a href="https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/QI2T9A">https://doi.org/10.7910/DVN/QI2T9A</a> (weekly updates).</p>
 <p>The icews package provides these major features:</p>
 <ul>
 <li>get the ICEWS event data without having to deal with Dataverse</li>
@@ -139,7 +139,7 @@
 <span class="fu"><a href="reference/query_icews.html">query_icews</a></span>(<span class="st">"SELECT count(*) AS n FROM events;"</span>)
 <span class="co"># or</span>
 <span class="no">con</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/connect.html">connect</a></span>()
-<span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html">tbl</a></span>(<span class="no">con</span>, <span class="st">"events"</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="kw">n</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/n.html">n</a></span>())
+<span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html">tbl</a></span>(<span class="no">con</span>, <span class="st">"events"</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="kw">n</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>())
 <span class="co"># or, </span>
 <span class="co"># read all 17+ million rows into memory</span>
 <span class="no">events</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/read_icews.html">read_icews</a></span>()</pre></div>
@@ -194,7 +194,7 @@
 
 <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html">dbGetQuery</a></span>(<span class="no">con</span>, <span class="st">"SELECT count(*) FROM events;"</span>)
 <span class="co"># or</span>
-<span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html">tbl</a></span>(<span class="no">con</span>, <span class="st">"events"</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="kw">n</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/n.html">n</a></span>())</pre></div>
+<span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html">tbl</a></span>(<span class="no">con</span>, <span class="st">"events"</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="kw">n</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>())</pre></div>
 <p>When done, it is good etiquette to close to the database connection:</p>
 <div class="sourceCode" id="cb11"><pre class="r"><span class="kw pkg">DBI</span><span class="kw ns">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html">dbDisconnect</a></span>(<span class="no">con</span>)</pre></div>
 </div>

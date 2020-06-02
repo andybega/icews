@@ -4,9 +4,9 @@ setup_mock_environment <- function(pop_raw = FALSE, init_db = FALSE, pop_db = FA
   dd <- tempdir()
   o <- sapply(file.path(dd, c("raw", "db", "docs")), dir.create, showWarnings = FALSE)
   raw_file_dir <- file.path(dd, "raw")
-  db_path <- file.path(dd, "db/test.sqlite3")
+  db_path <- tempfile(fileext = ".sqlite3", tmpdir = file.path(dd, "db"))
   if (file.exists(db_path)) {
-    unlink(db_path)
+    unlink(db_path, force = TRUE)
   }
   if (pop_raw) {
     populate_mock_raw(raw_file_dir)
@@ -72,6 +72,6 @@ populate_mock_db <- function(db_path) {
 }
 
 clean_mock_environment <- function(p) {
-  unlink(dir(p$db_path))
+  unlink(dirname(p$db_path), recursive = TRUE)
   unlink(file.path(p$raw_file_dir, "events.2018.sample.tab"))
 }

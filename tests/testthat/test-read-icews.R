@@ -1,4 +1,3 @@
-context("read_icews & co")
 
 test_that("read_icews input checking works", {
   opts <- unset_icews_opts()
@@ -25,7 +24,7 @@ test_that("n_max in read_icews and variants works", {
 
   set_icews_opts(opts)
   unlink(p$db_path)
-  unlink(file.path(p$raw_file_dir, "events.2018.sample.tab"))
+  unlink(p$raw_file_dir, recursive = TRUE)
 })
 
 test_that("read_icews respects paths",  {
@@ -44,6 +43,10 @@ test_that("read_icews respects paths",  {
   expect_equal(nrow(o_def), 0L)
   expect_equal(nrow(o_empty), 0L)
   expect_equal(nrow(o_full), 5L)
+
+  unlink(p_empty)
+  unlink(p_full)
+  unlink(p_def)
 })
 
 test_that("read_icews_raw works", {
@@ -54,6 +57,8 @@ test_that("read_icews_raw works", {
 
   expect_error(events <- read_icews_raw(raw_file_dir, n_max = 1L, fix_names = FALSE), NA)
   expect_true(names(events)[1]=="Event ID")
+
+  unlink(raw_file_dir, recursive = TRUE)
 
 })
 
@@ -73,3 +78,4 @@ test_that("read from local or db returns same column info and types", {
   expect_equal(o_db, o_raw)
 
 })
+

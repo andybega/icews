@@ -17,7 +17,10 @@ create_db <- function(db_path = find_db()) {
   if (!dir.exists(dirname(db_path))) {
     dir.create(dirname(db_path))
   }
-  con <- dplyr::src_sqlite(db_path, create = TRUE)
+
+  # create an empty database file
+  con <- DBI::dbConnect(RSQLite::SQLite(), dbname = db_path)
+  DBI::dbDisconnect(con)
 
   # Create events table and indices
   create_event_table(db_path)
@@ -26,8 +29,7 @@ create_db <- function(db_path = find_db()) {
   execute_sql("stats.sql", db_path)
   execute_sql("source_files.sql", db_path)
 
-  # return SQLiteConnection from RSQLite
-  invisible(con$con)
+  invisible(db_path)
 }
 
 #' Create event table and indices

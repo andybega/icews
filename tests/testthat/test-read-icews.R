@@ -66,7 +66,9 @@ test_that("read_icews_raw works", {
 test_that("read from local or db returns same column info and types", {
   p <- setup_mock_environment(pop_raw = TRUE, pop_db = TRUE)
 
-  o_raw <- read_icews(p$raw_file_dir, n_max = 5L)
+  # read_icews() returns spec_tbl_df, tbl_df, ...; this removes the first
+  # class (#63)
+  o_raw <- as_tibble(read_icews(p$raw_file_dir, n_max = 5L))
   o_db  <- read_icews(p$db_path, n_max = 5L)
   o_db  <- o_db[, -match("source_file", names(o_db))]
 

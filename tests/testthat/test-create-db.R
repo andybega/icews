@@ -1,4 +1,3 @@
-context("create_db")
 
 library("DBI")
 

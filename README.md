@@ -14,7 +14,7 @@ Get the ICEWS event data from the Harvard Dataverse repos at
 [https://doi.org/10.7910/DVN/28075](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/28075)
 (historic data) and
 [https://doi.org/10.7910/DVN/QI2T9A](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/QI2T9A)
-(daily updates from late 2018 on).
+(weekly updates).
 
 The icews package provides these major features:
 

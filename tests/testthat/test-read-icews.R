@@ -7,9 +7,27 @@ test_that("read_icews input checking works", {
   set_icews_opts("foo", TRUE, TRUE)
   expect_error(read_icews(n_max = 0L), "n_max must be a positive integer")
 
-  # no files at this path (#36)
-  #set_icews_opts("foo", TRUE, TRUE)
-  #expect_error(read_icews())
+})
+
+test_that("read_icews gives informative errors for empty dirs (#36)", {
+
+  set_icews_opts("foo", TRUE, TRUE)
+  expect_error(read_icews(), "maybe this is the wrong path?")
+
+  # non-relevant directory (neither db file nor data files)
+  expect_error(read_icews(getwd()), "neither data file nor a .sqlite3")
+
+  # non-existing directory
+  empty <- file.path(tempdir(), "empty")
+  dir.create(empty, showWarnings = FALSE)
+  expect_error(read_icews(empty), "empty directory")
+
+  # non-existing file
+  expect_error(read_icews(tempfile()), "the file")
+
+  # check the low-level readers as well
+  expect_error(read_icews_raw("foo"), "maybe this is the wrong path?")
+  expect_error(read_icews_db("foo/foo.sqlite3"), "maybe this is the wrong path?")
 
 })
 
@@ -35,7 +53,7 @@ test_that("read_icews respects paths",  {
   opts <- unset_icews_opts()
   set_icews_opts(tempdir(), TRUE, FALSE)
   # by fallback to opts should be empty
-  o_def <- read_icews(n_max = 5L)
+  o_def   <- read_icews(n_max = 5L)
   o_empty <- read_icews(path = p_empty, n_max = 5L)
   o_full  <- read_icews(path = p_full, n_max = 5L)
   set_icews_opts(opts)

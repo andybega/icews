@@ -27,8 +27,10 @@ download_data <- function(to_dir = find_raw(), update = TRUE, dryrun = FALSE) {
   plan <- plan_file_changes(to_dir)
 
   if (!isTRUE(update)) {
-    state$action <- ifelse(plan$action=="remove", "none", plan$action)
-    state$action <- factor(plan$action, levels = c("none", "download", "remove"))
+    action_levels <- levels(plan$action)
+    plan$action <- as.character(plan$action)
+    plan$action <- ifelse(plan$action=="remove", "none", plan$action)
+    plan$action <- factor(plan$action, levels = action_levels)
   }
 
   if (isTRUE(dryrun)) {

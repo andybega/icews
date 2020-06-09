@@ -1,4 +1,4 @@
-context("Planners")
+
 
 test_that("create_plan works", {
   expect_error(create_plan(data.frame(NULL)), NA)
@@ -65,4 +65,5 @@ test_that("plan_database_changes works", {
 
   clean_mock_environment(p)
 })
+
 

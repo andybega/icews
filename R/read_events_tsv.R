@@ -28,6 +28,23 @@ read_events_tsv <- function(file, fix_names = TRUE, ...) {
     Latitude = col_double(),
     Longitude = col_double()
   )
+
+  # hack fix for m/d/y format in Events.2017 (#57)
+  x <- readLines(file)[2]
+  x <- strsplit(x, "\t")[[1]][2]
+  if (grepl("[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}", x)) {
+    col_fmt <- readr::cols(
+      .default = col_character(),
+      `Event ID` = col_integer(),
+      `Event Date` = col_date(format = "%m/%d/%Y"),
+      Intensity = col_double(),
+      `Story ID` = col_integer(),
+      `Sentence Number` = col_integer(),
+      Latitude = col_double(),
+      Longitude = col_double()
+    )
+  }
+
   x <- readr::read_tsv(file, col_types = col_fmt, quote = "", ...)
   if (isTRUE(fix_names)) {
     x <- normalize_column_names(x)

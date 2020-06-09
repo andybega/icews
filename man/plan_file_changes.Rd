@@ -4,10 +4,12 @@
 \alias{plan_file_changes}
 \title{Plan file changes}
 \usage{
-plan_file_changes(raw_file_dir = find_raw())
+plan_file_changes(raw_file_dir = find_raw(), dvn_state = NULL)
 }
 \arguments{
 \item{raw_file_dir}{Directory containing the raw event TSV files}
+
+\item{dvn_state}{Sling around DVN state because the API is sooo slow}
 }
 \description{
 Plan file changes related to download/updating

@@ -92,35 +92,22 @@ print.icews_plan <- function(x, ...) {
 # Applied functions -------------------------------------------------------
 
 
-#' Identify dataset contained in file
-#'
-#' Identify which time period is nominally covered by a file. This is kept
-#' around from prior version of the package, in case it becomes useful again.
-#' E.g. to allow for time range specific downloading.
-#'
-#' @param x a normalized file name
-#'
-#' @keywords internal
-parse_dataset <- function(x) {
-  data_set <- rep(NA_character_, length(x))
-  is_data_mask <- is_data_file(x)
-  out <- gsub("(.[0-9]{14})|(events.)|(-icews-events)|(.tab)|(.sample)", "", x[is_data_mask])
-  data_set[is_data_mask] <- out
-  data_set
-}
-
 
 #' Plan file changes
 #'
 #' Plan file changes related to download/updating
 #'
 #' @param raw_file_dir Directory containing the raw event TSV files
+#' @param dvn_state Sling around DVN state because the API is sooo slow
 #' @keywords internal
-plan_file_changes <- function(raw_file_dir = find_raw()) {
+plan_file_changes <- function(raw_file_dir = find_raw(), dvn_state = NULL) {
 
   action <- NULL
 
-  dvn_state   <- get_dvn_state()
+  if (is.null(dvn_state)) {
+    dvn_state   <- get_dvn_state()
+  }
+
   local_state <- get_local_state(raw_file_dir) %>%
     # add a dummy indicator to ID which is local available
     mutate(in_local = TRUE)
@@ -146,13 +133,6 @@ plan_file_changes <- function(raw_file_dir = find_raw()) {
         .data$on_dvn==FALSE   ~ "remove",
         TRUE ~ "none"),
       action = factor(.data$action, levels =  c("none", "download", "remove")))
-
-  # ad hoc fix for missing events.2017 file on dataverse (#57)
-  missing_on_dvn <- !any(stringr::str_detect(dvn_state$dvn_file_label, "events\\.2017"))
-  in_local <- 2017 %in% full_plan$data_set
-  if (missing_on_dvn & in_local) {
-    full_plan[full_plan$data_set==2017, ][["action"]] <- "none"
-  }
 
   # Clean up file state so it is easier to read
   lvls <- c("none", "download", "delete", "ingest_from_file",
@@ -277,7 +257,7 @@ plan_database_changes <- function(db_path      = find_db(),
     dplyr::arrange(.data$data_set, .data$file_name)
 
   if (isTRUE(use_local) | isTRUE(keep_files)) {
-    local_plan <- plan_file_changes(raw_file_dir) %>%
+    local_plan <- plan_file_changes(raw_file_dir, dvn_state = dvn_state) %>%
       # to avoid factor/char merge warning
       mutate(action = as.character(.data$action))
     full_plan  <- dplyr::bind_rows(local_plan, file_state) %>%

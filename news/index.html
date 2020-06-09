@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">icews</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9007</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9008</span>
       </span>
     </div>
 
@@ -147,6 +147,7 @@
 <li>Fix ingest file to DB problem with duplicate events (<a href='https://github.com/andybega/icews/issues/46'>#46</a>). A regex in <code>write_data_to_db</code> did not recognize a data file ending with “-1.tab” as a daily data file, and thus skipped the duplicate events check that is done for daily data files only.</li>
 <li>Fix missing source files in DB state (<a href='https://github.com/andybega/icews/issues/47'>#47</a>). Source files that all duplicate events, i.e. no events that will end up in the “events” table, are saved in “null_source_files”. This was not being used to update the main “source_files” table on which the state is based on.</li>
 <li>Fix an issue in <code><a href="../reference/dr_icews.html">dr_icews()</a></code> that would erroneously indicate the need to sync local files and database. This was due to the internal changes in v0.2.0.</li>
+<li>Fix bugs in the non-standard 2017 events file; non-standard file name (“Events.2017.20200602.tab.zip”) and dates formatted like “12/1/2017” (<a href='https://github.com/andybega/icews/issues/57'>#57</a>).</li>
 </ul>
 </div>
     <div id="icews-020-2018-02-12" class="section level1">

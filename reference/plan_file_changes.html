@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">icews</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9007</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9008</span>
       </span>
     </div>
 
@@ -141,7 +141,7 @@
     <p>Plan file changes related to download/updating</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plan_file_changes</span>(<span class='kw'>raw_file_dir</span> <span class='kw'>=</span> <span class='fu'><a href='find_raw.html'>find_raw</a></span>())</pre>
+    <pre class="usage"><span class='fu'>plan_file_changes</span>(<span class='kw'>raw_file_dir</span> <span class='kw'>=</span> <span class='fu'><a href='find_raw.html'>find_raw</a></span>(), <span class='kw'>dvn_state</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -149,6 +149,10 @@
     <tr>
       <th>raw_file_dir</th>
       <td><p>Directory containing the raw event TSV files</p></td>
+    </tr>
+    <tr>
+      <th>dvn_state</th>
+      <td><p>Sling around DVN state because the API is sooo slow</p></td>
     </tr>
     </table>
 

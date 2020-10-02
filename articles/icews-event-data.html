@@ -31,18 +31,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">icews</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9008</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9009</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../articles/icews.html">Get started</a>
 </li>
@@ -88,13 +82,13 @@
 
       
 
-      </header><div class="row">
+      </header><script src="icews-event-data_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>ICEWS event data</h1>
                         <h4 class="author">Andreas Beger</h4>
             
-            <h4 class="date">2020-06-09</h4>
+            <h4 class="date">2020-10-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/andybega/icews/blob/master/vignettes/icews-event-data.Rmd"><code>vignettes/icews-event-data.Rmd</code></a></small>
       <div class="hidden name"><code>icews-event-data.Rmd</code></div>
@@ -103,16 +97,17 @@
 
     
     
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span>({
-  <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"icews"</span>)
-  <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"dplyr"</span>)
-  <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"tidyr"</span>)
-  <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"stringr"</span>)
-})
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="op">{</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://www.andybeger.com/icews/">"icews"</a></span><span class="op">)</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://dplyr.tidyverse.org">"dplyr"</a></span><span class="op">)</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://tidyr.tidyverse.org">"tidyr"</a></span><span class="op">)</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="http://stringr.tidyverse.org">"stringr"</a></span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
 <span class="co">#&gt; Warning in fun(libname, pkgname): The R dataverse client requires the DATAVERSE_SERVER environment</span>
 <span class="co">#&gt; variable to be set. See &lt;https://github.com/IQSS/dataverse-client-r&gt;.</span>
 <span class="co">#&gt; Please run:</span>
-<span class="co">#&gt; Sys.setenv(DATAVERSE_SERVER = "dataverse.harvard.edu")</span></pre></body></html></div>
+<span class="co">#&gt; Sys.setenv(DATAVERSE_SERVER = "dataverse.harvard.edu")</span></pre></div>
 <p>This vignette gives an overview of the ICEWS event data: how each event record is structured, and some the relationship between different sets of information in the event records and columns. The latter is mainly for instances where superficial assumptions one might make, e.g. that “event_id” is a unique event ID, are wrong.</p>
 <p><em>Note: the package is inherently unfriendly to a completely replicable workflow, as it is setup with the intention that one will use R options set in .Rprofile at each session start. And in any case, it is not trivial to throw around 5 GB of data.</em></p>
 <p><em>One side effect is that several parts of this vignette incorporte results from the local data copy I have, but which is not included on GitHub or the package install. However, I have tried to make the code here as explicity and replicable as possible.</em></p>
@@ -126,7 +121,8 @@
 <h3 class="hasAnchor">
 <a href="#event-id-is-not-unique" class="anchor"></a>Event ID is not unique</h3>
 <p>“Event ID” is not a unique ID, but together with “Event Date” it does appear to be unique.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"
 SELECT id_n, count(*) as instances
 FROM ( 
       SELECT event_id, count(*) as id_n 
@@ -134,7 +130,7 @@ FROM (
       GROUP BY event_id
      )
 GROUP BY id_n;
-"</span>) <span class="kw">%&gt;%</span> <span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(<span class="kw">format.args</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">big.mark</span> <span class="kw">=</span> <span class="st">','</span>))</pre></body></html></div>
+"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span>format.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>big.mark <span class="op">=</span> <span class="st">','</span><span class="op">)</span><span class="op">)</span></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="right">id_n</th>
@@ -168,12 +164,13 @@ GROUP BY id_n;
 <div id="total-number-of-records" class="section level3">
 <h3 class="hasAnchor">
 <a href="#total-number-of-records" class="anchor"></a>Total number of records</h3>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_cols</a></span>(
-  <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"select count(*) as n_unique_events from (select distinct(event_id) from events);"</span>),
-  <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"select count(*) as n_rows from events;"</span>)
-) <span class="kw">%&gt;%</span>
-  <span class="kw pkg">tidyr</span><span class="kw ns">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/gather.html">gather</a></span>(<span class="no">Measure</span>, <span class="no">Value</span>) <span class="kw">%&gt;%</span>
-  <span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(<span class="kw">format.args</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">big.mark</span> <span class="kw">=</span> <span class="st">','</span>))</pre></body></html></div>
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_cols</a></span><span class="op">(</span>
+  <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"select count(*) as n_unique_events from (select distinct(event_id) from events);"</span><span class="op">)</span>,
+  <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"select count(*) as n_rows from events;"</span><span class="op">)</span>
+<span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/gather.html">gather</a></span><span class="op">(</span><span class="va">Measure</span>, <span class="va">Value</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span>format.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>big.mark <span class="op">=</span> <span class="st">','</span><span class="op">)</span><span class="op">)</span></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">Measure</th>
@@ -195,13 +192,14 @@ GROUP BY id_n;
 <h3 class="hasAnchor">
 <a href="#distinct-locations" class="anchor"></a>Distinct locations</h3>
 <p>The location information for the event (not actors) consists of country, province, district, city, latitude, longitude.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_cols</a></span>(
-  <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"select count(*) as n_unique_locations from (select distinct latitude, longitude, country, province, district, city from events);"</span>),
-  <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"select count(*) as n_unique_coords from (select distinct latitude, longitude from events);"</span>),
-  <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"select count(*) as n_unique_countries from (select distinct country from events);"</span>)
-) <span class="kw">%&gt;%</span>
-  <span class="kw pkg">tidyr</span><span class="kw ns">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/gather.html">gather</a></span>(<span class="no">Measure</span>, <span class="no">Value</span>) <span class="kw">%&gt;%</span>
-  <span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(<span class="kw">format.args</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">big.mark</span> <span class="kw">=</span> <span class="st">','</span>))</pre></body></html></div>
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_cols</a></span><span class="op">(</span>
+  <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"select count(*) as n_unique_locations from (select distinct latitude, longitude, country, province, district, city from events);"</span><span class="op">)</span>,
+  <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"select count(*) as n_unique_coords from (select distinct latitude, longitude from events);"</span><span class="op">)</span>,
+  <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"select count(*) as n_unique_countries from (select distinct country from events);"</span><span class="op">)</span>
+<span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/gather.html">gather</a></span><span class="op">(</span><span class="va">Measure</span>, <span class="va">Value</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span>format.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>big.mark <span class="op">=</span> <span class="st">','</span><span class="op">)</span><span class="op">)</span></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">Measure</th>
@@ -223,20 +221,21 @@ GROUP BY id_n;
 </tbody>
 </table>
 <p>Coordinates are not sufficient to distinguish each unique location once we take city, district, etc. into account. Nothing short of the full set of columns [country, province, district, city, latitude, longitude] uniquely identifies all distinct locations.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">sectors</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"select source_sectors, target_sectors from events limit 1e5;"</span>)
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="va">sectors</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"select source_sectors, target_sectors from events limit 1e5;"</span><span class="op">)</span>
 
-<span class="no">sectors_long</span> <span class="kw">&lt;-</span> <span class="no">sectors</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">tidyr</span><span class="kw ns">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/gather.html">gather</a></span>(<span class="no">direction</span>, <span class="no">sector</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">direction</span> <span class="kw">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html">str_replace</a></span>(<span class="no">direction</span>, <span class="st">"_sectors"</span>, <span class="st">""</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">sector</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/separate_rows.html">separate_rows</a></span>(<span class="no">sector</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">sector</span> <span class="kw">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_trim.html">str_trim</a></span>(<span class="no">sector</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">sector</span> <span class="kw">!=</span> <span class="st">""</span>)
+<span class="va">sectors_long</span> <span class="op">&lt;-</span> <span class="va">sectors</span> <span class="op">%&gt;%</span>
+  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/gather.html">gather</a></span><span class="op">(</span><span class="va">direction</span>, <span class="va">sector</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>direction <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html">str_replace</a></span><span class="op">(</span><span class="va">direction</span>, <span class="st">"_sectors"</span>, <span class="st">""</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">sector</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/separate_rows.html">separate_rows</a></span><span class="op">(</span><span class="va">sector</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>sector <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_trim.html">str_trim</a></span><span class="op">(</span><span class="va">sector</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sector</span> <span class="op">!=</span> <span class="st">""</span><span class="op">)</span>
 
-<span class="no">sectors</span> <span class="kw">&lt;-</span> <span class="no">sectors_long</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="no">sector</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="kw">in_n_events</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>()) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(<span class="no">in_n_events</span>)</pre></body></html></div>
+<span class="va">sectors</span> <span class="op">&lt;-</span> <span class="va">sectors_long</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">sector</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>in_n_events <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">in_n_events</span><span class="op">)</span></pre></div>
 </div>
 </div>
   </div>
@@ -256,7 +255,7 @@ GROUP BY id_n;
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

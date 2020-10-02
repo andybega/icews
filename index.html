@@ -32,18 +32,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">icews</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9008</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9009</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="articles/icews.html">Get started</a>
 </li>
@@ -109,52 +103,56 @@
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>Not on CRAN, so you will have to install via remotes or devtools:</p>
-<div class="sourceCode" id="cb1"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"remotes"</span>)
-<span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"andybega/icews"</span>)</pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://remotes.r-lib.org">"remotes"</a></span><span class="op">)</span>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"andybega/icews"</span><span class="op">)</span></pre></div>
 <p>The <strong>icews</strong> package relies on the R <a href="https://github.com/IQSS/dataverse-client-r"><strong>dataverse</strong> client</a>. Note that this package requires a dataverse API token to correctly work. See the package README.</p>
 </div>
 <div id="usage" class="section level2">
 <h2 class="hasAnchor">
 <a href="#usage" class="anchor"></a>Usage</h2>
 <p><strong>tl;dr</strong>: get a SQLite database with the current events on Dataverse with this code; otherwise read below for more details.</p>
-<div class="sourceCode" id="cb2"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html">Sys.setenv</a></span>(<span class="kw">DATAVERSE_SERVER</span> <span class="kw">=</span> <span class="st">"dataverse.harvard.edu"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"icews"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"DBI"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"dplyr"</span>)
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html">Sys.setenv</a></span><span class="op">(</span>DATAVERSE_SERVER <span class="op">=</span> <span class="st">"dataverse.harvard.edu"</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://www.andybeger.com/icews/">"icews"</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="http://r-dbi.github.io/DBI">"DBI"</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://dplyr.tidyverse.org">"dplyr"</a></span><span class="op">)</span>
 
-<span class="fu"><a href="reference/setup_icews.html">setup_icews</a></span>(<span class="kw">data_dir</span> <span class="kw">=</span> <span class="st">"/where/should/data/be"</span>, <span class="kw">use_db</span> <span class="kw">=</span> <span class="fl">TRUE</span>, <span class="kw">keep_files</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
-            <span class="kw">r_profile</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="fu"><a href="reference/setup_icews.html">setup_icews</a></span><span class="op">(</span>data_dir <span class="op">=</span> <span class="st">"/where/should/data/be"</span>, use_db <span class="op">=</span> <span class="cn">TRUE</span>, keep_files <span class="op">=</span> <span class="cn">TRUE</span>,
+            r_profile <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co"># this will give instructions for what to add to .Rprofile so that settings</span>
 <span class="co"># persist between R sessions</span>
 
-<span class="fu"><a href="reference/update_icews.html">update_icews</a></span>(<span class="kw">dryrun</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="fu"><a href="reference/update_icews.html">update_icews</a></span><span class="op">(</span>dryrun <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co"># Should list proposed downloads, ingests, etc.</span>
-<span class="fu"><a href="reference/update_icews.html">update_icews</a></span>(<span class="kw">dryrun</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
+<span class="fu"><a href="reference/update_icews.html">update_icews</a></span><span class="op">(</span>dryrun <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="co"># Wait until all is done; like 45 minutes or more the first time around</span>
 
 <span class="co"># To get the data:</span>
-<span class="no">con</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/connect.html">connect</a></span>()
-<span class="kw pkg">DBI</span><span class="kw ns">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html">dbGetQuery</a></span>(<span class="no">con</span>, <span class="st">"SELECT count(*) AS n FROM events;"</span>)
+<span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/connect.html">connect</a></span><span class="op">(</span><span class="op">)</span>
+<span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html">dbGetQuery</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"SELECT count(*) AS n FROM events;"</span><span class="op">)</span>
 <span class="co"># or</span>
-<span class="fu"><a href="reference/query_icews.html">query_icews</a></span>(<span class="st">"SELECT count(*) AS n FROM events;"</span>)
+<span class="fu"><a href="reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"SELECT count(*) AS n FROM events;"</span><span class="op">)</span>
 <span class="co"># or</span>
-<span class="no">con</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/connect.html">connect</a></span>()
-<span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html">tbl</a></span>(<span class="no">con</span>, <span class="st">"events"</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="kw">n</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>())
+<span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/connect.html">connect</a></span><span class="op">(</span><span class="op">)</span>
+<span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"events"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co"># or, </span>
 <span class="co"># read all 17+ million rows into memory</span>
-<span class="no">events</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/read_icews.html">read_icews</a></span>()</pre></div>
+<span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_icews.html">read_icews</a></span><span class="op">(</span><span class="op">)</span></pre></div>
 <div id="files-only" class="section level3">
 <h3 class="hasAnchor">
 <a href="#files-only" class="anchor"></a>Files only</h3>
 <p>In the most simple use case, you can use the package to download the ICEWS event data, which comes in several tab-serparated value (TSV) files, without having to deal with Dataverse.</p>
-<div class="sourceCode" id="cb3"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html">Sys.setenv</a></span>(<span class="kw">DATAVERSE_SERVER</span> <span class="kw">=</span> <span class="st">"dataverse.harvard.edu"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"icews"</span>)
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html">Sys.setenv</a></span><span class="op">(</span>DATAVERSE_SERVER <span class="op">=</span> <span class="st">"dataverse.harvard.edu"</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://www.andybeger.com/icews/">"icews"</a></span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span>(<span class="st">"~/Downloads/icews"</span>)
-<span class="fu"><a href="reference/download_data.html">download_data</a></span>(<span class="st">"~/Downloads/icews"</span>)</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="st">"~/Downloads/icews"</span><span class="op">)</span>
+<span class="fu"><a href="reference/download_data.html">download_data</a></span><span class="op">(</span><span class="st">"~/Downloads/icews"</span><span class="op">)</span></pre></div>
 <p>This will conventiently also re-use and update any files already in the same directory. Zipped files will be unzipped. E.g. the monthly data updates currently come in a file with the pattern “events.2018.yyyymmddhhmmss.tab”, where the “yyyymmddhhmmss” part changes. The downloader can identify this and will replace the old with the new file.</p>
 <p>Just in case, you can do a dry run that will not actually make any changes:</p>
-<div class="sourceCode" id="cb4"><pre class="r"><span class="fu"><a href="reference/download_data.html">download_data</a></span>(<span class="st">"~/Downloads/icews"</span>, <span class="kw">dryrun</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="fu"><a href="reference/download_data.html">download_data</a></span><span class="op">(</span><span class="st">"~/Downloads/icews"</span>, dryrun <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
 <div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1"></a><span class="ex">Found</span> 25 local data file(s)</span>
 <span id="cb5-2"><a href="#cb5-2"></a><span class="ex">Downloading</span> 2 new file(s)</span>
 <span id="cb5-3"><a href="#cb5-3"></a><span class="ex">Removing</span> 1 old local file(s)</span>
@@ -164,46 +162,53 @@
 <span id="cb5-7"><a href="#cb5-7"></a><span class="ex">Download</span> <span class="st">'events.1996.20150313082528.tab.zip'</span></span>
 <span id="cb5-8"><a href="#cb5-8"></a><span class="ex">Remove</span>   <span class="st">'events.1996.20140313082528.tab'</span></span></code></pre></div>
 <p>The events come in (zipped) tab-seperated files. To load all of these into memory in a big combined data frame with about 16 million rows (~2.5Gb):</p>
-<div class="sourceCode" id="cb6"><pre class="r"><span class="no">events</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/read_icews.html">read_icews</a></span>(<span class="st">"~/Downloads/icews"</span>)</pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit">
+<span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_icews.html">read_icews</a></span><span class="op">(</span><span class="st">"~/Downloads/icews"</span><span class="op">)</span></pre></div>
 <p>Beyond this basic usage, the goal is to abstract as many little pains away as possible. To that end:</p>
 </div>
 <div id="persist-the-data-directory-location" class="section level3">
 <h3 class="hasAnchor">
 <a href="#persist-the-data-directory-location" class="anchor"></a>Persist the data directory location</h3>
 <p>The package can keep track of the data location via variables stored in the package options. The easiest way is to add these to an “.Rprofile” file so that they are available each time R starts up.</p>
-<div class="sourceCode" id="cb7"><pre class="r"><span class="fu"><a href="reference/setup_icews.html">setup_icews</a></span>(<span class="kw">data_dir</span> <span class="kw">=</span> <span class="st">"/where/should/data/be"</span>, <span class="kw">use_db</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
-            <span class="kw">keep_files</span> <span class="kw">=</span> <span class="fl">TRUE</span>, <span class="kw">r_profile</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit">
+<span class="fu"><a href="reference/setup_icews.html">setup_icews</a></span><span class="op">(</span>data_dir <span class="op">=</span> <span class="st">"/where/should/data/be"</span>, use_db <span class="op">=</span> <span class="cn">TRUE</span>, 
+            keep_files <span class="op">=</span> <span class="cn">TRUE</span>, r_profile <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
 <p>This will open the “.Rprofile” file and tell you what to add to it (requires <a href="https://cran.r-project.org/package=usethis">usethis</a> to be installed). From now on the package knows where your data lives, and most of the functions can be called without specifying any directory or path arguments.</p>
 <p>This sets three variables:</p>
-<div class="sourceCode" id="cb8"><pre class="r"><span class="co"># ICEWS data location and options</span>
-<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(<span class="kw">icews.data_dir</span>   <span class="kw">=</span> <span class="st">"~/path/to/icews_data"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(<span class="kw">icews.use_db</span>     <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(<span class="kw">icews.keep_files</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit">
+<span class="co"># ICEWS data location and options</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>icews.data_dir   <span class="op">=</span> <span class="st">"~/path/to/icews_data"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>icews.use_db     <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>icews.keep_files <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
 </div>
 <div id="use-a-sqlite-database-that-keeps-in-sync-with-dataverse" class="section level3">
 <h3 class="hasAnchor">
 <a href="#use-a-sqlite-database-that-keeps-in-sync-with-dataverse" class="anchor"></a>Use a SQLite database that keeps in sync with Dataverse</h3>
 <p>To setup and populate a database with the current version on Dataverse, use this command:</p>
-<div class="sourceCode" id="cb9"><pre class="r"><span class="co"># assumes setup_icews with use_db = TRUE has already been called</span>
-<span class="fu"><a href="reference/update_icews.html">update_icews</a></span>(<span class="kw">dryrun</span> <span class="kw">=</span> <span class="fl">FALSE</span>)</pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit">
+<span class="co"># assumes setup_icews with use_db = TRUE has already been called</span>
+<span class="fu"><a href="reference/update_icews.html">update_icews</a></span><span class="op">(</span>dryrun <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></pre></div>
 <p>This will download any data files needed from Dataverse, and create and populate a SQLite database with them. The events will be in a table called “events”. To connect, use <code><a href="reference/connect.html">connect()</a></code>; this returns a RSQLite database connection. From then on, it can be used like this:</p>
-<div class="sourceCode" id="cb10"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"DBI"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"dplyr"</span>)
+<div class="sourceCode" id="cb10"><pre class="downlit">
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="http://r-dbi.github.io/DBI">"DBI"</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://dplyr.tidyverse.org">"dplyr"</a></span><span class="op">)</span>
 
-<span class="no">con</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/connect.html">connect</a></span>()
+<span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/connect.html">connect</a></span><span class="op">(</span><span class="op">)</span>
 
-<span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html">dbGetQuery</a></span>(<span class="no">con</span>, <span class="st">"SELECT count(*) FROM events;"</span>)
+<span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html">dbGetQuery</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"SELECT count(*) FROM events;"</span><span class="op">)</span>
 <span class="co"># or</span>
-<span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html">tbl</a></span>(<span class="no">con</span>, <span class="st">"events"</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="kw">n</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>())</pre></div>
+<span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"events"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></pre></div>
 <p>When done, it is good etiquette to close to the database connection:</p>
-<div class="sourceCode" id="cb11"><pre class="r"><span class="kw pkg">DBI</span><span class="kw ns">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html">dbDisconnect</a></span>(<span class="no">con</span>)</pre></div>
+<div class="sourceCode" id="cb11"><pre class="downlit">
+<span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html">dbDisconnect</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></pre></div>
 </div>
 <div id="bonus-cameo-codes" class="section level3">
 <h3 class="hasAnchor">
 <a href="#bonus-cameo-codes" class="anchor"></a>Bonus: CAMEO codes</h3>
 <p>Also included is a dictionary of the CAMEO code for event types. This includes quad and penta category mappings as well.</p>
-<div class="sourceCode" id="cb12"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"cameo_codes"</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">cameo_codes</span>)
+<div class="sourceCode" id="cb12"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"cameo_codes"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">cameo_codes</span><span class="op">)</span>
 <span class="co">#&gt; Classes 'tbl_df', 'tbl' and 'data.frame':    312 obs. of  11 variables:</span>
 <span class="co">#&gt;  $ cameo_code    : chr  "01" "010" "011" "012" ...</span>
 <span class="co">#&gt;  $ name          : chr  "MAKE PUBLIC STATEMENT" "Make statement" "Decline comment" "Make pessimistic comment" ...</span>
@@ -217,8 +222,9 @@
 <span class="co">#&gt;  $ quad_category : chr  "verbal cooperation" "verbal cooperation" "verbal cooperation" "verbal cooperation" ...</span>
 <span class="co">#&gt;  $ penta_category: chr  "statement" "statement" "statement" "statement" ...</span></pre></div>
 <p>And, a dictionary mapping Goldstein scores to CAMEO codes.</p>
-<div class="sourceCode" id="cb13"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"goldstein_mappings"</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">goldstein_mappings</span>)
+<div class="sourceCode" id="cb13"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"goldstein_mappings"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">goldstein_mappings</span><span class="op">)</span>
 <span class="co">#&gt; Classes 'tbl_df', 'tbl' and 'data.frame':    312 obs. of  5 variables:</span>
 <span class="co">#&gt;  $ code     : chr  "01" "010" "011" "012" ...</span>
 <span class="co">#&gt;  $ name     : chr  "MAKE PUBLIC STATEMENT" "Make statement" "Decline comment" "Make pessimistic comment" ...</span>
@@ -271,7 +277,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

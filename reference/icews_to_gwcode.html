@@ -72,19 +72,13 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">icews</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9008</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9009</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/icews.html">Get started</a>
 </li>
 <li>
@@ -141,7 +135,7 @@
     <p>Translate country names to Gleditsch &amp; Ward country codes.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>icews_to_gwcode</span>(<span class='no'>country</span>, <span class='no'>date</span>)</pre>
+    <pre class="usage"><span class='fu'>icews_to_gwcode</span><span class='op'>(</span><span class='va'>country</span>, <span class='va'>date</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -160,24 +154,26 @@ change over time.</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Territories are correctly associated with metropole</span>
-<span class='no'>df</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>dplyr</span><span class='kw ns'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/reexports.html'>tibble</a></span>(
-  <span class='kw'>country</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"United States"</span>, <span class='st'>"Puerto Rico"</span>, <span class='st'>"Guam"</span>),
-  <span class='kw'>event_date</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span>(<span class='st'>"2018-01-01"</span>)),
-  <span class='kw'>stringsAsFactors</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-<span class='no'>df</span>$<span class='no'>gwcode</span> <span class='kw'>&lt;-</span> <span class='fu'>icews_to_gwcode</span>(<span class='no'>df</span>$<span class='no'>country</span>, <span class='no'>df</span>$<span class='no'>event_date</span>)
-<span class='no'>df</span></div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 3 x 4</span><span>
+<span class='va'>df</span> <span class='op'>&lt;-</span> <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span><span class='op'>(</span>
+  country <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"United States"</span>, <span class='st'>"Puerto Rico"</span>, <span class='st'>"Guam"</span><span class='op'>)</span>,
+  event_date <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"2018-01-01"</span><span class='op'>)</span><span class='op'>)</span>,
+  stringsAsFactors <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='va'>df</span><span class='op'>$</span><span class='va'>gwcode</span> <span class='op'>&lt;-</span> <span class='fu'>icews_to_gwcode</span><span class='op'>(</span><span class='va'>df</span><span class='op'>$</span><span class='va'>country</span>, <span class='va'>df</span><span class='op'>$</span><span class='va'>event_date</span><span class='op'>)</span>
+<span class='va'>df</span>
+</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 3 x 4</span><span>
 #&gt;   country       event_date stringsAsFactors gwcode
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;date&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>             </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>
 #&gt; </span><span style='color: #555555;'>1</span><span> United States 2018-01-01 FALSE                 2
 #&gt; </span><span style='color: #555555;'>2</span><span> Puerto Rico   2018-01-01 FALSE                 2
 #&gt; </span><span style='color: #555555;'>3</span><span> Guam          2018-01-01 FALSE                 2</div><div class='input'>
 <span class='co'># Time-varying translation</span>
-<span class='no'>df</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>dplyr</span><span class='kw ns'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/reexports.html'>tibble</a></span>(
-  <span class='kw'>country</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Serbia"</span>, <span class='st'>"Serbia"</span>),
-  <span class='kw'>event_date</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"2006-06-04"</span>, <span class='st'>"2006-06-05"</span>)),
-  <span class='kw'>stringsAsFactors</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-<span class='no'>df</span>$<span class='no'>gwcode</span> <span class='kw'>&lt;-</span> <span class='fu'>icews_to_gwcode</span>(<span class='no'>df</span>$<span class='no'>country</span>, <span class='no'>df</span>$<span class='no'>event_date</span>)
-<span class='no'>df</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 2 x 4</span><span>
+<span class='va'>df</span> <span class='op'>&lt;-</span> <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span><span class='op'>(</span>
+  country <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Serbia"</span>, <span class='st'>"Serbia"</span><span class='op'>)</span>,
+  event_date <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"2006-06-04"</span>, <span class='st'>"2006-06-05"</span><span class='op'>)</span><span class='op'>)</span>,
+  stringsAsFactors <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='va'>df</span><span class='op'>$</span><span class='va'>gwcode</span> <span class='op'>&lt;-</span> <span class='fu'>icews_to_gwcode</span><span class='op'>(</span><span class='va'>df</span><span class='op'>$</span><span class='va'>country</span>, <span class='va'>df</span><span class='op'>$</span><span class='va'>event_date</span><span class='op'>)</span>
+<span class='va'>df</span>
+</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 2 x 4</span><span>
 #&gt;   country event_date stringsAsFactors gwcode
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;date&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>             </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>
 #&gt; </span><span style='color: #555555;'>1</span><span> Serbia  2006-06-04 FALSE               345
@@ -197,7 +193,7 @@ change over time.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

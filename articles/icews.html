@@ -31,18 +31,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">icews</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9008</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9009</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../articles/icews.html">Get started</a>
 </li>
@@ -88,13 +82,13 @@
 
       
 
-      </header><div class="row">
+      </header><script src="icews_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Introduction to icews</h1>
                         <h4 class="author">Andreas Beger</h4>
             
-            <h4 class="date">2020-06-09</h4>
+            <h4 class="date">2020-10-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/andybega/icews/blob/master/vignettes/icews.Rmd"><code>vignettes/icews.Rmd</code></a></small>
       <div class="hidden name"><code>icews.Rmd</code></div>
@@ -127,18 +121,20 @@
 <h3 class="hasAnchor">
 <a href="#recommended-use-database-and-retain-files" class="anchor"></a>Recommended: use database and retain files</h3>
 <p>First, load some libraries required for this and the remainder of the vignette:</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span>({
-  <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"icews"</span>)
-  <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"dplyr"</span>)
-  <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"ggplot2"</span>)
-})
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="op">{</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://www.andybeger.com/icews/">"icews"</a></span><span class="op">)</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://dplyr.tidyverse.org">"dplyr"</a></span><span class="op">)</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="http://ggplot2.tidyverse.org">"ggplot2"</a></span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
 <span class="co">#&gt; Warning in fun(libname, pkgname): The R dataverse client requires the DATAVERSE_SERVER environment</span>
 <span class="co">#&gt; variable to be set. See &lt;https://github.com/IQSS/dataverse-client-r&gt;.</span>
 <span class="co">#&gt; Please run:</span>
-<span class="co">#&gt; Sys.setenv(DATAVERSE_SERVER = "dataverse.harvard.edu")</span></pre></body></html></div>
+<span class="co">#&gt; Sys.setenv(DATAVERSE_SERVER = "dataverse.harvard.edu")</span></pre></div>
 <p>Assuming this is the first time the icews package has been loaded, start by setting the option variables that the package will use to determine what kind of backend to use and where to keep files:</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu"><a href="../reference/setup_icews.html">setup_icews</a></span>(<span class="st">"~/path/to/icews_data"</span>, <span class="kw">use_db</span> <span class="kw">=</span> <span class="fl">TRUE</span>, <span class="kw">keep_files</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
-            <span class="kw">r_profile</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="fu"><a href="../reference/setup_icews.html">setup_icews</a></span><span class="op">(</span><span class="st">"~/path/to/icews_data"</span>, use_db <span class="op">=</span> <span class="cn">TRUE</span>, keep_files <span class="op">=</span> <span class="cn">FALSE</span>,
+            r_profile <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
 <p>The first argument is the path to the directory where ICEWS data will be kept. Several subdirectories will be created in this directory:</p>
 <ul>
 <li>
@@ -162,7 +158,8 @@ options(icews.keep_files = FALSE)
 Path options are set</code></pre>
 <p>From now on, icews will know where the data lives and what to do.</p>
 <p>Now we can start the data download. First, it might be a good idea to check what the planned changes are, which we can do by calling <code>update_icews</code> with <code>dryrun = TRUE</code>.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="../reference/update_icews.html">update_icews</a></span>(<span class="kw">dryrun</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="fu"><a href="../reference/update_icews.html">update_icews</a></span><span class="op">(</span>dryrun <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
 <p>The output looks something like this:</p>
 <pre><code>File system changes:
 Found 24 local data file(s)
@@ -179,37 +176,44 @@ Delete records from 'events.2018.20181010112357.tab'
 Ingest records from 'events.2018.20181119132436.tab'
 Remove              'events.2018.20181010112357.tab'</code></pre>
 <p>The initial download should take quite some time, around an hour or so. But any subsequent updates will only download files or make changes in two instances: a completely new data file is available on Dataverse, e.g. if a new year has started, or an existing file/event set with a new version is available on Dataverse, in which case the existing file and records will be updated in place with the new version. Let us now do the actual sync:</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu"><a href="../reference/update_icews.html">update_icews</a></span>()</pre></body></html></div>
+<div class="sourceCode" id="cb6"><pre class="downlit">
+<span class="fu"><a href="../reference/update_icews.html">update_icews</a></span><span class="op">(</span><span class="op">)</span></pre></div>
 <p>That’s it. To work with the data, there now several options. Read the whole data into memory:</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">events</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/read_icews.html">read_icews</a></span>()</pre></body></html></div>
+<div class="sourceCode" id="cb7"><pre class="downlit">
+<span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_icews.html">read_icews</a></span><span class="op">(</span><span class="op">)</span></pre></div>
 <p>Read only a single file, e.g. just to explore some of the data:</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">events</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/read_events_tsv.html">read_events_tsv</a></span>(<span class="fu"><a href="../reference/list_local_files.html">list_local_files</a></span>()[<span class="fl">1</span>])</pre></body></html></div>
+<div class="sourceCode" id="cb8"><pre class="downlit">
+<span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_events_tsv.html">read_events_tsv</a></span><span class="op">(</span><span class="fu"><a href="../reference/list_local_files.html">list_local_files</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></pre></div>
 <p>Connect to the database and use with with DBI or dplyr, or just plain SQL:</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">con</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/connect.html">connect</a></span>()
-<span class="no">events</span> <span class="kw">&lt;-</span> <span class="kw pkg">DBI</span><span class="kw ns">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html">dbGetQuery</a></span>(<span class="no">con</span>, <span class="st">"SELECT * FROM events LIMIT 5;"</span>)
+<div class="sourceCode" id="cb9"><pre class="downlit">
+<span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/connect.html">connect</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">events</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html">dbGetQuery</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"SELECT * FROM events LIMIT 5;"</span><span class="op">)</span>
 
-<span class="no">events</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"SELECT * FROM events LIMIT 5;"</span>)
+<span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"SELECT * FROM events LIMIT 5;"</span><span class="op">)</span>
 
-<span class="no">events</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html">tbl</a></span>(<span class="no">con</span>, <span class="st">"events"</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fl">5</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html">collect</a></span>()</pre></body></html></div>
+<span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"events"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html">collect</a></span><span class="op">(</span><span class="op">)</span></pre></div>
 </div>
 <div id="database-only-setup" class="section level3">
 <h3 class="hasAnchor">
 <a href="#database-only-setup" class="anchor"></a>Database-only setup</h3>
 <p>For this workflow, we will setup the options to use a database to store the events, and to discard the raw data files.</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="fu"><a href="../reference/setup_icews.html">setup_icews</a></span>(<span class="st">"~/path/to/icews_data"</span>, <span class="kw">use_db</span> <span class="kw">=</span> <span class="fl">TRUE</span>, <span class="kw">keep_files</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
-            <span class="kw">r_profile</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb10"><pre class="downlit">
+<span class="fu"><a href="../reference/setup_icews.html">setup_icews</a></span><span class="op">(</span><span class="st">"~/path/to/icews_data"</span>, use_db <span class="op">=</span> <span class="cn">TRUE</span>, keep_files <span class="op">=</span> <span class="cn">FALSE</span>,
+            r_profile <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
 <p><code>update_icews</code> will now download the “.tab” data files to a temporary file and ingest from there. This saves about 5GB of space as of late 2018.</p>
 </div>
 <div id="files-only-setup" class="section level3">
 <h3 class="hasAnchor">
 <a href="#files-only-setup" class="anchor"></a>Files-only setup</h3>
 <p>Again, we start with the setup function and add the relevant options to the “.Rprofile” file in order to avoid having to deal with paths in future sessions.</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="fu"><a href="../reference/setup_icews.html">setup_icews</a></span>(<span class="st">"~/path/to/icews_data"</span>, <span class="kw">use_db</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">keep_files</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
-            <span class="kw">r_profile</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb11"><pre class="downlit">
+<span class="fu"><a href="../reference/setup_icews.html">setup_icews</a></span><span class="op">(</span><span class="st">"~/path/to/icews_data"</span>, use_db <span class="op">=</span> <span class="cn">FALSE</span>, keep_files <span class="op">=</span> <span class="cn">TRUE</span>,
+            r_profile <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
 <p><code>update_icews</code> will now only download and keep in sync the local data files.</p>
 <p>A completely minimalistic alternative that <strong>does not require options to be set</strong> is to use <code>download_data</code>:</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">old_opts</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/setup_icews.html">unset_icews_opts</a></span>()
-<span class="fu"><a href="../reference/download_data.html">download_data</a></span>(<span class="kw">to_dir</span> <span class="kw">=</span> <span class="st">"~/Downloads/icews_data"</span>, <span class="kw">update</span> <span class="kw">=</span> <span class="fl">TRUE</span>, <span class="kw">dryrun</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb12"><pre class="downlit">
+<span class="va">old_opts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/setup_icews.html">unset_icews_opts</a></span><span class="op">(</span><span class="op">)</span>
+<span class="fu"><a href="../reference/download_data.html">download_data</a></span><span class="op">(</span>to_dir <span class="op">=</span> <span class="st">"~/Downloads/icews_data"</span>, update <span class="op">=</span> <span class="cn">TRUE</span>, dryrun <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
 <pre><code>File system changes:
 Found 0 local data file(s)
 Downloading 24 file(s)
@@ -225,8 +229,9 @@ Download            'events.1996.20150313082528.tab.zip'
 <h2 class="hasAnchor">
 <a href="#data-overview" class="anchor"></a>Data overview</h2>
 <p>The package includes a data sample for the 4,993 events betwen 1 and 3 June 2018. This provides an overview of the data structure:</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"icews_sample"</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">icews_sample</span>)
+<div class="sourceCode" id="cb14"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"icews_sample"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">icews_sample</span><span class="op">)</span>
 <span class="co">#&gt; tibble [4,993 × 22] (S3: tbl_df/tbl/data.frame)</span>
 <span class="co">#&gt;  $ event_id       : int [1:4993] 32889836 32889837 32891290 32891065 32891064 32889838 32891059 32891060 32891062 32891061 ...</span>
 <span class="co">#&gt;  $ event_date     : Date[1:4993], format: "2018-06-01" "2018-06-01" ...</span>
@@ -249,7 +254,7 @@ Download            'events.1996.20150313082528.tab.zip'
 <span class="co">#&gt;  $ latitude       : num [1:4993] 21 21 34.7 35.6 21 ...</span>
 <span class="co">#&gt;  $ longitude      : num [1:4993] 106 106 136 140 106 ...</span>
 <span class="co">#&gt;  $ year           : int [1:4993] 2018 2018 2018 2018 2018 2018 2018 2018 2018 2018 ...</span>
-<span class="co">#&gt;  $ yearmonth      : int [1:4993] 201806 201806 201806 201806 201806 201806 201806 201806 201806 201806 ...</span></pre></body></html></div>
+<span class="co">#&gt;  $ yearmonth      : int [1:4993] 201806 201806 201806 201806 201806 201806 201806 201806 201806 201806 ...</span></pre></div>
 <p>The country column includes short country names for a slightly expanded version of the countries and territories with an <a href="https://en.wikipedia.org/wiki/ISO_3166-1">ISO 3166-1</a> code.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</p>
 <div id="format-differences-between-the-raw-data-and-database-version" class="section level3">
 <h3 class="hasAnchor">
@@ -262,69 +267,72 @@ Download            'events.1996.20150313082528.tab.zip'
 <a href="#some-example-queries" class="anchor"></a>Some example queries</h3>
 <p>The next section below gives a more thorough overview of the ICEWS data; here are some simple example transformations of the data, with several alternative ways to do each.</p>
 <p>First, the total number of events per year, with three different methods giving equivalent results:</p>
-<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="co"># SQL</span>
-<span class="no">events1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"SELECT year, count(*) as events
+<div class="sourceCode" id="cb15"><pre class="downlit">
+<span class="co"># SQL</span>
+<span class="va">events1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"SELECT year, count(*) as events
                         FROM events 
-                        GROUP BY year;"</span>)
+                        GROUP BY year;"</span><span class="op">)</span>
 
 <span class="co"># dplyr</span>
-<span class="no">events2</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html">tbl</a></span>(<span class="fu"><a href="../reference/connect.html">connect</a></span>(), <span class="st">"events"</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="no">year</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="kw">events</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>()) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html">collect</a></span>()
+<span class="va">events2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html">tbl</a></span><span class="op">(</span><span class="fu"><a href="../reference/connect.html">connect</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"events"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">year</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>events <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html">collect</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="co"># read-in memory then dplyr</span>
-<span class="no">events3</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/read_icews.html">read_icews</a></span>() <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="no">year</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="kw">events</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>())
+<span class="va">events3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_icews.html">read_icews</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">year</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>events <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># plot the country series</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="no">events1</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">year</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">events</span>)) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>() +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span>()</pre></body></html></div>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">events1</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">year</span>, y <span class="op">=</span> <span class="va">events</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></pre></div>
 <p><img src="cached_figures/intro-year-totals.png" width="90%"></p>
 <p>Next we will do country-year totals, using the ICEWS country column.</p>
-<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="co"># SQL</span>
-<span class="no">events1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"SELECT country, year, count(*) as events
+<div class="sourceCode" id="cb16"><pre class="downlit">
+<span class="co"># SQL</span>
+<span class="va">events1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"SELECT country, year, count(*) as events
                         FROM events 
-                        GROUP BY year, country;"</span>)
+                        GROUP BY year, country;"</span><span class="op">)</span>
 
 <span class="co"># dplyr</span>
-<span class="no">events2</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html">tbl</a></span>(<span class="fu"><a href="../reference/connect.html">connect</a></span>(), <span class="st">"events"</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="no">year</span>, <span class="no">country</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="kw">events</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>()) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html">collect</a></span>()
+<span class="va">events2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html">tbl</a></span><span class="op">(</span><span class="fu"><a href="../reference/connect.html">connect</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"events"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">country</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>events <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html">collect</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="co"># read-in memory then dplyr</span>
-<span class="no">events3</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/read_icews.html">read_icews</a></span>() <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="no">year</span>, <span class="no">country</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="kw">events</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>())
+<span class="va">events3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_icews.html">read_icews</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">country</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>events <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># plot the country series</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="no">events1</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">year</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">events</span>, <span class="kw">group</span> <span class="kw">=</span> <span class="no">country</span>)) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>() +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span>()</pre></body></html></div>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">events1</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">year</span>, y <span class="op">=</span> <span class="va">events</span>, group <span class="op">=</span> <span class="va">country</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></pre></div>
 <p><img src="cached_figures/intro-country-year-totals.png" width="90%"></p>
 <p>The ICEWS country names, and the ISO standard they are derived from, for state-centric analysis and data aggregations: (1) they tend to disregard states that do not exist anymore, e.g. Yugoslavia, and state changes in general, and (2) a lot of non-independent territories are treated separately from their associated states, e.g. Puerto Rico, American Samoa, etc. have seperate designations from the US. The Gleditsch and Ward (GW) list of independent states<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>, which extends and improves upon the Correlates of War (COW) state list<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>, provides an alternative coding that aims to capture independent states and preserve historical accuracy.</p>
-<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"cameo_codes"</span>)
-<span class="no">events</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span>(<span class="st">"SELECT event_date, country FROM events;"</span>)
-<span class="no">gw_totals</span> <span class="kw">&lt;-</span> <span class="no">events</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(
+<div class="sourceCode" id="cb17"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"cameo_codes"</span><span class="op">)</span>
+<span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"SELECT event_date, country FROM events;"</span><span class="op">)</span>
+<span class="va">gw_totals</span> <span class="op">&lt;-</span> <span class="va">events</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>
     <span class="co"># convert integer to proper Date</span>
-    <span class="kw">event_date</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(<span class="no">event_date</span>), <span class="kw">format</span> <span class="kw">=</span> <span class="st">"%Y%m%d"</span>,
-                         <span class="kw">origin</span> <span class="kw">=</span> <span class="st">"1970-01-01"</span>),
+    event_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">event_date</span><span class="op">)</span>, format <span class="op">=</span> <span class="st">"%Y%m%d"</span>, 
+                         origin <span class="op">=</span> <span class="st">"1970-01-01"</span><span class="op">)</span>,
     <span class="co"># translate country to GW codes</span>
-    <span class="kw">gwcode</span> <span class="kw">=</span> <span class="fu"><a href="../reference/icews_to_gwcode.html">icews_to_gwcode</a></span>(<span class="no">country</span>, <span class="no">event_date</span>),
+    gwcode <span class="op">=</span> <span class="fu"><a href="../reference/icews_to_gwcode.html">icews_to_gwcode</a></span><span class="op">(</span><span class="va">country</span>, <span class="va">event_date</span><span class="op">)</span>,
     <span class="co"># extract year for aggregation</span>
-    <span class="kw">year</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span>(<span class="no">event_date</span>, <span class="st">"%Y"</span>))
-  ) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="no">gwcode</span>, <span class="no">year</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="kw">events</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>())
+    year <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span><span class="va">event_date</span>, <span class="st">"%Y"</span><span class="op">)</span><span class="op">)</span>
+  <span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">gwcode</span>, <span class="va">year</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>events <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># plot the GW country series</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="no">gw_totals</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">year</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">events</span>, <span class="kw">group</span> <span class="kw">=</span> <span class="no">gwcode</span>)) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>() +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span>()</pre></body></html></div>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">gw_totals</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">year</span>, y <span class="op">=</span> <span class="va">events</span>, group <span class="op">=</span> <span class="va">gwcode</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></pre></div>
 <p><img src="cached_figures/intro-gw-year-totals.png" width="90%"></p>
 </div>
 </div>
@@ -354,7 +362,7 @@ Download            'events.1996.20150313082528.tab.zip'
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

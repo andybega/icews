@@ -74,19 +74,13 @@ files." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">icews</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9008</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9009</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/icews.html">Get started</a>
 </li>
 <li>
@@ -145,13 +139,13 @@ the latest versions on DVN. If needed, create the database and download data
 files.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>update_icews</span>(
-  <span class='kw'>dryrun</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>use_db</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"icews.use_db"</span>),
-  <span class='kw'>keep_files</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"icews.keep_files"</span>),
-  <span class='kw'>db_path</span> <span class='kw'>=</span> <span class='fu'><a href='find_raw.html'>find_db</a></span>(),
-  <span class='kw'>raw_file_dir</span> <span class='kw'>=</span> <span class='fu'><a href='find_raw.html'>find_raw</a></span>()
-)</pre>
+    <pre class="usage"><span class='fu'>update_icews</span><span class='op'>(</span>
+  dryrun <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  use_db <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"icews.use_db"</span><span class='op'>)</span>,
+  keep_files <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"icews.keep_files"</span><span class='op'>)</span>,
+  db_path <span class='op'>=</span> <span class='fu'><a href='find_raw.html'>find_db</a></span><span class='op'>(</span><span class='op'>)</span>,
+  raw_file_dir <span class='op'>=</span> <span class='fu'><a href='find_raw.html'>find_raw</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -198,16 +192,18 @@ raw data files will be downloaded. This is equivalent to <code><a href='download
 <code><a href='download_data.html'>download_data()</a></code>, followed by <code><a href='sync_db_with_files.html'>sync_db_with_files()</a></code>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># assuming this is the first time the package is used:</span>
-<span class='fu'><a href='setup_icews.html'>setup_icews</a></span>(<span class='st'>"path/to/icews_data"</span>, <span class='kw'>use_db</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>keep_files</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-            <span class='kw'>r_profile</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='fu'><a href='setup_icews.html'>setup_icews</a></span><span class='op'>(</span><span class='st'>"path/to/icews_data"</span>, use_db <span class='op'>=</span> <span class='cn'>TRUE</span>, keep_files <span class='op'>=</span> <span class='cn'>TRUE</span>,
+            r_profile <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 <span class='co'># see the plan for the initial download</span>
-<span class='fu'>update_icews</span>(<span class='kw'>dryrun</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='fu'>update_icews</span><span class='op'>(</span>dryrun <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 <span class='co'># do the initial download; this will take a while (1hr or so)</span>
-<span class='fu'>update_icews</span>(<span class='kw'>dryrun</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='fu'>update_icews</span><span class='op'>(</span>dryrun <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 <span class='co'># call it again in the future to check if updates are needed</span>
-}</div></pre>
+<span class='op'>}</span>
+
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -223,7 +219,7 @@ raw data files will be downloaded. This is equivalent to <code><a href='download
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

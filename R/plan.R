@@ -238,7 +238,7 @@ plan_database_changes <- function(db_path      = find_db(),
 
   dvn_state <- get_dvn_state() %>%
     mutate(on_dvn = TRUE)
-  # if there were any errros on a previous update, the DB state may be old
+  # if there were any erros on a previous update, the DB state may be old
   update_stats(db_path)
   db_state  <- get_db_state(db_path) %>%
     mutate(in_db = TRUE)
@@ -299,14 +299,6 @@ plan_database_changes <- function(db_path      = find_db(),
         TRUE ~ action)
     ) %>%
     dplyr::ungroup()
-
-  # ad hoc fix for missing events.2017 file on dataverse (#57)
-  missing_on_dvn <- !any(stringr::str_detect(dvn_state$dvn_file_label, "events\\.2017"))
-  in_local <- 2017 %in% full_plan$data_set
-  if (missing_on_dvn & in_local) {
-    fix <- full_plan$data_set==2017 & full_plan$where=="in database" & full_plan$action=="delete"
-    if (any(fix)) full_plan[fix, ][["action"]] <- "none"
-  }
 
   # Clean up file state so it is easier to read
   lvls <- c("none", "download", "delete", "ingest_from_file",

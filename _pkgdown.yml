@@ -3,6 +3,7 @@ reference:
     desc: >
       Basic functionality for downloading ICEWS data from dataverse.
     contents:
+      - icews
       - dr_icews
       - update_icews
       - download_icews
@@ -67,3 +68,4 @@ reference:
       - purge_db
       - purge_data_files
       - remove_db
+

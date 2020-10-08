@@ -128,11 +128,12 @@
 <span class="fu"><a href="reference/update_icews.html">update_icews</a></span><span class="op">(</span>dryrun <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="co"># Wait until all is done; like 45 minutes or more the first time around</span>
 
+<span class="co"># The events will be in a table called "events". </span>
 <span class="co"># To get the data:</span>
+<span class="fu"><a href="reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"SELECT count(*) AS n FROM events;"</span><span class="op">)</span>
+<span class="co"># or</span>
 <span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/connect.html">connect</a></span><span class="op">(</span><span class="op">)</span>
 <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html">dbGetQuery</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"SELECT count(*) AS n FROM events;"</span><span class="op">)</span>
-<span class="co"># or</span>
-<span class="fu"><a href="reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"SELECT count(*) AS n FROM events;"</span><span class="op">)</span>
 <span class="co"># or</span>
 <span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/connect.html">connect</a></span><span class="op">(</span><span class="op">)</span>
 <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"events"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
@@ -149,7 +150,7 @@
 
 <span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="st">"~/Downloads/icews"</span><span class="op">)</span>
 <span class="fu"><a href="reference/download_data.html">download_data</a></span><span class="op">(</span><span class="st">"~/Downloads/icews"</span><span class="op">)</span></pre></div>
-<p>This will conventiently also re-use and update any files already in the same directory. Zipped files will be unzipped. E.g. the monthly data updates currently come in a file with the pattern “events.2018.yyyymmddhhmmss.tab”, where the “yyyymmddhhmmss” part changes. The downloader can identify this and will replace the old with the new file.</p>
+<p>This will conventiently also re-use and update any files already in the same directory. Zipped files will be unzipped. E.g. the yearly data files come in zipped a file with the pattern “events.2018.yyyymmddhhmmss.tab”, where the “yyyymmddhhmmss” part changes might change if data have been updated. The downloader can identify this and will replace the old with the new file.</p>
 <p>Just in case, you can do a dry run that will not actually make any changes:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit">
 <span class="fu"><a href="reference/download_data.html">download_data</a></span><span class="op">(</span><span class="st">"~/Downloads/icews"</span>, dryrun <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
@@ -161,7 +162,7 @@
 <span id="cb5-6"><a href="#cb5-6"></a><span class="ex">Download</span> <span class="st">'events.1995.20150313082510.tab.zip'</span></span>
 <span id="cb5-7"><a href="#cb5-7"></a><span class="ex">Download</span> <span class="st">'events.1996.20150313082528.tab.zip'</span></span>
 <span id="cb5-8"><a href="#cb5-8"></a><span class="ex">Remove</span>   <span class="st">'events.1996.20140313082528.tab'</span></span></code></pre></div>
-<p>The events come in (zipped) tab-seperated files. To load all of these into memory in a big combined data frame with about 16 million rows (~2.5Gb):</p>
+<p>The events come in (zipped) tab-separated files. To load all of these into memory in a big combined data frame with about 16 million rows (~2.5Gb):</p>
 <div class="sourceCode" id="cb6"><pre class="downlit">
 <span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_icews.html">read_icews</a></span><span class="op">(</span><span class="st">"~/Downloads/icews"</span><span class="op">)</span></pre></div>
 <p>Beyond this basic usage, the goal is to abstract as many little pains away as possible. To that end:</p>
@@ -174,7 +175,7 @@
 <span class="fu"><a href="reference/setup_icews.html">setup_icews</a></span><span class="op">(</span>data_dir <span class="op">=</span> <span class="st">"/where/should/data/be"</span>, use_db <span class="op">=</span> <span class="cn">TRUE</span>, 
             keep_files <span class="op">=</span> <span class="cn">TRUE</span>, r_profile <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
 <p>This will open the “.Rprofile” file and tell you what to add to it (requires <a href="https://cran.r-project.org/package=usethis">usethis</a> to be installed). From now on the package knows where your data lives, and most of the functions can be called without specifying any directory or path arguments.</p>
-<p>This sets three variables:</p>
+<p>Under the hood, this will set three R options that the package uses in the downloader functions:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit">
 <span class="co"># ICEWS data location and options</span>
 <span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>icews.data_dir   <span class="op">=</span> <span class="st">"~/path/to/icews_data"</span><span class="op">)</span>

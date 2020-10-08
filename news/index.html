@@ -129,24 +129,46 @@
       <small>Source: <a href='https://github.com/andybega/icews/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="icews-0209000" class="section level1">
-<h1 class="page-header" data-toc-text="0.2.0.9000">
-<a href="#icews-0209000" class="anchor"></a>icews 0.2.0.9000</h1>
+    <div id="icews-030-2020-10-08" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.0">
+<a href="#icews-030-2020-10-08" class="anchor"></a>icews 0.3.0 (2020-10-08)</h1>
+<div id="resumption-of-icews-updates-with-weekly-data-drops" class="section level2">
+<h2 class="hasAnchor">
+<a href="#resumption-of-icews-updates-with-weekly-data-drops" class="anchor"></a>Resumption of ICEWS updates with weekly data drops</h2>
+<p>The ICEWS project ceased updates in late 2019, but resumed again in May 2020. However, instead of daily updates for the most recent data, it switched to weekly updates for recent data. This required changes in the package.</p>
+<ul>
+<li>The basic update for the new dataverse repo structure is documented in <a href='https://github.com/andybega/icews/issues/54'>#54</a>. For databases that were setup with the old daily structure, the only change that should be needed is to run <code><a href="../reference/query_icews.html">query_icews("delete from null_source_files;")</a></code> to remove some old references in a utility table in SQLite. For databases that were created after May 2020, everything is good.</li>
+</ul>
+</div>
+<div id="enhancements" class="section level2">
+<h2 class="hasAnchor">
+<a href="#enhancements" class="anchor"></a>Enhancements</h2>
 <ul>
 <li>The path finders (<code><a href="../reference/find_raw.html">find_raw()</a></code>, <code><a href="../reference/find_raw.html">find_docs()</a></code>, and <code><a href="../reference/find_raw.html">find_db()</a></code>) now also take and optional argument that is combined with the base path returned using <code><a href="https://rdrr.io/r/base/file.path.html">base::file.path()</a></code>. This makes it easier to get the full path for files within the data directories.</li>
 </ul>
-<p>Addresses various relatively minor issues that are still related to the big issue with new non-standard file names in the daily DVN repo.</p>
+</div>
+<div id="minor-fixes-etc" class="section level2">
+<h2 class="hasAnchor">
+<a href="#minor-fixes-etc" class="anchor"></a>Minor fixes, etc.</h2>
+<ul>
+<li>Fix bugs in the non-standard 2017 events file; non-standard file name (“Events.2017.20200602.tab.zip”) and dates formatted like “12/1/2017” (<a href='https://github.com/andybega/icews/issues/57'>#57</a>).</li>
+</ul>
+</div>
+<div id="fixes-etc-for-the-old-daily-repo-structure" class="section level2">
+<h2 class="hasAnchor">
+<a href="#fixes-etc-for-the-old-daily-repo-structure" class="anchor"></a>Fixes, etc. for the old daily repo structure</h2>
+<p>Some of the earlier commits in 2019, when the updates were still daily, fixed various minor issues:</p>
 <ul>
 <li>Fix an update error due to a duplicate filename (“20190309-icews-events.zip”) on dataverse (<a href='https://github.com/andybega/icews/issues/45'>#45</a>). The non-unique dataverse file label is now converted to a unique local file name (see <code><a href="../reference/normalize_label.html">normalize_label()</a></code>) by appending “part1”, “part2”, etc. as needed. This local file name is used to track state between the local downloaded files and/or database and dataverse. Download now occurs through the integer file ID instead of the file label.</li>
 <li>Fix ingest file to DB problem with duplicate events (<a href='https://github.com/andybega/icews/issues/46'>#46</a>). A regex in <code>write_data_to_db</code> did not recognize a data file ending with “-1.tab” as a daily data file, and thus skipped the duplicate events check that is done for daily data files only.</li>
 <li>Fix missing source files in DB state (<a href='https://github.com/andybega/icews/issues/47'>#47</a>). Source files that all duplicate events, i.e. no events that will end up in the “events” table, are saved in “null_source_files”. This was not being used to update the main “source_files” table on which the state is based on.</li>
 <li>Fix an issue in <code><a href="../reference/dr_icews.html">dr_icews()</a></code> that would erroneously indicate the need to sync local files and database. This was due to the internal changes in v0.2.0.</li>
-<li>Fix bugs in the non-standard 2017 events file; non-standard file name (“Events.2017.20200602.tab.zip”) and dates formatted like “12/1/2017” (<a href='https://github.com/andybega/icews/issues/57'>#57</a>).</li>
 </ul>
 </div>
-    <div id="icews-020-2018-02-12" class="section level1">
+</div>
+    <div id="icews-020-2019-02-12" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.0">
-<a href="#icews-020-2018-02-12" class="anchor"></a>icews 0.2.0 (2018-02-12)</h1>
+<a href="#icews-020-2019-02-12" class="anchor"></a>icews 0.2.0 (2019-02-12)</h1>
 <p>Major rewrite of the download and synchronization code, with some <strong>breaking changes</strong>.</p>
 <p>A major non-breaking change is that the second ICEWS dataverse repository, which has been providing daily updates since November 2018, has been integrated. <code><a href="../reference/update_icews.html">update_icews()</a></code> will seamlessly pull/update data from both repositories.</p>
 <p>Big changes, including breaking changes:</p>

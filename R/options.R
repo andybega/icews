@@ -42,6 +42,9 @@ setup_icews <- function(data_dir, use_db = TRUE, keep_files = FALSE, r_profile =
   if (!use_db %in% c(TRUE, FALSE)) {
     stop("use_db should be TRUE or FALSE")
   }
+  if (use_db %in% FALSE & keep_files %in% FALSE) {
+    stop("Either 'use_db' or 'keep_files' has to be TRUE, both cannot be FALSE")
+  }
 
   set_icews_opts(data_dir, use_db, keep_files)
 

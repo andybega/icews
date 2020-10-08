@@ -14,3 +14,4 @@ scratchpad.R
 
 devel
 ^\.github$
+^cran-comments\.md$

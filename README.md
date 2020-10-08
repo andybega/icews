@@ -72,11 +72,12 @@ update_icews(dryrun = TRUE)
 update_icews(dryrun = FALSE)
 # Wait until all is done; like 45 minutes or more the first time around
 
+# The events will be in a table called "events". 
 # To get the data:
+query_icews("SELECT count(*) AS n FROM events;")
+# or
 con <- connect()
 DBI::dbGetQuery(con, "SELECT count(*) AS n FROM events;")
-# or
-query_icews("SELECT count(*) AS n FROM events;")
 # or
 con <- connect()
 dplyr::tbl(con, "events") %>% summarize(n = n())
@@ -100,11 +101,11 @@ download_data("~/Downloads/icews")
 ```
 
 This will conventiently also re-use and update any files already in the
-same directory. Zipped files will be unzipped. E.g. the monthly data
-updates currently come in a file with the pattern
+same directory. Zipped files will be unzipped. E.g. the yearly data
+files come in zipped a file with the pattern
 “events.2018.yyyymmddhhmmss.tab”, where the “yyyymmddhhmmss” part
-changes. The downloader can identify this and will replace the old with
-the new file.
+changes might change if data have been updated. The downloader can
+identify this and will replace the old with the new file.
 
 Just in case, you can do a dry run that will not actually make any
 changes:
@@ -124,7 +125,7 @@ Download 'events.1996.20150313082528.tab.zip'
 Remove   'events.1996.20140313082528.tab'
 ```
 
-The events come in (zipped) tab-seperated files. To load all of these
+The events come in (zipped) tab-separated files. To load all of these
 into memory in a big combined data frame with about 16 million rows
 (\~2.5Gb):
 
@@ -152,7 +153,8 @@ installed). From now on the package knows where your data lives, and
 most of the functions can be called without specifying any directory or
 path arguments.
 
-This sets three variables:
+Under the hood, this will set three R options that the package uses in
+the downloader functions:
 
 ``` r
 # ICEWS data location and options

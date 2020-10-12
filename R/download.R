@@ -61,8 +61,10 @@ download_file <- function(file, to_dir, repo = "historic", file_id = NULL, new_n
     writeBin(as.vector(f), con)
   }
 
-  if (!is.null(new_name) & new_name != basename(con)) {
-    file.rename(con, file.path(to_dir, new_name))
+  if (!is.null(new_name)) {
+    if (new_name != basename(con)) {
+      file.rename(con, file.path(to_dir, new_name))
+    }
   }
 
   return(invisible(con))

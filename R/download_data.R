@@ -38,10 +38,10 @@ download_data <- function(to_dir = find_raw(), update = TRUE, dryrun = FALSE) {
     return(invisible(plan))
   }
 
-  execute_plan(plan, raw_file_dir = to_dir, db_path = NULL)
+  execute_plan(plan, raw_file_dir = to_dir, db_path = NULL)  # nocov
 
-  cat("File download/sync done\n")
-  invisible(TRUE)
+  cat("File download/sync done\n")  # nocov
+  invisible(TRUE)  # nocov
 }
 
 #' @rdname download_data

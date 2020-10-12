@@ -33,7 +33,7 @@ test_that("ingest_from_file works", {
 
   con <- DBI::dbConnect(RSQLite::SQLite(), db_path)
   nrows <- DBI::dbGetQuery(con, "select count(*) from events;")[[1]]
-  expect_equal(nrows, 4993)
+  expect_equal(nrows, 3705L)
 
   DBI::dbDisconnect(con)
 })

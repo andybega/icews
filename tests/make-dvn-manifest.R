@@ -2,7 +2,7 @@
 
 dontrun <- function() {
 
-  devtools::load_all()
+  #devtools::load_all()
   manifest <- get_dvn_manifest()
   saveRDS(manifest, "inst/testdata/dvn_manifest.rds")
 

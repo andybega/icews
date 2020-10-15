@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">icews</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9009</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9010</span>
       </span>
     </div>
 
@@ -88,7 +88,7 @@
       <h1 data-toc-skip>ICEWS event data</h1>
                         <h4 class="author">Andreas Beger</h4>
             
-            <h4 class="date">2020-10-13</h4>
+            <h4 class="date">2020-10-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/andybega/icews/blob/master/vignettes/icews-event-data.Rmd"><code>vignettes/icews-event-data.Rmd</code></a></small>
       <div class="hidden name"><code>icews-event-data.Rmd</code></div>
@@ -97,6 +97,11 @@
 
     
     
+<p>This vignette gives an overview of the ICEWS event data: how each event record is structured, and some the relationship between different sets of information in the event records and columns. The latter is mainly for instances where superficial assumptions one might make, e.g. that “event_id” is a unique event ID, are wrong.</p>
+<p><em>Note: the package is inherently unfriendly to a completely replicable workflow, as it is setup with the intention that one will use R options set in .Rprofile at each session start. And in any case, it is not trivial to throw around 5 GB of data.</em></p>
+<p><em>One side effect is that several parts of this vignette incorporte results from the local data copy I have, but which is not included on GitHub or the package install. However, I have tried to make the code here as explicity and replicable as possible.</em></p>
+<p><em>The data used cover the beginning in 1995 to a last event date of 2020-09-28.</em></p>
+<!-- as.Date(as.character(query_icews("select max(event_date) from events;")), format = "%Y%m%d") -->
 <div class="sourceCode" id="cb1"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="op">{</span>
   <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://www.andybeger.com/icews/">"icews"</a></span><span class="op">)</span>
@@ -108,11 +113,6 @@
 <span class="co">#&gt; variable to be set. See &lt;https://github.com/IQSS/dataverse-client-r&gt;.</span>
 <span class="co">#&gt; Please run:</span>
 <span class="co">#&gt; Sys.setenv(DATAVERSE_SERVER = "dataverse.harvard.edu")</span></pre></div>
-<p>This vignette gives an overview of the ICEWS event data: how each event record is structured, and some the relationship between different sets of information in the event records and columns. The latter is mainly for instances where superficial assumptions one might make, e.g. that “event_id” is a unique event ID, are wrong.</p>
-<p><em>Note: the package is inherently unfriendly to a completely replicable workflow, as it is setup with the intention that one will use R options set in .Rprofile at each session start. And in any case, it is not trivial to throw around 5 GB of data.</em></p>
-<p><em>One side effect is that several parts of this vignette incorporte results from the local data copy I have, but which is not included on GitHub or the package install. However, I have tried to make the code here as explicity and replicable as possible.</em></p>
-<p><em>The data used cover the beginning in 1995 to a last event date of 2018-09-30.</em></p>
-<!-- as.Date(as.character(query_icews("select max(event_date) from events;", "~/Dropbox/Work/VForecast/Data/icews_data/db/icews.sqlite3")[[1]]), format = "%Y%m%d") -->
 <div id="things-to-look-out-for" class="section level2">
 <h2 class="hasAnchor">
 <a href="#things-to-look-out-for" class="anchor"></a>Things to look out for</h2>
@@ -120,7 +120,7 @@
 <div id="event-id-is-not-unique" class="section level3">
 <h3 class="hasAnchor">
 <a href="#event-id-is-not-unique" class="anchor"></a>Event ID is not unique</h3>
-<p>“Event ID” is not a unique ID, but together with “Event Date” it does appear to be unique.</p>
+<p>“Event ID” is not a unique ID, but together with “Event Date” it does appear to be unique. The table below shows the number of times event ID occur in the data. If it was unique, this would always be only once, but sometimes it occurs twice.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit">
 <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"
 SELECT id_n, count(*) as instances
@@ -139,7 +139,7 @@ GROUP BY id_n;
 <tbody>
 <tr class="odd">
 <td align="right">1</td>
-<td align="right">17,074,435</td>
+<td align="right">18,303,707</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
@@ -147,15 +147,544 @@ GROUP BY id_n;
 </tr>
 </tbody>
 </table>
-<p>In all cases, the duplicate events have distinct event dates.</p>
+<p>In all cases, the duplicate events have distinct event dates, and the combination of <code>[event_id, event_date]</code> is a unique identifier for each row.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"
+SELECT count(*) AS dupe_records, distinct_dates
+FROM (
+  SELECT   event_id, Count(Distinct(event_date)) AS distinct_dates
+  FROM     events
+  GROUP BY event_id
+  HAVING   Count(*) &gt; 1
+)
+GROUP BY distinct_dates;"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span>format.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>big.mark <span class="op">=</span> <span class="st">','</span><span class="op">)</span><span class="op">)</span></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="right">dupe_records</th>
+<th align="right">distinct_dates</th>
+</tr></thead>
+<tbody><tr class="odd">
+<td align="right">145,312</td>
+<td align="right">2</td>
+</tr></tbody>
+</table>
+<p>Below are 5 pairs of records that have duplicate event IDs. These are clearly separate events and differ in details beyond the event date.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"
+WITH dupes AS (
+  SELECT distinct(event_id) as event_id
+  FROM   events
+  GROUP BY event_id
+  HAVING count(*) &gt; 1
+  LIMIT 5
+)
+SELECT event_id, event_date, source_name, source_country, event_text,
+       target_name, target_country
+FROM   events
+WHERE  events.event_id IN dupes;"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<table class="table">
+<colgroup>
+<col width="4%">
+<col width="5%">
+<col width="23%">
+<col width="13%">
+<col width="20%">
+<col width="18%">
+<col width="13%">
+</colgroup>
+<thead><tr class="header">
+<th align="right">event_id</th>
+<th align="right">event_date</th>
+<th align="left">source_name</th>
+<th align="left">source_country</th>
+<th align="left">event_text</th>
+<th align="left">target_name</th>
+<th align="left">target_country</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="right">20718170</td>
+<td align="right">20131112</td>
+<td align="left">Japan</td>
+<td align="left">Japan</td>
+<td align="left">Host a visit</td>
+<td align="left">Jacob J. Lew</td>
+<td align="left">United States</td>
+</tr>
+<tr class="even">
+<td align="right">20718170</td>
+<td align="right">20140101</td>
+<td align="left">Police (Australia)</td>
+<td align="left">Australia</td>
+<td align="left">Arrest, detain, or charge with legal action</td>
+<td align="left">Men (Australia)</td>
+<td align="left">Australia</td>
+</tr>
+<tr class="odd">
+<td align="right">20718171</td>
+<td align="right">20131112</td>
+<td align="left">Combatant (Syria)</td>
+<td align="left">Syria</td>
+<td align="left">Use unconventional violence</td>
+<td align="left">Military (Syria)</td>
+<td align="left">Syria</td>
+</tr>
+<tr class="even">
+<td align="right">20718171</td>
+<td align="right">20140101</td>
+<td align="left">Police (Australia)</td>
+<td align="left">Australia</td>
+<td align="left">Arrest, detain, or charge with legal action</td>
+<td align="left">Children (Australia)</td>
+<td align="left">Australia</td>
+</tr>
+<tr class="odd">
+<td align="right">20718172</td>
+<td align="right">20131112</td>
+<td align="left">Itsunori Onodera</td>
+<td align="left">Japan</td>
+<td align="left">Make statement</td>
+<td align="left">Turkey</td>
+<td align="left">Turkey</td>
+</tr>
+<tr class="even">
+<td align="right">20718172</td>
+<td align="right">20140101</td>
+<td align="left">Government Official (Democratic Republic of Congo)</td>
+<td align="left">Democratic Republic of Congo</td>
+<td align="left">Make statement</td>
+<td align="left">Attacker (Democratic Republic of Congo)</td>
+<td align="left">Democratic Republic of Congo</td>
+</tr>
+<tr class="odd">
+<td align="right">20718173</td>
+<td align="right">20131112</td>
+<td align="left">Refugee (Rwanda)</td>
+<td align="left">Rwanda</td>
+<td align="left">Accuse</td>
+<td align="left">Citizen (Rwanda)</td>
+<td align="left">Rwanda</td>
+</tr>
+<tr class="even">
+<td align="right">20718173</td>
+<td align="right">20140101</td>
+<td align="left">Armed Rebel (South Sudan)</td>
+<td align="left">South Sudan</td>
+<td align="left">Use unconventional violence</td>
+<td align="left">Military (South Sudan)</td>
+<td align="left">South Sudan</td>
+</tr>
+<tr class="odd">
+<td align="right">20718174</td>
+<td align="right">20131112</td>
+<td align="left">Barry O’Farrell</td>
+<td align="left">Australia</td>
+<td align="left">Make statement</td>
+<td align="left">Australia</td>
+<td align="left">Australia</td>
+</tr>
+<tr class="even">
+<td align="right">20718174</td>
+<td align="right">20140101</td>
+<td align="left">Military (South Sudan)</td>
+<td align="left">South Sudan</td>
+<td align="left">Use conventional military force</td>
+<td align="left">Armed Rebel (South Sudan)</td>
+<td align="left">South Sudan</td>
+</tr>
+</tbody>
+</table>
+<p>This issue only affects data through 2013 and does not occur in more recent data.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"
+SELECT min(event_date), max(event_date)
+FROM (
+  SELECT   event_date
+  FROM     events
+  GROUP BY event_id
+  HAVING   Count(*) &gt; 1 
+);"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="right">min(event_date)</th>
+<th align="right">max(event_date)</th>
+</tr></thead>
+<tbody><tr class="odd">
+<td align="right">20070201</td>
+<td align="right">20131231</td>
+</tr></tbody>
+</table>
+<p>Only one source file is responsible for the duplicate event IDs:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit">
+<span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"
+SELECT distinct(source_file), Count(*) as N_records
+FROM (
+  SELECT   source_file
+  FROM     events
+  GROUP BY event_id
+  HAVING   Count(*) &gt; 1 
+);"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">source_file</th>
+<th align="right">N_records</th>
+</tr></thead>
+<tbody><tr class="odd">
+<td align="left">events.2013.20150313084929.tab</td>
+<td align="right">145312</td>
+</tr></tbody>
+</table>
 </div>
 <div id="each-actor-can-have-multiple-sectors-and-they-can-change-over-time" class="section level3">
 <h3 class="hasAnchor">
 <a href="#each-actor-can-have-multiple-sectors-and-they-can-change-over-time" class="anchor"></a>Each actor can have multiple sectors, and they can change over time</h3>
+<p>For example, “10 Downing Street” occurs multiple times in this query because it is coded as belonging to multiple sectors, but</p>
+<ul>
+<li>those sets are not always the same,</li>
+<li>the order in which they appear in “source_sectors” is variable,</li>
+<li>and sometimes the value is quoted and sometimes not.</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre class="downlit">
+<span class="va">foo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"
+SELECT source_name, source_sectors, source_country, Count(*) AS n 
+FROM   events
+WHERE  source_name = '10 Downing Street'
+GROUP BY source_name, source_sectors, source_country"</span><span class="op">)</span>
+
+<span class="va">foo</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">10</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">source_name</th>
+<th align="left">source_sectors</th>
+<th align="left">source_country</th>
+<th align="right">n</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">10 Downing Street</td>
+<td align="left">Executive,Executive Office,Government</td>
+<td align="left">United Kingdom</td>
+<td align="right">275</td>
+</tr>
+<tr class="even">
+<td align="left">10 Downing Street</td>
+<td align="left">Executive Office,Government,Executive</td>
+<td align="left">United Kingdom</td>
+<td align="right">258</td>
+</tr>
+<tr class="odd">
+<td align="left">10 Downing Street</td>
+<td align="left">Government,Executive,Executive Office</td>
+<td align="left">United Kingdom</td>
+<td align="right">242</td>
+</tr>
+<tr class="even">
+<td align="left">10 Downing Street</td>
+<td align="left">Executive,Government,Executive Office</td>
+<td align="left">United Kingdom</td>
+<td align="right">203</td>
+</tr>
+<tr class="odd">
+<td align="left">10 Downing Street</td>
+<td align="left">Government,Executive Office,Executive</td>
+<td align="left">United Kingdom</td>
+<td align="right">197</td>
+</tr>
+<tr class="even">
+<td align="left">10 Downing Street</td>
+<td align="left">Executive Office,Executive,Government</td>
+<td align="left">United Kingdom</td>
+<td align="right">140</td>
+</tr>
+<tr class="odd">
+<td align="left">10 Downing Street</td>
+<td align="left">“Executive Office,Government,Executive”</td>
+<td align="left">United Kingdom</td>
+<td align="right">18</td>
+</tr>
+<tr class="even">
+<td align="left">10 Downing Street</td>
+<td align="left">“Executive,Government,Executive Office”</td>
+<td align="left">United Kingdom</td>
+<td align="right">17</td>
+</tr>
+<tr class="odd">
+<td align="left">10 Downing Street</td>
+<td align="left">“Government,Executive Office,Executive”</td>
+<td align="left">United Kingdom</td>
+<td align="right">15</td>
+</tr>
+<tr class="even">
+<td align="left">10 Downing Street</td>
+<td align="left">“Executive Office,Executive,Government”</td>
+<td align="left">United Kingdom</td>
+<td align="right">10</td>
+</tr>
+</tbody>
+</table>
+<p>If we resort the source sectors, it becomes apparent that there are only two distinct sets of source sectors:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit">
+<span class="va">foo</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>source_sectors <span class="op">=</span> <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html">str_remove_all</a></span><span class="op">(</span><span class="va">source_sectors</span>, <span class="st">"\""</span><span class="op">)</span>,
+         record_id <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/separate_rows.html">separate_rows</a></span><span class="op">(</span><span class="va">source_sectors</span>, sep <span class="op">=</span> <span class="st">","</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">record_id</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>source_sectors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="va">source_sectors</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span>, 
+            n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">source_sectors</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<table class="table">
+<colgroup>
+<col width="95%">
+<col width="4%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">source_sectors</th>
+<th align="right">n</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">Executive, Executive Office, Government</td>
+<td align="right">1390</td>
+</tr>
+<tr class="even">
+<td align="left">Executive, Executive Office, Government, International Government Organization, Regional, Regional Diplomatic IGOs</td>
+<td align="right">67</td>
+</tr>
+</tbody>
+</table>
+<p>Some actors also change source sectors over time, e.g. politicians who were in or not in government.</p>
 </div>
 <div id="cameo-codes-are-unique-but-have-a-nested-hierarchical-structure" class="section level3">
 <h3 class="hasAnchor">
 <a href="#cameo-codes-are-unique-but-have-a-nested-hierarchical-structure" class="anchor"></a>CAMEO codes are unique but have a nested hierarchical structure</h3>
+<p>Each event only has one full CAMEO code, however the codes themselves reflect a hierarchical structure with three levels. At the top level (“level” 0 in the <code>cameo_codes</code> data included in the package) are 20 categories for types of interactions:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">cameo_codes</span><span class="op">)</span> 
+<span class="va">cameo_codes</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">level</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">cameo_code</span>, <span class="va">name</span>, <span class="va">level</span>, <span class="va">lvl0</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">cameo_code</th>
+<th align="left">name</th>
+<th align="right">level</th>
+<th align="right">lvl0</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">01</td>
+<td align="left">MAKE PUBLIC STATEMENT</td>
+<td align="right">0</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">02</td>
+<td align="left">APPEAL</td>
+<td align="right">0</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">03</td>
+<td align="left">EXPRESS INTENT TO COOPERATE</td>
+<td align="right">0</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">04</td>
+<td align="left">CONSULT</td>
+<td align="right">0</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">05</td>
+<td align="left">ENGAGE IN DIPLOMATIC COOPERATION</td>
+<td align="right">0</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">06</td>
+<td align="left">ENGAGE IN MATERIAL COOPERATION</td>
+<td align="right">0</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">07</td>
+<td align="left">PROVIDE AID</td>
+<td align="right">0</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="left">08</td>
+<td align="left">YIELD</td>
+<td align="right">0</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">09</td>
+<td align="left">INVESTIGATE</td>
+<td align="right">0</td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
+<td align="left">10</td>
+<td align="left">DEMAND</td>
+<td align="right">0</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">11</td>
+<td align="left">DISAPPROVE</td>
+<td align="right">0</td>
+<td align="right">11</td>
+</tr>
+<tr class="even">
+<td align="left">12</td>
+<td align="left">REJECT</td>
+<td align="right">0</td>
+<td align="right">12</td>
+</tr>
+<tr class="odd">
+<td align="left">13</td>
+<td align="left">THREATEN</td>
+<td align="right">0</td>
+<td align="right">13</td>
+</tr>
+<tr class="even">
+<td align="left">14</td>
+<td align="left">PROTEST</td>
+<td align="right">0</td>
+<td align="right">14</td>
+</tr>
+<tr class="odd">
+<td align="left">15</td>
+<td align="left">EXHIBIT FORCE POSTURE</td>
+<td align="right">0</td>
+<td align="right">15</td>
+</tr>
+<tr class="even">
+<td align="left">16</td>
+<td align="left">REDUCE RELATIONS</td>
+<td align="right">0</td>
+<td align="right">16</td>
+</tr>
+<tr class="odd">
+<td align="left">17</td>
+<td align="left">COERCE</td>
+<td align="right">0</td>
+<td align="right">17</td>
+</tr>
+<tr class="even">
+<td align="left">18</td>
+<td align="left">ASSAULT</td>
+<td align="right">0</td>
+<td align="right">18</td>
+</tr>
+<tr class="odd">
+<td align="left">19</td>
+<td align="left">FIGHT</td>
+<td align="right">0</td>
+<td align="right">19</td>
+</tr>
+<tr class="even">
+<td align="left">20</td>
+<td align="left">USE UNCONVENTIONAL MASS VIOLENCE</td>
+<td align="right">0</td>
+<td align="right">20</td>
+</tr>
+</tbody>
+</table>
+<p>The “level” variable in <code>cameo_codes</code> refers to a CAMEO codes level in the hierarchy, ranging from 0 to 2, whereas “lvl0” refers to the “level” 0 top-level code, e.g. “01”, and “lvl1” refers to the intermediate-level code at “level” 1, e.g. “010”.</p>
+<p>Each top level code includes up to 2 further levels down, e.g. for the top level code “20”:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit">
+<span class="va">cameo_codes</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">lvl0</span><span class="op">==</span><span class="fl">20</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">cameo_code</span>, <span class="va">name</span>, <span class="va">level</span>, <span class="va">lvl0</span>, <span class="va">lvl1</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">cameo_code</th>
+<th align="left">name</th>
+<th align="right">level</th>
+<th align="right">lvl0</th>
+<th align="right">lvl1</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">20</td>
+<td align="left">USE UNCONVENTIONAL MASS VIOLENCE</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">200</td>
+<td align="left">Use unconventional mass violence</td>
+<td align="right">1</td>
+<td align="right">20</td>
+<td align="right">200</td>
+</tr>
+<tr class="odd">
+<td align="left">201</td>
+<td align="left">Engage in mass expulsion</td>
+<td align="right">1</td>
+<td align="right">20</td>
+<td align="right">201</td>
+</tr>
+<tr class="even">
+<td align="left">202</td>
+<td align="left">Engage in mass killings</td>
+<td align="right">1</td>
+<td align="right">20</td>
+<td align="right">202</td>
+</tr>
+<tr class="odd">
+<td align="left">203</td>
+<td align="left">Engage in ethnic cleansing</td>
+<td align="right">1</td>
+<td align="right">20</td>
+<td align="right">203</td>
+</tr>
+<tr class="even">
+<td align="left">204</td>
+<td align="left">Use weapons of mass destruction</td>
+<td align="right">1</td>
+<td align="right">20</td>
+<td align="right">204</td>
+</tr>
+<tr class="odd">
+<td align="left">2041</td>
+<td align="left">Use chemical, biological, or radiological weapons</td>
+<td align="right">2</td>
+<td align="right">20</td>
+<td align="right">204</td>
+</tr>
+<tr class="even">
+<td align="left">2042</td>
+<td align="left">Detonate nuclear weapons</td>
+<td align="right">2</td>
+<td align="right">20</td>
+<td align="right">204</td>
+</tr>
+</tbody>
+</table>
+<p>This means that in practice some care needs to be taken to count all the correct events when aggregating to the top- or intermediate-level CAMEO codes. In SQL, one can do:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit">
+<span class="co"># Instead of:</span>
+<span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"SELECT count(*) FROM events WHERE cameo_code = '20';"</span><span class="op">)</span>
+<span class="co"># which will not return any records, do:</span>
+<span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"SELECT count(*) FROM events WHERE Substr(cameo_code, 1, 2) = '20';"</span><span class="op">)</span>
+<span class="co"># returns ~3,000 records</span></pre></div>
+<p>Some records are also missing a CAMEO code (NULL in SQL, NA in R).</p>
 </div>
 </div>
 <div id="summary-statistics" class="section level2">
@@ -164,35 +693,32 @@ GROUP BY id_n;
 <div id="total-number-of-records" class="section level3">
 <h3 class="hasAnchor">
 <a href="#total-number-of-records" class="anchor"></a>Total number of records</h3>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_cols</a></span><span class="op">(</span>
-  <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"select count(*) as n_unique_events from (select distinct(event_id) from events);"</span><span class="op">)</span>,
-  <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"select count(*) as n_rows from events;"</span><span class="op">)</span>
-<span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/gather.html">gather</a></span><span class="op">(</span><span class="va">Measure</span>, <span class="va">Value</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<div class="sourceCode" id="cb12"><pre class="downlit">
+<span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"SELECT max(event_date) AS Last_Event_Date, 
+                    Count(*) as Records 
+             FROM events;"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>Last_Event_Date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">Last_Event_Date</span><span class="op">)</span>, format <span class="op">=</span> <span class="st">"%Y%m%d"</span><span class="op">)</span>,
+         Today <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">Today</span>, <span class="va">Last_Event_Date</span>, <span class="va">Records</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span>format.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>big.mark <span class="op">=</span> <span class="st">','</span><span class="op">)</span><span class="op">)</span></pre></div>
 <table class="table">
 <thead><tr class="header">
-<th align="left">Measure</th>
-<th align="right">Value</th>
+<th align="left">Today</th>
+<th align="left">Last_Event_Date</th>
+<th align="right">Records</th>
 </tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">n_unique_events</td>
-<td align="right">17,219,747</td>
-</tr>
-<tr class="even">
-<td align="left">n_rows</td>
-<td align="right">17,365,059</td>
-</tr>
-</tbody>
+<tbody><tr class="odd">
+<td align="left">2020-10-15</td>
+<td align="left">2020-09-28</td>
+<td align="right">18,594,331</td>
+</tr></tbody>
 </table>
 </div>
 <div id="distinct-locations" class="section level3">
 <h3 class="hasAnchor">
 <a href="#distinct-locations" class="anchor"></a>Distinct locations</h3>
 <p>The location information for the event (not actors) consists of country, province, district, city, latitude, longitude.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
+<div class="sourceCode" id="cb13"><pre class="downlit">
 <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_cols</a></span><span class="op">(</span>
   <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"select count(*) as n_unique_locations from (select distinct latitude, longitude, country, province, district, city from events);"</span><span class="op">)</span>,
   <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"select count(*) as n_unique_coords from (select distinct latitude, longitude from events);"</span><span class="op">)</span>,
@@ -208,34 +734,19 @@ GROUP BY id_n;
 <tbody>
 <tr class="odd">
 <td align="left">n_unique_locations</td>
-<td align="right">110,405</td>
+<td align="right">128,126</td>
 </tr>
 <tr class="even">
 <td align="left">n_unique_coords</td>
-<td align="right">109,557</td>
+<td align="right">114,035</td>
 </tr>
 <tr class="odd">
 <td align="left">n_unique_countries</td>
-<td align="right">252</td>
+<td align="right">255</td>
 </tr>
 </tbody>
 </table>
 <p>Coordinates are not sufficient to distinguish each unique location once we take city, district, etc. into account. Nothing short of the full set of columns [country, province, district, city, latitude, longitude] uniquely identifies all distinct locations.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="va">sectors</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"select source_sectors, target_sectors from events limit 1e5;"</span><span class="op">)</span>
-
-<span class="va">sectors_long</span> <span class="op">&lt;-</span> <span class="va">sectors</span> <span class="op">%&gt;%</span>
-  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/gather.html">gather</a></span><span class="op">(</span><span class="va">direction</span>, <span class="va">sector</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>direction <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html">str_replace</a></span><span class="op">(</span><span class="va">direction</span>, <span class="st">"_sectors"</span>, <span class="st">""</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">sector</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/separate_rows.html">separate_rows</a></span><span class="op">(</span><span class="va">sector</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>sector <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_trim.html">str_trim</a></span><span class="op">(</span><span class="va">sector</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sector</span> <span class="op">!=</span> <span class="st">""</span><span class="op">)</span>
-
-<span class="va">sectors</span> <span class="op">&lt;-</span> <span class="va">sectors_long</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">sector</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>in_n_events <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">in_n_events</span><span class="op">)</span></pre></div>
 </div>
 </div>
   </div>

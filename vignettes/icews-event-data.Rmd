@@ -17,7 +17,17 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r, eval = TRUE}
+This vignette gives an overview of the ICEWS event data: how each event record is structured, and some the relationship between different sets of information in the event records and columns. The latter is mainly for instances where superficial assumptions one might make, e.g. that "event_id" is a unique event ID, are wrong. 
+
+*Note: the package is inherently unfriendly to a completely replicable workflow, as it is setup with the intention that one will use R options set in .Rprofile at each session start. And in any case, it is not trivial to throw around 5 GB of data.*
+
+*One side effect is that several parts of this vignette incorporte results from the local data copy I have, but which is not included on GitHub or the package install. However, I have tried to make the code here as explicity and replicable as possible.*
+
+*The data used cover the beginning in 1995 to a last event date of 2020-09-28.*
+
+<!-- as.Date(as.character(query_icews("select max(event_date) from events;")), format = "%Y%m%d") --> 
+
+```{r, eval=TRUE}
 suppressPackageStartupMessages({
   library("icews")
   library("dplyr")
@@ -27,16 +37,6 @@ suppressPackageStartupMessages({
 ```
 
 
-This vignette gives an overview of the ICEWS event data: how each event record is structured, and some the relationship between different sets of information in the event records and columns. The latter is mainly for instances where superficial assumptions one might make, e.g. that "event_id" is a unique event ID, are wrong. 
-
-*Note: the package is inherently unfriendly to a completely replicable workflow, as it is setup with the intention that one will use R options set in .Rprofile at each session start. And in any case, it is not trivial to throw around 5 GB of data.*
-
-*One side effect is that several parts of this vignette incorporte results from the local data copy I have, but which is not included on GitHub or the package install. However, I have tried to make the code here as explicity and replicable as possible.*
-
-*The data used cover the beginning in 1995 to a last event date of 2018-09-30.*
-
-<!-- as.Date(as.character(query_icews("select max(event_date) from events;", "~/Dropbox/Work/VForecast/Data/icews_data/db/icews.sqlite3")[[1]]), format = "%Y%m%d") --> 
-
 
 ## Things to look out for
 
@@ -44,7 +44,7 @@ Below are a couple of gotchas that might lead to wrongly aggregated data.
 
 ### Event ID is not unique
 
-"Event ID" is not a unique ID, but together with "Event Date" it does appear to be unique. 
+"Event ID" is not a unique ID, but together with "Event Date" it does appear to be unique. The table below shows the number of times event ID occur in the data. If it was unique, this would always be only once, but sometimes it occurs twice. 
 
 ```{r, eval = FALSE}
 query_icews("
@@ -58,16 +58,221 @@ GROUP BY id_n;
 ") %>% knitr::kable(format.args = list(big.mark = ','))
 ```
 
-| id_n| instances|
-|----:|---------:|
-|    1|  17,074,435|
+| id_n|  instances|
+|----:|----------:|
+|    1| 18,303,707|
 |    2|    145,312|
 
-In all cases, the duplicate events have distinct event dates. 
+In all cases, the duplicate events have distinct event dates, and the combination of `[event_id, event_date]` is a unique identifier for each row. 
+
+```{r, eval=FALSE}
+query_icews("
+SELECT count(*) AS dupe_records, distinct_dates
+FROM (
+  SELECT   event_id, Count(Distinct(event_date)) AS distinct_dates
+  FROM     events
+  GROUP BY event_id
+  HAVING   Count(*) > 1
+)
+GROUP BY distinct_dates;") %>%
+  knitr::kable(format.args = list(big.mark = ','))
+```
+
+| dupe_records| distinct_dates|
+|------------:|--------------:|
+|      145,312|              2|
+
+Below are 5 pairs of records that have duplicate event IDs. These are clearly separate events and differ in details beyond the event date. 
+
+```{r, eval=FALSE}
+query_icews("
+WITH dupes AS (
+  SELECT distinct(event_id) as event_id
+  FROM   events
+  GROUP BY event_id
+  HAVING count(*) > 1
+  LIMIT 5
+)
+SELECT event_id, event_date, source_name, source_country, event_text,
+       target_name, target_country
+FROM   events
+WHERE  events.event_id IN dupes;") %>%
+  knitr::kable()
+```
+
+| event_id| event_date|source_name                                        |source_country               |event_text                                  |target_name                             |target_country               |
+|--------:|----------:|:--------------------------------------------------|:----------------------------|:-------------------------------------------|:---------------------------------------|:----------------------------|
+| 20718170|   20131112|Japan                                              |Japan                        |Host a visit                                |Jacob J. Lew                            |United States                |
+| 20718170|   20140101|Police (Australia)                                 |Australia                    |Arrest, detain, or charge with legal action |Men (Australia)                         |Australia                    |
+| 20718171|   20131112|Combatant (Syria)                                  |Syria                        |Use unconventional violence                 |Military (Syria)                        |Syria                        |
+| 20718171|   20140101|Police (Australia)                                 |Australia                    |Arrest, detain, or charge with legal action |Children (Australia)                    |Australia                    |
+| 20718172|   20131112|Itsunori Onodera                                   |Japan                        |Make statement                              |Turkey                                  |Turkey                       |
+| 20718172|   20140101|Government Official (Democratic Republic of Congo) |Democratic Republic of Congo |Make statement                              |Attacker (Democratic Republic of Congo) |Democratic Republic of Congo |
+| 20718173|   20131112|Refugee (Rwanda)                                   |Rwanda                       |Accuse                                      |Citizen (Rwanda)                        |Rwanda                       |
+| 20718173|   20140101|Armed Rebel (South Sudan)                          |South Sudan                  |Use unconventional violence                 |Military (South Sudan)                  |South Sudan                  |
+| 20718174|   20131112|Barry O'Farrell                                    |Australia                    |Make statement                              |Australia                               |Australia                    |
+| 20718174|   20140101|Military (South Sudan)                             |South Sudan                  |Use conventional military force             |Armed Rebel (South Sudan)               |South Sudan                  |
+
+This issue only affects data through 2013 and does not occur in more recent data. 
+
+```{r, eval = FALSE}
+query_icews("
+SELECT min(event_date), max(event_date)
+FROM (
+  SELECT   event_date
+  FROM     events
+  GROUP BY event_id
+  HAVING   Count(*) > 1 
+);") %>%
+  knitr::kable()
+```
+
+| min(event_date)| max(event_date)|
+|---------------:|---------------:|
+|        20070201|        20131231|
+
+Only one source file is responsible for the duplicate event IDs:
+
+```{r}
+query_icews("
+SELECT distinct(source_file), Count(*) as N_records
+FROM (
+  SELECT   source_file
+  FROM     events
+  GROUP BY event_id
+  HAVING   Count(*) > 1 
+);") %>%
+  knitr::kable()
+```
+
+|source_file                    | N_records|
+|:------------------------------|---------:|
+|events.2013.20150313084929.tab |    145312|
 
 ### Each actor can have multiple sectors, and they can change over time
 
+For example, "10 Downing Street" occurs multiple times in this query because it is coded as belonging to multiple sectors, but 
+
+- those sets are not always the same, 
+- the order in which they appear in "source_sectors" is variable,
+- and sometimes the value is quoted and sometimes not.
+
+```{r, eval=FALSE}
+foo <- query_icews("
+SELECT source_name, source_sectors, source_country, Count(*) AS n 
+FROM   events
+WHERE  source_name = '10 Downing Street'
+GROUP BY source_name, source_sectors, source_country")
+
+foo %>% 
+  arrange(desc(n)) %>%
+  head(n=10) %>%
+  knitr::kable()
+```
+
+|source_name       |source_sectors                          |source_country |   n|
+|:-----------------|:---------------------------------------|:--------------|---:|
+|10 Downing Street |Executive,Executive Office,Government   |United Kingdom | 275|
+|10 Downing Street |Executive Office,Government,Executive   |United Kingdom | 258|
+|10 Downing Street |Government,Executive,Executive Office   |United Kingdom | 242|
+|10 Downing Street |Executive,Government,Executive Office   |United Kingdom | 203|
+|10 Downing Street |Government,Executive Office,Executive   |United Kingdom | 197|
+|10 Downing Street |Executive Office,Executive,Government   |United Kingdom | 140|
+|10 Downing Street |"Executive Office,Government,Executive" |United Kingdom |  18|
+|10 Downing Street |"Executive,Government,Executive Office" |United Kingdom |  17|
+|10 Downing Street |"Government,Executive Office,Executive" |United Kingdom |  15|
+|10 Downing Street |"Executive Office,Executive,Government" |United Kingdom |  10|
+
+If we resort the source sectors, it becomes apparent that there are only two distinct sets of source sectors:
+
+```{r, eval=FALSE}
+foo %>% 
+  mutate(source_sectors = stringr::str_remove_all(source_sectors, "\""),
+         record_id = 1:n()) %>% 
+  tidyr::separate_rows(source_sectors, sep = ",") %>% 
+  group_by(record_id) %>% 
+  summarize(source_sectors = paste0(sort(source_sectors), collapse = ", "), 
+            n = unique(n)) %>% 
+  group_by(source_sectors) %>% 
+  summarize(n = sum(n)) %>%
+  knitr::kable()
+```
+
+|source_sectors                                                                                                     |    n|
+|:------------------------------------------------------------------------------------------------------------------|----:|
+|Executive, Executive Office, Government                                                                            | 1390|
+|Executive, Executive Office, Government, International Government Organization, Regional, Regional Diplomatic IGOs |   67|
+
+Some actors also change source sectors over time, e.g. politicians who were in or not in government.
+
+```{r, include=FALSE}
+# this is too complicated, don't include
+foo <- query_icews("select event_date, source_sectors from events where source_country='United Kingdom' and source_name='Boris Johnson' limit 500;")
+
+# Normalize (sort) the source sectors
+normed <- foo %>%
+  mutate(record_id = 1:n(), 
+         source_sectors = stringr::str_remove_all(source_sectors, "\"")) %>%
+  tidyr::separate_rows(source_sectors, sep = ",") %>%
+  group_by(record_id, event_date) %>%
+  summarize(source_sectors = paste0(sort(source_sectors), collapse = ","),
+            .groups = "drop")
+
+# Identify and take out common subset of sectors, so we only have distinct
+# sectors left
+common <- strsplit(normed$source_sectors, ",") %>% Reduce(f = intersect)
+normed %>%
+  tidyr::separate_rows(source_sectors, sep = ",") %>%
+  group_by(event_date) %>%
+  filter(!source_sectors %in% common) %>%
+  group_by(event_date) %>%
+  summarize(source_sectors = paste0(sort(source_sectors), collapse = ","),
+            .groups = "drop")
+
+```
+
+
 ### CAMEO codes are unique but have a nested hierarchical structure
+
+Each event only has one full CAMEO code, however the codes themselves reflect a hierarchical structure with three levels. At the top level ("level" 0 in the `cameo_codes` data included in the package) are 20 categories for types of interactions:
+
+```{r, eval=TRUE}
+data(cameo_codes) 
+cameo_codes %>% 
+  filter(level==0) %>% 
+  select(cameo_code, name, level, lvl0) %>%
+  knitr::kable()
+```
+
+The "level" variable in `cameo_codes` refers to a CAMEO codes level in the hierarchy, ranging from 0 to 2, whereas "lvl0" refers to the "level" 0 top-level code, e.g. "01", and "lvl1" refers to the intermediate-level code at "level" 1, e.g. "010".
+
+Each top level code includes up to 2 further levels down, e.g. for the top level code "20":
+
+```{r, eval=TRUE}
+cameo_codes %>%
+  filter(lvl0==20) %>%
+  select(cameo_code, name, level, lvl0, lvl1) %>%
+  knitr::kable()
+```
+
+This means that in practice some care needs to be taken to count all the correct events when aggregating to the top- or intermediate-level CAMEO codes. In SQL, one can do:
+
+```{r, eval=FALSE}
+# Instead of:
+query_icews("SELECT count(*) FROM events WHERE cameo_code = '20';")
+# which will not return any records, do:
+query_icews("SELECT count(*) FROM events WHERE Substr(cameo_code, 1, 2) = '20';")
+# returns ~3,000 records
+```
+
+Some records are also missing a CAMEO code (NULL in SQL, NA in R).
+
+```{r, include=FALSE}
+# Notes:
+query_icews("SELECT event_id, source_file from events where cameo_code is null limit 1;")
+#  event_id              source_file
+#1 25326167 Events.2017.20201006.tab
+```
 
 
 ## Summary statistics
@@ -75,18 +280,18 @@ In all cases, the duplicate events have distinct event dates.
 ### Total number of records
 
 ```{r, eval = FALSE}
-bind_cols(
-  query_icews("select count(*) as n_unique_events from (select distinct(event_id) from events);"),
-  query_icews("select count(*) as n_rows from events;")
-) %>%
-  tidyr::gather(Measure, Value) %>%
+query_icews("SELECT max(event_date) AS Last_Event_Date, 
+                    Count(*) as Records 
+             FROM events;") %>%
+  mutate(Last_Event_Date = as.Date(as.character(Last_Event_Date), format = "%Y%m%d"),
+         Today = Sys.Date()) %>%
+  select(Today, Last_Event_Date, Records) %>%
   knitr::kable(format.args = list(big.mark = ','))
 ```
 
-|Measure         |    Value|
-|:---------------|--------:|
-|n_unique_events | 17,219,747|
-|n_rows          | 17,365,059|
+|Today      |Last_Event_Date |    Records|
+|:----------|:---------------|----------:|
+|2020-10-15 |2020-09-28      | 18,594,331|
 
 ### Distinct locations
 
@@ -104,13 +309,13 @@ bind_cols(
 
 |Measure            |   Value|
 |:------------------|-------:|
-|n_unique_locations | 110,405|
-|n_unique_coords    | 109,557|
-|n_unique_countries |     252|
+|n_unique_locations | 128,126|
+|n_unique_coords    | 114,035|
+|n_unique_countries |     255|
 
 Coordinates are not sufficient to distinguish each unique location once we take city, district, etc. into account. Nothing short of the full set of columns [country, province, district, city, latitude, longitude] uniquely identifies all distinct locations. 
 
-```{r sectors}
+```{r sectors, include=FALSE}
 sectors <- query_icews("select source_sectors, target_sectors from events limit 1e5;")
 
 sectors_long <- sectors %>%

@@ -39,8 +39,6 @@ Suggests:
     tictoc,
     tidyr,
     usethis
-Remotes:
-    IQSS/dataverse-client-r
 VignetteBuilder: 
     knitr
 Encoding: UTF-8

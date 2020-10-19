@@ -51,7 +51,7 @@ globalVariables(c("cameo_codes", "goldstein_mappings"))
       strwrap("There is bug in the dataverse R package prior to version 0.2.1.9001 that breaks file downloading. Please check on CRAN if a newer version is available or install the development version from GitHub using:"),
       "  remotes::install_github(\"IQSS/dataverse-client-r\")"
       ), collapse = "\n")
-    warning(msg)
+    warning(msg, call. = FALSE)
   }
 
   # Make sure the DATAVERSE_SERVER env variable is set
@@ -60,7 +60,7 @@ globalVariables(c("cameo_codes", "goldstein_mappings"))
       strwrap("The R dataverse client requires the DATAVERSE_SERVER environment variable to be set. See <https://github.com/IQSS/dataverse-client-r>. Please run:"),
       "Sys.setenv(DATAVERSE_SERVER = \"dataverse.harvard.edu\")"
     ), collapse = "\n")
-    warning(msg)
+    warning(msg, call. = FALSE)
   }
 }
 

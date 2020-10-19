@@ -88,7 +88,7 @@
       <h1 data-toc-skip>Speed comparison database versus file-based</h1>
                         <h4 class="author">Andreas Beger</h4>
             
-            <h4 class="date">2020-10-15</h4>
+            <h4 class="date">2020-10-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/andybega/icews/blob/master/vignettes/speed-comparison-database-versus-file-based.Rmd"><code>vignettes/speed-comparison-database-versus-file-based.Rmd</code></a></small>
       <div class="hidden name"><code>speed-comparison-database-versus-file-based.Rmd</code></div>
@@ -97,27 +97,11 @@
 
     
     
-<p>Generally, in-memory calculations are much faster than calculations via SQL, but they come at the cost of loading several GB into memory, which on my laptop takes about 2 minutes.</p>
-<p><em>(The values in this note were last updated on 2020-05-22. Since the SQL queries take several minutes to run, and depend on a working local database and files that are not available on CI, the code cells are mostly not evaluated when rendering this vignette.)</em></p>
+<p>This vignette has some timings for database versus in memory calculations using the entire ICEWS event data. Generally, in-memory calculations are much faster than calculations via SQL, but they come at the cost of loading several GB into memory, which on my laptop takes about 2 minutes.</p>
+<p><em>This vignette depends on the ICEWS event data I have locally on the laptop I’m using to compile it. The results are manually copied into the Rmd file, since evaluating the chunks at re-build is not possible on a server that doesn’t have the local data present.</em></p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.andybeger.com/icews/">icews</a></span><span class="op">)</span>
-<span class="co">#&gt; Warning in fun(libname, pkgname): The R dataverse client requires the DATAVERSE_SERVER environment</span>
-<span class="co">#&gt; variable to be set. See &lt;https://github.com/IQSS/dataverse-client-r&gt;.</span>
-<span class="co">#&gt; Please run:</span>
-<span class="co">#&gt; Sys.setenv(DATAVERSE_SERVER = "dataverse.harvard.edu")</span>
-<span class="co">#&gt; Options not set, consider running 'setup_icews()'</span>
-<span class="co">#&gt; data_dir: NULL</span>
-<span class="co">#&gt; use_db: NULL</span>
-<span class="co">#&gt; keep_files: NULL</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'dplyr'</span>
-<span class="co">#&gt; The following objects are masked from 'package:stats':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     filter, lag</span>
-<span class="co">#&gt; The following objects are masked from 'package:base':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     intersect, setdiff, setequal, union</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org">tidyr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://github.com/collectivemedia/tictoc">tictoc</a></span><span class="op">)</span></pre></div>
 <div id="read-into-memory" class="section level1">
@@ -129,18 +113,19 @@
 <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">events</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html">object.size</a></span><span class="op">(</span><span class="va">events</span><span class="op">)</span>, <span class="st">"Gb"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span><span class="op">(</span><span class="op">)</span></pre></div>
-<pre><code>#&gt; [1] 18465057
-#&gt; [1] "2.9 Gb"
-#&gt; 165.218 sec elapsed</code></pre>
+<pre><code>#&gt; [1] 18594331
+#&gt; "3 GB"
+#&gt; 282.18 sec elapsed</code></pre>
 <div class="sourceCode" id="cb4"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span><span class="op">(</span><span class="op">)</span>
 <span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_icews.html">read_icews</a></span><span class="op">(</span><span class="fu"><a href="../reference/find_raw.html">find_raw</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">events</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html">object.size</a></span><span class="op">(</span><span class="va">events</span><span class="op">)</span>, <span class="st">"Gb"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span><span class="op">(</span><span class="op">)</span></pre></div>
-<pre><code>#&gt; [1] 18465057
+<pre><code>#&gt; [1] 18594374
 #&gt; [1] "2.8 Gb"
-#&gt; 155.476 sec elapsed</code></pre>
+#&gt; 191.052 sec elapsed</code></pre>
+<p>The data from SQLite are slightly bigger because there is an extra column indicating the source file from which a set of events came. The command above directly reads from the raw source files, without recording which file an event came from.</p>
 </div>
 <div id="country-year-event-counts" class="section level1">
 <h1 class="hasAnchor">
@@ -152,21 +137,21 @@
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">country</span>, <span class="va">year</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>events <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span><span class="op">(</span><span class="op">)</span></pre></div>
-<pre><code>#&gt; 2.313 sec elapsed</code></pre>
+<pre><code>#&gt; 2.294 sec elapsed</code></pre>
 <p>And here by querying the database:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span><span class="op">(</span><span class="op">)</span>
 <span class="va">cy_total_db</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span>
   <span class="st">"SELECT count(*) AS total FROM events GROUP BY country, year;"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span><span class="op">(</span><span class="op">)</span></pre></div>
-<pre><code>#&gt; 740.567 sec elapsed</code></pre>
-<p>Equivalent results, but much faster:</p>
+<pre><code>#&gt; 67.247 sec elapsed</code></pre>
+<p>Grouping first by year, then country:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span><span class="op">(</span><span class="op">)</span>
 <span class="va">cy_total_db</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span>
   <span class="st">"SELECT count() AS total FROM events GROUP BY year, country;"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span><span class="op">(</span><span class="op">)</span></pre></div>
-<pre><code>#&gt; 52.795 sec elapsed</code></pre>
+<pre><code>#&gt; 65.662 sec elapsed</code></pre>
 <p>This is an equivalent SQL query but using <strong>dplyr</strong>’s behind the scenes construction:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span><span class="op">(</span><span class="op">)</span>
@@ -175,8 +160,7 @@
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>events <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html">collect</a></span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span><span class="op">(</span><span class="op">)</span></pre></div>
-<div class="sourceCode" id="cb13"><pre class="downlit">
-<span class="co">#&gt; 54.855 sec elapsed</span></pre></div>
+<pre><code>#&gt; 67.812 sec elapsed</code></pre>
 </div>
 <div id="column-cardinality" class="section level1">
 <h1 class="hasAnchor">
@@ -208,92 +192,92 @@
 <td align="right">26</td>
 </tr>
 <tr class="odd">
-<td align="left">source_file</td>
-<td align="right">29</td>
-</tr>
-<tr class="even">
 <td align="left">intensity</td>
 <td align="right">41</td>
 </tr>
+<tr class="even">
+<td align="left">source_file</td>
+<td align="right">48</td>
+</tr>
 <tr class="odd">
 <td align="left">source_country</td>
-<td align="right">250</td>
+<td align="right">253</td>
 </tr>
 <tr class="even">
 <td align="left">target_country</td>
-<td align="right">250</td>
+<td align="right">253</td>
 </tr>
 <tr class="odd">
 <td align="left">country</td>
-<td align="right">251</td>
+<td align="right">254</td>
 </tr>
 <tr class="even">
 <td align="left">cameo_code</td>
 <td align="right">273</td>
 </tr>
 <tr class="odd">
-<td align="left">event_text</td>
-<td align="right">273</td>
+<td align="left">publisher</td>
+<td align="right">292</td>
 </tr>
 <tr class="even">
-<td align="left">publisher</td>
-<td align="right">290</td>
+<td align="left">event_text</td>
+<td align="right">304</td>
 </tr>
 <tr class="odd">
 <td align="left">yearmonth</td>
-<td align="right">305</td>
+<td align="right">309</td>
 </tr>
 <tr class="even">
 <td align="left">province</td>
-<td align="right">5263</td>
+<td align="right">5286</td>
 </tr>
 <tr class="odd">
 <td align="left">event_date</td>
-<td align="right">9269</td>
+<td align="right">9402</td>
 </tr>
 <tr class="even">
 <td align="left">district</td>
-<td align="right">10055</td>
+<td align="right">10082</td>
 </tr>
 <tr class="odd">
 <td align="left">target_name</td>
-<td align="right">74604</td>
+<td align="right">75028</td>
 </tr>
 <tr class="even">
 <td align="left">source_name</td>
-<td align="right">76982</td>
+<td align="right">77463</td>
 </tr>
 <tr class="odd">
 <td align="left">latitude</td>
-<td align="right">88440</td>
+<td align="right">88844</td>
 </tr>
 <tr class="even">
 <td align="left">city</td>
-<td align="right">91348</td>
+<td align="right">91842</td>
 </tr>
 <tr class="odd">
 <td align="left">longitude</td>
-<td align="right">92562</td>
+<td align="right">92960</td>
 </tr>
 <tr class="even">
 <td align="left">target_sectors</td>
-<td align="right">222589</td>
+<td align="right">272279</td>
 </tr>
 <tr class="odd">
 <td align="left">source_sectors</td>
-<td align="right">276177</td>
+<td align="right">337609</td>
 </tr>
 <tr class="even">
 <td align="left">story_id</td>
-<td align="right">9040119</td>
+<td align="right">9116259</td>
 </tr>
 <tr class="odd">
 <td align="left">event_id</td>
-<td align="right">18319702</td>
+<td align="right">18449019</td>
 </tr>
 <tr class="even">
 <td align="left">rows</td>
-<td align="right">18465014</td>
+<td align="right">18594331</td>
 </tr>
 </tbody>
 </table>

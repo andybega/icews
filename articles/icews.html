@@ -88,7 +88,7 @@
       <h1 data-toc-skip>Introduction to icews</h1>
                         <h4 class="author">Andreas Beger</h4>
             
-            <h4 class="date">2020-10-15</h4>
+            <h4 class="date">2020-10-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/andybega/icews/blob/master/vignettes/icews.Rmd"><code>vignettes/icews.Rmd</code></a></small>
       <div class="hidden name"><code>icews.Rmd</code></div>
@@ -98,7 +98,7 @@
     
     
 <p>The ICEWS event data are one of the major event data sources publicly available, currently providing more than 17 million events from 1995 to late 2018 for more than 198 independent countries. The data were at first delivered with a one-year delay, but since late 2018 are available with monthly updates and no embargo period.</p>
-<p>The data are delivered via Dataverse, an open-source research data sharing platform. The main repository at <a href="https://doi.org/10.7910/DVN/28075" class="uri">https://doi.org/10.7910/DVN/28075</a> contains documentation and data in the form of 20+ data files covering each year from 1995 to the present.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> Although it is straightforward to bulk-download the entire repository, the data files are contained in a mix of “.tab” and zippes “.tab.zip” files, file versions can change and minimally change every month for the data file for the current year, and the bulk-download itself is several GB in size.</p>
+<p>The data are delivered via Dataverse, an open-source research data sharing platform. The main repository at <a href="https://doi.org/10.7910/DVN/28075" class="uri">https://doi.org/10.7910/DVN/28075</a> contains documentation and data in the form of 20+ data files covering each year from 1995 to the present. Another repository at <a href="https://doi.org/10.7910/DVN/QI2T9A" class="uri">https://doi.org/10.7910/DVN/QI2T9A</a> has been providing weekly data updates since early 2020.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> Although it is straightforward to bulk-download the entire repository, the data files are contained in a mix of “.tab” and zipped “.tab.zip” files, file versions can change and minimally change every month for the data file for the current year, and the bulk-download itself is several GB in size.</p>
 <p>The icews package provides several features to make it easier to work with the ICEWS event data:</p>
 <ul>
 <li>
@@ -255,7 +255,7 @@ Download            'events.1996.20150313082528.tab.zip'
 <span class="co">#&gt;  $ longitude      : num [1:4993] 106 106 136 140 106 ...</span>
 <span class="co">#&gt;  $ year           : int [1:4993] 2018 2018 2018 2018 2018 2018 2018 2018 2018 2018 ...</span>
 <span class="co">#&gt;  $ yearmonth      : int [1:4993] 201806 201806 201806 201806 201806 201806 201806 201806 201806 201806 ...</span></pre></div>
-<p>The country column includes short country names for a slightly expanded version of the countries and territories with an <a href="https://en.wikipedia.org/wiki/ISO_3166-1">ISO 3166-1</a> code.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</p>
+<p>The country column includes short country names for a slightly expanded version of the countries and territories with an <a href="https://en.wikipedia.org/wiki/ISO_3166-1">ISO 3166-1</a> code.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
 <div id="format-differences-between-the-raw-data-and-database-version" class="section level3">
 <h3 class="hasAnchor">
 <a href="#format-differences-between-the-raw-data-and-database-version" class="anchor"></a>Format differences between the raw data and database version</h3>
@@ -339,7 +339,7 @@ Download            'events.1996.20150313082528.tab.zip'
 <div class="footnotes">
 <hr>
 <ol>
-<li id="fn1"><p>Another repository at <a href="https://doi.org/10.7910/DVN/QI2T9A" class="uri">https://doi.org/10.7910/DVN/QI2T9A</a> has been providing weekly data updates since October 2018, however the icews package is not yet setup to work with these as well.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn1"><p>Originally there was a repository with daily updates, and the original version of the <strong>icews</strong> package was setup to work with this. This daily repo stopped updating in the fall of 2019; when updates resumed in 2020, it was replaced by the current repository with weekly updates. If you see references to daily updates anywhere, these are accidental leftovers from the old package version.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
 <li id="fn2"><p>At least it appears to be this.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
 <li id="fn3"><p>See <a href="http://ksgleditsch.com/statelist.html" class="uri">http://ksgleditsch.com/statelist.html</a> and <a href="https://doi.org/10.1080/03050629908434958" class="uri">https://doi.org/10.1080/03050629908434958</a>.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
 <li id="fn4"><p>See “State System Membership” at <a href="http://www.correlatesofwar.org/data-sets" class="uri">http://www.correlatesofwar.org/data-sets</a>.<a href="#fnref4" class="footnote-back">↩︎</a></p></li>

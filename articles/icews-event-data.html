@@ -88,7 +88,7 @@
       <h1 data-toc-skip>ICEWS event data</h1>
                         <h4 class="author">Andreas Beger</h4>
             
-            <h4 class="date">2020-10-15</h4>
+            <h4 class="date">2020-10-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/andybega/icews/blob/master/vignettes/icews-event-data.Rmd"><code>vignettes/icews-event-data.Rmd</code></a></small>
       <div class="hidden name"><code>icews-event-data.Rmd</code></div>
@@ -99,7 +99,7 @@
     
 <p>This vignette gives an overview of the ICEWS event data: how each event record is structured, and some the relationship between different sets of information in the event records and columns. The latter is mainly for instances where superficial assumptions one might make, e.g. that “event_id” is a unique event ID, are wrong.</p>
 <p><em>Note: the package is inherently unfriendly to a completely replicable workflow, as it is setup with the intention that one will use R options set in .Rprofile at each session start. And in any case, it is not trivial to throw around 5 GB of data.</em></p>
-<p><em>One side effect is that several parts of this vignette incorporte results from the local data copy I have, but which is not included on GitHub or the package install. However, I have tried to make the code here as explicity and replicable as possible.</em></p>
+<p><em>One side effect is that several parts of this vignette incorporate results from the local data copy I have, but which is not included on GitHub or the package install. However, I have tried to make the code here as explicit and replicable as possible.</em></p>
 <p><em>The data used cover the beginning in 1995 to a last event date of 2020-09-28.</em></p>
 <!-- as.Date(as.character(query_icews("select max(event_date) from events;")), format = "%Y%m%d") -->
 <div class="sourceCode" id="cb1"><pre class="downlit">

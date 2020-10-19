@@ -118,11 +118,11 @@
 <li>
 <code>source_files</code> and <code>null_source_files</code>: these tables are related to the raw data files (.tab) that have been ingested into the database. If a raw source file only contains duplicate events<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>, no events are ingested into the database and the <code>events</code> table contains no reference to this file. To avoid an attempt to re-download and re-ingest the file at a future update, it is in this case instead added to the <code>null_sources_files</code> table, which is taken into account when resolving the various states (dataverse, database, files).</li>
 </ul>
-<p>Note that no indices are created by default for the <code>events</code> table. Usually it makes sense to add some to speed up common querys. For example, I have locally added indices for country, year, and yearmonth.</p>
+<p>Note that no indices are created by default for the <code>events</code> table. Usually it makes sense to add some to speed up common queries. For example, I have at some points locally added indices for country, year, and yearmonth.</p>
 <div id="create-table-statements" class="section level1">
 <h1 class="hasAnchor">
 <a href="#create-table-statements" class="anchor"></a>Create table statements</h1>
-<p>The package installation includes SQL scripts that create these tables. These can be accessed an printed from R like below.</p>
+<p>The package installation includes SQL scripts that create these tables. These can be accessed an printed from R like below. (One can also get these from SQLite with something like <code><a href="https://rdrr.io/r/base/cat.html">cat(query_icews("select sql from sqlite_master where name = 'events';")$sql)</a></code>.)</p>
 <div id="events" class="section level2">
 <h2 class="hasAnchor">
 <a href="#events" class="anchor"></a>Events</h2>
@@ -263,6 +263,12 @@
 <span id="cb8-64"><a href="#cb8-64"></a>  <span class="kw">SELECT</span> name <span class="kw">FROM</span> null_source_files <span class="kw">EXCEPT</span> <span class="kw">SELECT</span> name <span class="kw">FROM</span> source_files;</span>
 <span id="cb8-65"><a href="#cb8-65"></a><span class="cf">END</span>;</span></code></pre></div>
 </div>
+</div>
+<div id="indices" class="section level1">
+<h1 class="hasAnchor">
+<a href="#indices" class="anchor"></a>Indices</h1>
+<p>If you are running similar queries repeatedly, it might make sense to add indices for the events table. These can dramatically increase the speed of queries if setup correctly. They do take a while to create and take up extra storage space in the database file, though. They will also slow updating the data, and what I did in the past was to remove indices, update, and then re-add the indices.</p>
+<p>I found the general guide on indices at <a href="https://use-the-index-luke.com">Use the index, Luke!</a> to be helpful, as well as the <a href="https://www.sqlite.org/eqp.html"><code>EXPLAIN QUERY PLAN</code></a> command, which can be used to tell what, if any, indices are going to be used for a query.</p>
 </div>
 <div class="footnotes">
 <hr>

@@ -104,6 +104,14 @@ set_icews_opts.icews_opts <- function(x, ...) {
 #' @rdname setup_icews
 #'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#'   # This works:
+#'   opts <- unset_icews_opts()
+#'   # do some stuff without the path options
+#'   set_icews_opts(opts)
+#' }
 unset_icews_opts <- function() {
   opts <- get_icews_opts()
   options(icews.data_dir   = NULL)

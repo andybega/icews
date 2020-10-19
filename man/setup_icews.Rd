@@ -47,6 +47,14 @@ specific queries.
 Either way, I heavily recommend adding the option values to .Rprofile,
 to take away the trouble of having to deal with paths manually.
 }
+\examples{
+\dontrun{
+  # This works:
+  opts <- unset_icews_opts()
+  # do some stuff without the path options
+  set_icews_opts(opts)
+}
+}
 \seealso{
 \code{\link[=set_icews_opts]{set_icews_opts()}}
 }

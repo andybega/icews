@@ -47,7 +47,7 @@ download_data <- function(to_dir = find_raw(), update = TRUE, dryrun = FALSE) {
 #' @rdname download_data
 #'
 #' @details
-#' Use `download_data()` instead of `download_icews()``
+#' Use `download_data()` instead of `download_icews()`
 #' @export
 download_icews <- function(to_dir = find_raw(), update = TRUE, dryrun = FALSE) {
   lifecycle::deprecate_soft("0.2.0", "download_icews()", "download_data()")

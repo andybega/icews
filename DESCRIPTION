@@ -9,8 +9,9 @@ Authors@R:
            email = "adbeger@gmail.com",
            comment = c(ORCID = "0000-0003-1883-3169"))
 Maintainer: Andreas Beger <adbeger@gmail.com>
-Description: Download utilities and other helpers for getting
-    the ICEWS event data from Dataverse.
+Description: Download the ICEWS event data from Dataverse and keep it synced
+    with the latest updates. Store the local data using either the raw 
+    tab-serparated files (.tab), in a SQLite database, or both. 
 License: MIT + file LICENSE
 URL: https://www.andybeger.com/icews/,
     https://github.com/andybega/icews

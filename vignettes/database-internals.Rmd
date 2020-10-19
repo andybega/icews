@@ -32,11 +32,11 @@ With the default setup, four tables should be present:
 - `stats`: statistics for the event table; this currently only contains the total number of rows/events in the `events` table, and is used by `dr_icews()` when showing the total number of events in the database (if using the database option)
 - `source_files` and `null_source_files`: these tables are related to the raw data files (.tab) that have been ingested into the database. If a raw source file only contains duplicate events^[Specifically, records that share both event ID and event date.], no events are ingested into the database and the `events` table contains no reference to this file. To avoid an attempt to re-download and re-ingest the file at a future update, it is in this case instead added to the `null_sources_files` table, which is taken into account when resolving the various states (dataverse, database, files).
 
-Note that no indices are created by default for the `events` table. Usually it makes sense to add some to speed up common querys. For example, I have locally added indices for country, year, and yearmonth. 
+Note that no indices are created by default for the `events` table. Usually it makes sense to add some to speed up common queries. For example, I have at some points locally added indices for country, year, and yearmonth. 
 
 # Create table statements
 
-The package installation includes SQL scripts that create these tables. These can be accessed an printed from R like below.
+The package installation includes SQL scripts that create these tables. These can be accessed an printed from R like below. (One can also get these from SQLite with something like `cat(query_icews("select sql from sqlite_master where name = 'events';")$sql)`.)
 
 ## Events
 
@@ -55,5 +55,12 @@ cat(readLines(system.file("sql/stats.sql", package = "icews")), sep = "\n")
 ```{r, class.output = "sql", comment = ''}
 cat(readLines(system.file("sql/source_files.sql", package = "icews")), sep = "\n")
 ```
+
+# Indices
+
+If you are running similar queries repeatedly, it might make sense to add indices for the events table. These can dramatically increase the speed of queries if setup correctly. They do take a while to create and take up extra storage space in the database file, though. They will also slow updating the data, and what I did in the past was to remove indices, update, and then re-add the indices. 
+
+I found the general guide on indices at [Use the index, Luke!](https://use-the-index-luke.com) to be helpful, as well as the [`EXPLAIN QUERY PLAN`](https://www.sqlite.org/eqp.html) command, which can be used to tell what, if any, indices are going to be used for a query. 
+
 
 

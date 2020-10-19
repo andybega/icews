@@ -21,7 +21,7 @@ This vignette gives an overview of the ICEWS event data: how each event record i
 
 *Note: the package is inherently unfriendly to a completely replicable workflow, as it is setup with the intention that one will use R options set in .Rprofile at each session start. And in any case, it is not trivial to throw around 5 GB of data.*
 
-*One side effect is that several parts of this vignette incorporte results from the local data copy I have, but which is not included on GitHub or the package install. However, I have tried to make the code here as explicity and replicable as possible.*
+*One side effect is that several parts of this vignette incorporate results from the local data copy I have, but which is not included on GitHub or the package install. However, I have tried to make the code here as explicit and replicable as possible.*
 
 *The data used cover the beginning in 1995 to a last event date of 2020-09-28.*
 

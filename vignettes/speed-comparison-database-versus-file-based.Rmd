@@ -12,13 +12,14 @@ vignette: >
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  eval = FALSE
 )
 ```
 
-Generally, in-memory calculations are much faster than calculations via SQL, but they come at the cost of loading several GB into memory, which on my laptop takes about 2 minutes. 
+This vignette has some timings for database versus in memory calculations using the entire ICEWS event data. Generally, in-memory calculations are much faster than calculations via SQL, but they come at the cost of loading several GB into memory, which on my laptop takes about 2 minutes. 
 
-_(The values in this note were last updated on 2020-05-22. Since the SQL queries take several minutes to run, and depend on a working local database and files that are not available on CI, the code cells are mostly not evaluated when rendering this vignette.)_
+_This vignette depends on the ICEWS event data I have locally on the laptop I'm using to compile it. The results are manually copied into the Rmd file, since evaluating the chunks at re-build is not possible on a server that doesn't have the local data present._
 
 ```{r}
 library(icews)
@@ -29,7 +30,7 @@ library(tictoc)
 
 # Read into memory
 
-```{r, results='hold', eval=FALSE}
+```{r, results='hold'}
 tic()
 events <- read_icews(find_db())
 nrow(events)
@@ -38,12 +39,12 @@ toc()
 ```
 
 ```
-#> [1] 18465057
-#> [1] "2.9 Gb"
-#> 165.218 sec elapsed
+#> [1] 18594331
+#> "3 GB"
+#> 282.18 sec elapsed
 ```
 
-```{r, results='hold', eval=FALSE}
+```{r, results='hold'}
 tic()
 events <- read_icews(find_raw())
 nrow(events)
@@ -52,16 +53,18 @@ toc()
 ```
 
 ```
-#> [1] 18465057
+#> [1] 18594374
 #> [1] "2.8 Gb"
-#> 155.476 sec elapsed
+#> 191.052 sec elapsed
 ```
+
+The data from SQLite are slightly bigger because there is an extra column indicating the source file from which a set of events came. The command above directly reads from the raw source files, without recording which file an event came from. 
 
 # Country-year event counts
 
 The in-memory calculation is much faster than in the database, although longer if one counts the overhead of reading the data into memory as well.
 
-```{r, results='hold', eval=FALSE}
+```{r, results='hold'}
 tic()
 cy_total_mem <- events %>% 
   group_by(country, year) %>% 
@@ -70,12 +73,12 @@ toc()
 ```
 
 ```
-#> 2.313 sec elapsed
+#> 2.294 sec elapsed
 ```
 
 And here by querying the database:
 
-```{r, eval=FALSE}
+```{r}
 tic()
 cy_total_db <- query_icews(
   "SELECT count(*) AS total FROM events GROUP BY country, year;")
@@ -83,12 +86,12 @@ toc()
 ```
 
 ```
-#> 740.567 sec elapsed
+#> 67.247 sec elapsed
 ```
 
-Equivalent results, but much faster:
+Grouping first by year, then country:
 
-```{r, eval=FALSE}
+```{r}
 tic()
 cy_total_db <- query_icews(
   "SELECT count() AS total FROM events GROUP BY year, country;")
@@ -96,12 +99,12 @@ toc()
 ```
 
 ```
-#> 52.795 sec elapsed
+#> 65.662 sec elapsed
 ```
 
 This is an equivalent SQL query but using **dplyr**'s behind the scenes construction:
 
-```{r, eval=FALSE}
+```{r}
 tic()
 cy_total_db <- tbl(connect(), "events") %>% 
   group_by(year, country) %>% 
@@ -110,15 +113,15 @@ cy_total_db <- tbl(connect(), "events") %>%
 toc()
 ```
 
-```r
-#> 54.855 sec elapsed
+```
+#> 67.812 sec elapsed
 ```
 
 # Column cardinality
 
 Usually SQL indices work better on columns that have high cardinality.
 
-```{r, eval=FALSE}
+```{r}
 col_vals <- query_icews("
 select count(*) as rows,
        count(distinct(event_id)) as event_id,
@@ -160,27 +163,27 @@ col_vals %>%
 |:---------------|-------------:|
 |sentence_number |             6|
 |year            |            26|
-|source_file     |            29|
 |intensity       |            41|
-|source_country  |           250|
-|target_country  |           250|
-|country         |           251|
+|source_file     |            48|
+|source_country  |           253|
+|target_country  |           253|
+|country         |           254|
 |cameo_code      |           273|
-|event_text      |           273|
-|publisher       |           290|
-|yearmonth       |           305|
-|province        |          5263|
-|event_date      |          9269|
-|district        |         10055|
-|target_name     |         74604|
-|source_name     |         76982|
-|latitude        |         88440|
-|city            |         91348|
-|longitude       |         92562|
-|target_sectors  |        222589|
-|source_sectors  |        276177|
-|story_id        |       9040119|
-|event_id        |      18319702|
-|rows            |      18465014|
+|publisher       |           292|
+|event_text      |           304|
+|yearmonth       |           309|
+|province        |          5286|
+|event_date      |          9402|
+|district        |         10082|
+|target_name     |         75028|
+|source_name     |         77463|
+|latitude        |         88844|
+|city            |         91842|
+|longitude       |         92960|
+|target_sectors  |        272279|
+|source_sectors  |        337609|
+|story_id        |       9116259|
+|event_id        |      18449019|
+|rows            |      18594331|
 
 No indices are created by default, but if you prefer working with the events in a SQLite database and doing certain queries frequently then it may make sense to create some. There are plenty of tutorials online on how to create good indices (for example [_Use the index, Luke!_](https://use-the-index-luke.com)), and you can always preface a query you are developing with `EXPLAIN QUERY PLAN [query]` (see [here](https://www.sqlite.org/eqp.html) for details).

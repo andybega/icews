@@ -1,4 +1,34 @@
 
+
+
+#' Remove a data file
+#'
+#' @param raw_file_path Data file to be removed
+#'
+#' @keywords internal
+remove_file <- function(raw_file_path) {
+  unlink(raw_file_path)
+  invisible(NULL)
+}
+
+#' Purge file downloads
+#'
+#' Removes the downloaded raw event TSV files
+#'
+#' @param raw_file_dir Directory containing the raw event TSV files
+#'
+#' @seealso [purge_db()], [remove_db()], [burn_it_down()]
+#'
+#' @export
+#' @md
+purge_data_files <- function(raw_file_dir = find_raw()) {
+
+  data_files <- list_local_files(raw_file_dir)
+  remove_file(data_files)
+  invisible(NULL)
+}
+
+
 #' Remove all data
 #'
 #' Remove all local ICEWS data artifacts, i.e. local data files and/or database

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Authors • icews</title>
+<title>Notes to prep for release • icews</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Authors" />
+<meta property="og:title" content="Notes to prep for release" />
 
 
 
@@ -58,7 +58,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-authors">
+    <div class="container template-title-body">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -125,16 +125,29 @@
 <div class="row">
   <div class="contents col-md-9">
     <div class="page-header">
-      <h1>Authors</h1>
+      <h1>Notes to prep for release</h1>
     </div>
 
-    <ul class="list-unstyled">
-      <li>
-        <p><strong>Andreas Beger</strong>. Maintainer, author. <a href='https://orcid.org/0000-0003-1883-3169' target='orcid.widget' aria-label='ORCID'><span class='fab fa-orcid orcid' aria-hidden='true'></span></a>
-        </p>
-      </li>
-    </ul>
+<div id="notes-to-prep-for-release" class="section level1">
 
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu">check_win_devel</span><span class="op">(</span><span class="op">)</span>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu">check_win_release</span><span class="op">(</span><span class="op">)</span>
+<span class="va">ch</span> <span class="op">&lt;-</span> <span class="fu">rhub</span><span class="fu">::</span><span class="fu">check_for_cran</span><span class="op">(</span><span class="op">)</span>
+
+<span class="co"># monitor progress</span>
+<span class="fu">list_package_checks</span><span class="op">(</span><span class="op">)</span>
+
+<span class="co"># eventually:</span>
+<span class="va">ch</span><span class="op">$</span><span class="fu">cran_summary</span><span class="op">(</span><span class="op">)</span></pre></div>
+</div>
+
+  </div>
+
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 
 </div>

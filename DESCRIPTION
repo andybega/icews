@@ -1,7 +1,7 @@
 Type: Package
 Package: icews
 Title: Get ICEWS Event Data
-Version: 0.2.0.9010
+Version: 0.3.0
 Authors@R: 
     person(given = "Andreas",
            family = "Beger",
@@ -11,13 +11,16 @@ Authors@R:
 Maintainer: Andreas Beger <adbeger@gmail.com>
 Description: Download the ICEWS event data from Dataverse and keep it synced
     with the latest updates. Store the local data using either the raw 
-    tab-serparated files (.tab), in a SQLite database, or both. 
+    tab-separated files (.tab), in a SQLite database, or both. 
 License: MIT + file LICENSE
 URL: https://www.andybeger.com/icews/,
     https://github.com/andybega/icews
 BugReports: https://github.com/andybega/icews/issues
 Depends:
     R (>= 3.5)
+SystemRequirements: 
+    libxml2,
+    openssl
 Imports:
     countrycode,
     dataverse,

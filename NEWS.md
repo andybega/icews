@@ -1,5 +1,7 @@
 
-# icews 0.3.0 (2020-10-08)
+# icews 1.0.0
+
+This is the first version released to CRAN. 
 
 ## Resumption of ICEWS updates with weekly data drops
 

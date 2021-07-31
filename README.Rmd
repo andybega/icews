@@ -42,13 +42,14 @@ library("remotes")
 remotes::install_github("andybega/icews")
 ```
 
-The **icews** package relies on the R [**dataverse** client](https://github.com/IQSS/dataverse-client-r). Note that this package requires a dataverse API token to correctly work. See the package README. 
+The **icews** package relies on the R [**dataverse** client](https://github.com/IQSS/dataverse-client-r). Note that this package requires a dataverse API token to correctly work. See the package README and https://guides.dataverse.org/en/latest/user/account.html#api-token. 
 
 ## Usage
 
 **tl;dr**: get a SQLite database with the current events on Dataverse with this code; otherwise read below for more details. 
 
 ```{r, eval = FALSE}
+Sys.setenv(DATAVERSE_KEY = "{api key}")  # see ?dataverse_api_token
 Sys.setenv(DATAVERSE_SERVER = "dataverse.harvard.edu")
 library("icews")
 library("DBI")

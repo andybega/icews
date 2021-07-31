@@ -93,7 +93,7 @@ get_dvn_manifest <- function(icews_doi = get_doi(), server = Sys.getenv("DATAVER
              dataverse::get_dataset(icews_doi$weekly, server = server)
            )),
     error = function(e) {
-      stop("Something went wrong in 'dataverse' or the Dataverse API, try again. Original error message:\n", e$message)
+      stop("Something went wrong in 'dataverse' or the Dataverse API. Check that the API token is valid (?dataverse_api_token) and try again. Original error message:\n", e$message)
     })
 
   # handle 0 length weekly update repo (#54, #56)

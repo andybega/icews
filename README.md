@@ -17,12 +17,12 @@ Get the ICEWS event data from the Harvard Dataverse repos at
 
 The icews package provides these major features:
 
-  - get the ICEWS event data without having to deal with Dataverse
-  - use raw data files (tab-separated variables, .tsv) or a database
+-   get the ICEWS event data without having to deal with Dataverse
+-   use raw data files (tab-separated variables, .tsv) or a database
     (SQLite3) or both as the storage backend
-  - set options so that in future R sessions icews knows where your data
+-   set options so that in future R sessions icews knows where your data
     lives
-  - icews keeps the local data in sync with the latest versions on
+-   icews keeps the local data in sync with the latest versions on
     Dataverse
 
 *Note about stability:*
@@ -32,7 +32,7 @@ downloading and keeping track of potentially 10+GB of files and data. I
 have not found a good way to test that thoroughly. There are probably
 bugs and errors that pop up on a fresh run without any downloaded data
 already in place. Please file bug reports or email me
-(<adbeger@gmail.com>)\!*
+(<adbeger@gmail.com>)!*
 
 ## Installation
 
@@ -46,7 +46,8 @@ remotes::install_github("andybega/icews")
 The **icews** package relies on the R [**dataverse**
 client](https://github.com/IQSS/dataverse-client-r). Note that this
 package requires a dataverse API token to correctly work. See the
-package README.
+package README and
+<https://guides.dataverse.org/en/latest/user/account.html#api-token>.
 
 ## Usage
 
@@ -54,6 +55,7 @@ package README.
 with this code; otherwise read below for more details.
 
 ``` r
+Sys.setenv(DATAVERSE_KEY = "{api key}")  # see ?dataverse_api_token
 Sys.setenv(DATAVERSE_SERVER = "dataverse.harvard.edu")
 library("icews")
 library("DBI")

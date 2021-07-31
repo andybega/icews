@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -67,8 +69,8 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/andybega/icews/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+  <a href="https://github.com/andybega/icews/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -82,14 +84,13 @@
 
       
 
-      </header><script src="database-internals_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="database-internals_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="database-internals_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+      </header><script src="database-internals_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Database internals</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/andybega/icews/blob/master/vignettes/database-internals.Rmd"><code>vignettes/database-internals.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/andybega/icews/blob/master/vignettes/database-internals.Rmd" class="external-link"><code>vignettes/database-internals.Rmd</code></a></small>
       <div class="hidden name"><code>database-internals.Rmd</code></div>
 
     </div>
@@ -97,8 +98,8 @@
     
     
 <p>This note describes the database internals. In addition to the main <code>events</code> table, there are other tables that impact how the updating process works.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.andybeger.com/icews/">icews</a></span><span class="op">)</span>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.andybeger.com/icews/" class="external-link">icews</a></span><span class="op">)</span>
 <span class="co">#&gt; Warning in fun(libname, pkgname): The R dataverse client requires the DATAVERSE_SERVER environment</span>
 <span class="co">#&gt; variable to be set. See &lt;https://github.com/IQSS/dataverse-client-r&gt;.</span>
 <span class="co">#&gt; Please run:</span>
@@ -106,10 +107,10 @@
 <span class="co">#&gt; Options not set, consider running 'setup_icews()'</span>
 <span class="co">#&gt; data_dir: NULL</span>
 <span class="co">#&gt; use_db: NULL</span>
-<span class="co">#&gt; keep_files: NULL</span></pre></div>
+<span class="co">#&gt; keep_files: NULL</span></code></pre></div>
 <p>SQLite has a special <code>sqlite_master</code> table that describes the schema. This can be queried to find out what objects are present in the database, e.g.:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"select * from sqlite_master;"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"select * from sqlite_master;"</span><span class="op">)</span></code></pre></div>
 <p>With the default setup, four tables should be present:</p>
 <ul>
 <li>
@@ -122,154 +123,151 @@
 <p>Note that no indices are created by default for the <code>events</code> table. Usually it makes sense to add some to speed up common queries. For example, I have at some points locally added indices for country, year, and yearmonth.</p>
 <div id="create-table-statements" class="section level1">
 <h1 class="hasAnchor">
-<a href="#create-table-statements" class="anchor"></a>Create table statements</h1>
-<p>The package installation includes SQL scripts that create these tables. These can be accessed an printed from R like below. (One can also get these from SQLite with something like <code><a href="https://rdrr.io/r/base/cat.html">cat(query_icews("select sql from sqlite_master where name = 'events';")$sql)</a></code>.)</p>
+<a href="#create-table-statements" class="anchor" aria-hidden="true"></a>Create table statements</h1>
+<p>The package installation includes SQL scripts that create these tables. These can be accessed an printed from R like below. (One can also get these from SQLite with something like <code>cat(query_icews("select sql from sqlite_master where name = 'events';")$sql)</code>.)</p>
 <div id="events" class="section level2">
 <h2 class="hasAnchor">
-<a href="#events" class="anchor"></a>Events</h2>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"sql/events.sql"</span>, package <span class="op">=</span> <span class="st">"icews"</span><span class="op">)</span><span class="op">)</span>, sep <span class="op">=</span> <span class="st">"\n"</span><span class="op">)</span></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> <span class="kw">events</span> (</span>
-<span id="cb4-2"><a href="#cb4-2"></a>  event_id <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
-<span id="cb4-3"><a href="#cb4-3"></a>  event_date <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
-<span id="cb4-4"><a href="#cb4-4"></a>  source_name TEXT,</span>
-<span id="cb4-5"><a href="#cb4-5"></a>  source_sectors TEXT,</span>
-<span id="cb4-6"><a href="#cb4-6"></a>  source_country TEXT,</span>
-<span id="cb4-7"><a href="#cb4-7"></a>  event_text TEXT,</span>
-<span id="cb4-8"><a href="#cb4-8"></a>  cameo_code TEXT,</span>
-<span id="cb4-9"><a href="#cb4-9"></a>  intensity <span class="dt">REAL</span>,</span>
-<span id="cb4-10"><a href="#cb4-10"></a>  target_name TEXT,</span>
-<span id="cb4-11"><a href="#cb4-11"></a>  target_sectors TEXT,</span>
-<span id="cb4-12"><a href="#cb4-12"></a>  target_country TEXT,</span>
-<span id="cb4-13"><a href="#cb4-13"></a>  story_id <span class="dt">INTEGER</span>,</span>
-<span id="cb4-14"><a href="#cb4-14"></a>  sentence_number <span class="dt">INTEGER</span>,</span>
-<span id="cb4-15"><a href="#cb4-15"></a>  publisher TEXT,</span>
-<span id="cb4-16"><a href="#cb4-16"></a>  city TEXT,</span>
-<span id="cb4-17"><a href="#cb4-17"></a>  district TEXT,</span>
-<span id="cb4-18"><a href="#cb4-18"></a>  province TEXT,</span>
-<span id="cb4-19"><a href="#cb4-19"></a>  country TEXT,</span>
-<span id="cb4-20"><a href="#cb4-20"></a>  latitude <span class="dt">REAL</span>,</span>
-<span id="cb4-21"><a href="#cb4-21"></a>  longitude <span class="dt">REAL</span>,</span>
-<span id="cb4-22"><a href="#cb4-22"></a>  <span class="dt">year</span> <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
-<span id="cb4-23"><a href="#cb4-23"></a>  yearmonth <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
-<span id="cb4-24"><a href="#cb4-24"></a>  source_file TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
-<span id="cb4-25"><a href="#cb4-25"></a>  <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (event_id, event_date)</span>
-<span id="cb4-26"><a href="#cb4-26"></a>);</span></code></pre></div>
+<a href="#events" class="anchor" aria-hidden="true"></a>Events</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">cat</span>(<span class="kw">readLines</span>(<span class="kw">system.file</span>(<span class="st">"sql/events.sql"</span>, <span class="dt">package =</span> <span class="st">"icews"</span>)), <span class="dt">sep =</span> <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2"></a>CREATE TABLE IF NOT EXISTS <span class="kw">events</span> (</span>
+<span id="cb3-3"><a href="#cb3-3"></a>  event_id INTEGER NOT <span class="ot">NULL</span>,</span>
+<span id="cb3-4"><a href="#cb3-4"></a>  event_date INTEGER NOT <span class="ot">NULL</span>,</span>
+<span id="cb3-5"><a href="#cb3-5"></a>  source_name TEXT,</span>
+<span id="cb3-6"><a href="#cb3-6"></a>  source_sectors TEXT,</span>
+<span id="cb3-7"><a href="#cb3-7"></a>  source_country TEXT,</span>
+<span id="cb3-8"><a href="#cb3-8"></a>  event_text TEXT,</span>
+<span id="cb3-9"><a href="#cb3-9"></a>  cameo_code TEXT,</span>
+<span id="cb3-10"><a href="#cb3-10"></a>  intensity REAL,</span>
+<span id="cb3-11"><a href="#cb3-11"></a>  target_name TEXT,</span>
+<span id="cb3-12"><a href="#cb3-12"></a>  target_sectors TEXT,</span>
+<span id="cb3-13"><a href="#cb3-13"></a>  target_country TEXT,</span>
+<span id="cb3-14"><a href="#cb3-14"></a>  story_id INTEGER,</span>
+<span id="cb3-15"><a href="#cb3-15"></a>  sentence_number INTEGER,</span>
+<span id="cb3-16"><a href="#cb3-16"></a>  publisher TEXT,</span>
+<span id="cb3-17"><a href="#cb3-17"></a>  city TEXT,</span>
+<span id="cb3-18"><a href="#cb3-18"></a>  district TEXT,</span>
+<span id="cb3-19"><a href="#cb3-19"></a>  province TEXT,</span>
+<span id="cb3-20"><a href="#cb3-20"></a>  country TEXT,</span>
+<span id="cb3-21"><a href="#cb3-21"></a>  latitude REAL,</span>
+<span id="cb3-22"><a href="#cb3-22"></a>  longitude REAL,</span>
+<span id="cb3-23"><a href="#cb3-23"></a>  year INTEGER NOT <span class="ot">NULL</span>,</span>
+<span id="cb3-24"><a href="#cb3-24"></a>  yearmonth INTEGER NOT <span class="ot">NULL</span>,</span>
+<span id="cb3-25"><a href="#cb3-25"></a>  source_file TEXT NOT <span class="ot">NULL</span>,</span>
+<span id="cb3-26"><a href="#cb3-26"></a>  PRIMARY <span class="kw">KEY</span> (event_id, event_date)</span>
+<span id="cb3-27"><a href="#cb3-27"></a>);</span></code></pre></div>
 </div>
 <div id="stats-table" class="section level2">
 <h2 class="hasAnchor">
-<a href="#stats-table" class="anchor"></a>Stats table</h2>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"sql/stats.sql"</span>, package <span class="op">=</span> <span class="st">"icews"</span><span class="op">)</span><span class="op">)</span>, sep <span class="op">=</span> <span class="st">"\n"</span><span class="op">)</span></pre></div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1"></a><span class="co">/*</span></span>
-<span id="cb6-2"><a href="#cb6-2"></a><span class="co">   This sets up a stats table, for now containing only the number of records in</span></span>
-<span id="cb6-3"><a href="#cb6-3"></a><span class="co">   events (events_n), and triggers to UPDATE the row count when any records</span></span>
-<span id="cb6-4"><a href="#cb6-4"></a><span class="co">   are added or deleted FROM events.</span></span>
-<span id="cb6-5"><a href="#cb6-5"></a></span>
-<span id="cb6-6"><a href="#cb6-6"></a><span class="co">   Point is to make dr_icews faster when querying # of records</span></span>
-<span id="cb6-7"><a href="#cb6-7"></a><span class="co">*/</span></span>
-<span id="cb6-8"><a href="#cb6-8"></a></span>
-<span id="cb6-9"><a href="#cb6-9"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> stats (</span>
-<span id="cb6-10"><a href="#cb6-10"></a>  name TEXT,</span>
-<span id="cb6-11"><a href="#cb6-11"></a>  <span class="fu">value</span> <span class="dt">INTEGER</span></span>
-<span id="cb6-12"><a href="#cb6-12"></a>);</span>
-<span id="cb6-13"><a href="#cb6-13"></a></span>
-<span id="cb6-14"><a href="#cb6-14"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> stats <span class="kw">VALUES</span> (<span class="st">'events_n'</span>, <span class="kw">NULL</span>);</span>
-<span id="cb6-15"><a href="#cb6-15"></a></span>
-<span id="cb6-16"><a href="#cb6-16"></a><span class="kw">UPDATE</span> stats <span class="kw">SET</span> <span class="fu">value</span> <span class="op">=</span> ( <span class="kw">SELECT</span> <span class="fu">count</span>(<span class="op">*</span>) <span class="kw">FROM</span> <span class="kw">events</span> )</span>
-<span id="cb6-17"><a href="#cb6-17"></a><span class="kw">WHERE</span> name<span class="op">==</span><span class="st">'events_n'</span>;</span>
-<span id="cb6-18"><a href="#cb6-18"></a></span>
-<span id="cb6-19"><a href="#cb6-19"></a><span class="co">/*</span></span>
-<span id="cb6-20"><a href="#cb6-20"></a><span class="co">CREATE trigger update_events_n_after_insert AFTER INSERT ON events</span></span>
-<span id="cb6-21"><a href="#cb6-21"></a><span class="co">BEGIN</span></span>
-<span id="cb6-22"><a href="#cb6-22"></a><span class="co">  UPDATE stats SET value = ( SELECT count(*) FROM events )</span></span>
-<span id="cb6-23"><a href="#cb6-23"></a><span class="co">  WHERE name=='events_n';</span></span>
-<span id="cb6-24"><a href="#cb6-24"></a><span class="co">END;</span></span>
-<span id="cb6-25"><a href="#cb6-25"></a></span>
-<span id="cb6-26"><a href="#cb6-26"></a><span class="co">CREATE trigger update_events_n_after_delete AFTER DELETE ON events</span></span>
-<span id="cb6-27"><a href="#cb6-27"></a><span class="co">BEGIN</span></span>
-<span id="cb6-28"><a href="#cb6-28"></a><span class="co">  UPDATE stats SET value = ( SELECT count(*) FROM events )</span></span>
-<span id="cb6-29"><a href="#cb6-29"></a><span class="co">  WHERE name=='events_n';</span></span>
-<span id="cb6-30"><a href="#cb6-30"></a><span class="co">END;</span></span>
-<span id="cb6-31"><a href="#cb6-31"></a><span class="co">*/</span></span></code></pre></div>
+<a href="#stats-table" class="anchor" aria-hidden="true"></a>Stats table</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">cat</span>(<span class="kw">readLines</span>(<span class="kw">system.file</span>(<span class="st">"sql/stats.sql"</span>, <span class="dt">package =</span> <span class="st">"icews"</span>)), <span class="dt">sep =</span> <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="op">/</span><span class="er">*</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="st">   </span>This sets up a stats table, <span class="cf">for</span> now containing only the number of records <span class="cf">in</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a>   <span class="kw">events</span> (events_n), and triggers to UPDATE the row count when any records</span>
+<span id="cb4-5"><a href="#cb4-5"></a>   are added or deleted FROM events.</span>
+<span id="cb4-6"><a href="#cb4-6"></a></span>
+<span id="cb4-7"><a href="#cb4-7"></a>   Point is to make dr_icews faster when querying <span class="co"># of records</span></span>
+<span id="cb4-8"><a href="#cb4-8"></a><span class="op">*</span><span class="er">/</span></span>
+<span id="cb4-9"><a href="#cb4-9"></a></span>
+<span id="cb4-10"><a href="#cb4-10"></a>CREATE TABLE IF NOT EXISTS <span class="kw">stats</span> (</span>
+<span id="cb4-11"><a href="#cb4-11"></a>  name TEXT,</span>
+<span id="cb4-12"><a href="#cb4-12"></a>  value INTEGER</span>
+<span id="cb4-13"><a href="#cb4-13"></a>);</span>
+<span id="cb4-14"><a href="#cb4-14"></a></span>
+<span id="cb4-15"><a href="#cb4-15"></a>INSERT INTO stats <span class="kw">VALUES</span> (<span class="st">'events_n'</span>, <span class="ot">NULL</span>);</span>
+<span id="cb4-16"><a href="#cb4-16"></a></span>
+<span id="cb4-17"><a href="#cb4-17"></a>UPDATE stats SET value =<span class="st"> </span>( SELECT <span class="kw">count</span>(<span class="op">*</span>) FROM events )</span>
+<span id="cb4-18"><a href="#cb4-18"></a>WHERE name<span class="op">==</span><span class="st">'events_n'</span>;</span>
+<span id="cb4-19"><a href="#cb4-19"></a></span>
+<span id="cb4-20"><a href="#cb4-20"></a><span class="op">/</span><span class="er">*</span></span>
+<span id="cb4-21"><a href="#cb4-21"></a>CREATE trigger update_events_n_after_insert AFTER INSERT ON events</span>
+<span id="cb4-22"><a href="#cb4-22"></a>BEGIN</span>
+<span id="cb4-23"><a href="#cb4-23"></a>  UPDATE stats SET value =<span class="st"> </span>( SELECT <span class="kw">count</span>(<span class="op">*</span>) FROM events )</span>
+<span id="cb4-24"><a href="#cb4-24"></a>  WHERE name<span class="op">==</span><span class="st">'events_n'</span>;</span>
+<span id="cb4-25"><a href="#cb4-25"></a>END;</span>
+<span id="cb4-26"><a href="#cb4-26"></a></span>
+<span id="cb4-27"><a href="#cb4-27"></a>CREATE trigger update_events_n_after_delete AFTER DELETE ON events</span>
+<span id="cb4-28"><a href="#cb4-28"></a>BEGIN</span>
+<span id="cb4-29"><a href="#cb4-29"></a>  UPDATE stats SET value =<span class="st"> </span>( SELECT <span class="kw">count</span>(<span class="op">*</span>) FROM events )</span>
+<span id="cb4-30"><a href="#cb4-30"></a>  WHERE name<span class="op">==</span><span class="st">'events_n'</span>;</span>
+<span id="cb4-31"><a href="#cb4-31"></a>END;</span>
+<span id="cb4-32"><a href="#cb4-32"></a><span class="op">*</span><span class="er">/</span></span></code></pre></div>
 </div>
 <div id="source-and-null-source-file-tables" class="section level2">
 <h2 class="hasAnchor">
-<a href="#source-and-null-source-file-tables" class="anchor"></a>Source and null source file tables</h2>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"sql/source_files.sql"</span>, package <span class="op">=</span> <span class="st">"icews"</span><span class="op">)</span><span class="op">)</span>, sep <span class="op">=</span> <span class="st">"\n"</span><span class="op">)</span></pre></div>
-<div class="sourceCode" id="cb8"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb8-1"><a href="#cb8-1"></a><span class="co">/*</span></span>
-<span id="cb8-2"><a href="#cb8-2"></a><span class="co">   Create a table containing the currently ingested source_files, and update</span></span>
-<span id="cb8-3"><a href="#cb8-3"></a><span class="co">   it via triggers if anything changes in the events table.</span></span>
-<span id="cb8-4"><a href="#cb8-4"></a></span>
-<span id="cb8-5"><a href="#cb8-5"></a><span class="co">   Point is to make get_db_state() and thus update_icews(), etc. faster</span></span>
-<span id="cb8-6"><a href="#cb8-6"></a><span class="co">*/</span></span>
-<span id="cb8-7"><a href="#cb8-7"></a></span>
-<span id="cb8-8"><a href="#cb8-8"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> source_files (</span>
-<span id="cb8-9"><a href="#cb8-9"></a>  name TEXT</span>
-<span id="cb8-10"><a href="#cb8-10"></a>);</span>
-<span id="cb8-11"><a href="#cb8-11"></a></span>
-<span id="cb8-12"><a href="#cb8-12"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> source_files (name)</span>
-<span id="cb8-13"><a href="#cb8-13"></a><span class="kw">SELECT</span> <span class="kw">DISTINCT</span>(source_file) <span class="kw">AS</span> name <span class="kw">FROM</span> <span class="kw">events</span>;</span>
-<span id="cb8-14"><a href="#cb8-14"></a></span>
-<span id="cb8-15"><a href="#cb8-15"></a><span class="co">/*</span></span>
-<span id="cb8-16"><a href="#cb8-16"></a><span class="co">CREATE trigger update_source_files_after_insert AFTER INSERT ON events</span></span>
-<span id="cb8-17"><a href="#cb8-17"></a><span class="co">BEGIN</span></span>
-<span id="cb8-18"><a href="#cb8-18"></a><span class="co">  DELETE FROM source_files;</span></span>
-<span id="cb8-19"><a href="#cb8-19"></a><span class="co">  INSERT INTO source_files (name)</span></span>
-<span id="cb8-20"><a href="#cb8-20"></a><span class="co">  SELECT DISTINCT(source_file) AS name FROM events;</span></span>
-<span id="cb8-21"><a href="#cb8-21"></a><span class="co">END;</span></span>
-<span id="cb8-22"><a href="#cb8-22"></a></span>
-<span id="cb8-23"><a href="#cb8-23"></a><span class="co">CREATE trigger update_source_files_after_delete AFTER DELETE ON events</span></span>
-<span id="cb8-24"><a href="#cb8-24"></a><span class="co">BEGIN</span></span>
-<span id="cb8-25"><a href="#cb8-25"></a><span class="co">  DELETE FROM source_files;</span></span>
-<span id="cb8-26"><a href="#cb8-26"></a><span class="co">  INSERT INTO source_files (name)</span></span>
-<span id="cb8-27"><a href="#cb8-27"></a><span class="co">  SELECT DISTINCT(source_file) AS name FROM events;</span></span>
-<span id="cb8-28"><a href="#cb8-28"></a><span class="co">END;</span></span>
-<span id="cb8-29"><a href="#cb8-29"></a></span>
-<span id="cb8-30"><a href="#cb8-30"></a><span class="co">CREATE trigger update_source_files_after_update AFTER UPDATE ON events</span></span>
-<span id="cb8-31"><a href="#cb8-31"></a><span class="co">BEGIN</span></span>
-<span id="cb8-32"><a href="#cb8-32"></a><span class="co">  DELETE FROM source_files;</span></span>
-<span id="cb8-33"><a href="#cb8-33"></a><span class="co">  INSERT INTO source_files (name)</span></span>
-<span id="cb8-34"><a href="#cb8-34"></a><span class="co">  SELECT DISTINCT(source_file) AS name FROM events;</span></span>
-<span id="cb8-35"><a href="#cb8-35"></a><span class="co">END;</span></span>
-<span id="cb8-36"><a href="#cb8-36"></a><span class="co">*/</span></span>
-<span id="cb8-37"><a href="#cb8-37"></a></span>
-<span id="cb8-38"><a href="#cb8-38"></a></span>
-<span id="cb8-39"><a href="#cb8-39"></a><span class="co">/*</span></span>
-<span id="cb8-40"><a href="#cb8-40"></a><span class="co">    With the daily update repository, there can be source files from which no</span></span>
-<span id="cb8-41"><a href="#cb8-41"></a><span class="co">    events are added to the DB because all events are already present. To avoid</span></span>
-<span id="cb8-42"><a href="#cb8-42"></a><span class="co">    re-ingesting these files every time an update is run, because they are not</span></span>
-<span id="cb8-43"><a href="#cb8-43"></a><span class="co">    in the stats source file column, keep track of them in a separate table.</span></span>
-<span id="cb8-44"><a href="#cb8-44"></a><span class="co">*/</span></span>
-<span id="cb8-45"><a href="#cb8-45"></a></span>
-<span id="cb8-46"><a href="#cb8-46"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> null_source_files (</span>
-<span id="cb8-47"><a href="#cb8-47"></a>  name TEXT <span class="kw">PRIMARY</span> <span class="kw">KEY</span></span>
-<span id="cb8-48"><a href="#cb8-48"></a>);</span>
-<span id="cb8-49"><a href="#cb8-49"></a></span>
-<span id="cb8-50"><a href="#cb8-50"></a><span class="kw">CREATE</span> <span class="kw">trigger</span> update_source_files_after_null_ingest <span class="kw">AFTER</span> <span class="kw">INSERT</span> <span class="kw">ON</span> null_source_files</span>
-<span id="cb8-51"><a href="#cb8-51"></a><span class="cf">BEGIN</span></span>
-<span id="cb8-52"><a href="#cb8-52"></a>  <span class="kw">INSERT</span> <span class="kw">INTO</span> source_files (name)</span>
-<span id="cb8-53"><a href="#cb8-53"></a>  <span class="kw">SELECT</span> name <span class="kw">FROM</span> null_source_files <span class="kw">EXCEPT</span> <span class="kw">SELECT</span> name <span class="kw">FROM</span> source_files;</span>
-<span id="cb8-54"><a href="#cb8-54"></a><span class="cf">END</span>;</span>
-<span id="cb8-55"><a href="#cb8-55"></a></span>
-<span id="cb8-56"><a href="#cb8-56"></a><span class="co">/*</span></span>
-<span id="cb8-57"><a href="#cb8-57"></a><span class="co">    Also update source_files when the table is destroyed/recreated with</span></span>
-<span id="cb8-58"><a href="#cb8-58"></a><span class="co">    update_stats()</span></span>
-<span id="cb8-59"><a href="#cb8-59"></a><span class="co">*/</span></span>
-<span id="cb8-60"><a href="#cb8-60"></a></span>
-<span id="cb8-61"><a href="#cb8-61"></a><span class="kw">CREATE</span> <span class="kw">trigger</span> add_null_ingests_to_source_files <span class="kw">AFTER</span> <span class="kw">INSERT</span> <span class="kw">ON</span> source_files</span>
-<span id="cb8-62"><a href="#cb8-62"></a><span class="cf">BEGIN</span></span>
-<span id="cb8-63"><a href="#cb8-63"></a>  <span class="kw">INSERT</span> <span class="kw">INTO</span> source_files (name)</span>
-<span id="cb8-64"><a href="#cb8-64"></a>  <span class="kw">SELECT</span> name <span class="kw">FROM</span> null_source_files <span class="kw">EXCEPT</span> <span class="kw">SELECT</span> name <span class="kw">FROM</span> source_files;</span>
-<span id="cb8-65"><a href="#cb8-65"></a><span class="cf">END</span>;</span></code></pre></div>
+<a href="#source-and-null-source-file-tables" class="anchor" aria-hidden="true"></a>Source and null source file tables</h2>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">cat</span>(<span class="kw">readLines</span>(<span class="kw">system.file</span>(<span class="st">"sql/source_files.sql"</span>, <span class="dt">package =</span> <span class="st">"icews"</span>)), <span class="dt">sep =</span> <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="op">/</span><span class="er">*</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="st">   </span>Create a table containing the currently ingested source_files, and update</span>
+<span id="cb5-4"><a href="#cb5-4"></a>   it via triggers <span class="cf">if</span> anything changes <span class="cf">in</span> the events table.</span>
+<span id="cb5-5"><a href="#cb5-5"></a></span>
+<span id="cb5-6"><a href="#cb5-6"></a>   Point is to make <span class="kw">get_db_state</span>() and thus <span class="kw">update_icews</span>(), etc. faster</span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="op">*</span><span class="er">/</span></span>
+<span id="cb5-8"><a href="#cb5-8"></a></span>
+<span id="cb5-9"><a href="#cb5-9"></a>CREATE TABLE <span class="kw">source_files</span> (</span>
+<span id="cb5-10"><a href="#cb5-10"></a>  name TEXT</span>
+<span id="cb5-11"><a href="#cb5-11"></a>);</span>
+<span id="cb5-12"><a href="#cb5-12"></a></span>
+<span id="cb5-13"><a href="#cb5-13"></a>INSERT INTO <span class="kw">source_files</span> (name)</span>
+<span id="cb5-14"><a href="#cb5-14"></a>SELECT <span class="kw">DISTINCT</span>(source_file) AS name FROM events;</span>
+<span id="cb5-15"><a href="#cb5-15"></a></span>
+<span id="cb5-16"><a href="#cb5-16"></a><span class="op">/</span><span class="er">*</span></span>
+<span id="cb5-17"><a href="#cb5-17"></a>CREATE trigger update_source_files_after_insert AFTER INSERT ON events</span>
+<span id="cb5-18"><a href="#cb5-18"></a>BEGIN</span>
+<span id="cb5-19"><a href="#cb5-19"></a>  DELETE FROM source_files;</span>
+<span id="cb5-20"><a href="#cb5-20"></a>  INSERT INTO <span class="kw">source_files</span> (name)</span>
+<span id="cb5-21"><a href="#cb5-21"></a>  SELECT <span class="kw">DISTINCT</span>(source_file) AS name FROM events;</span>
+<span id="cb5-22"><a href="#cb5-22"></a>END;</span>
+<span id="cb5-23"><a href="#cb5-23"></a></span>
+<span id="cb5-24"><a href="#cb5-24"></a>CREATE trigger update_source_files_after_delete AFTER DELETE ON events</span>
+<span id="cb5-25"><a href="#cb5-25"></a>BEGIN</span>
+<span id="cb5-26"><a href="#cb5-26"></a>  DELETE FROM source_files;</span>
+<span id="cb5-27"><a href="#cb5-27"></a>  INSERT INTO <span class="kw">source_files</span> (name)</span>
+<span id="cb5-28"><a href="#cb5-28"></a>  SELECT <span class="kw">DISTINCT</span>(source_file) AS name FROM events;</span>
+<span id="cb5-29"><a href="#cb5-29"></a>END;</span>
+<span id="cb5-30"><a href="#cb5-30"></a></span>
+<span id="cb5-31"><a href="#cb5-31"></a>CREATE trigger update_source_files_after_update AFTER UPDATE ON events</span>
+<span id="cb5-32"><a href="#cb5-32"></a>BEGIN</span>
+<span id="cb5-33"><a href="#cb5-33"></a>  DELETE FROM source_files;</span>
+<span id="cb5-34"><a href="#cb5-34"></a>  INSERT INTO <span class="kw">source_files</span> (name)</span>
+<span id="cb5-35"><a href="#cb5-35"></a>  SELECT <span class="kw">DISTINCT</span>(source_file) AS name FROM events;</span>
+<span id="cb5-36"><a href="#cb5-36"></a>END;</span>
+<span id="cb5-37"><a href="#cb5-37"></a><span class="op">*</span><span class="er">/</span></span>
+<span id="cb5-38"><a href="#cb5-38"></a></span>
+<span id="cb5-39"><a href="#cb5-39"></a></span>
+<span id="cb5-40"><a href="#cb5-40"></a><span class="er">/*</span></span>
+<span id="cb5-41"><a href="#cb5-41"></a><span class="st">    </span>With the daily update repository, there can be source files from which no</span>
+<span id="cb5-42"><a href="#cb5-42"></a>    events are added to the DB because all events are already present. To avoid</span>
+<span id="cb5-43"><a href="#cb5-43"></a>    re<span class="op">-</span>ingesting these files every time an update is run, because they are not</span>
+<span id="cb5-44"><a href="#cb5-44"></a>    <span class="cf">in</span> the stats source file column, keep track of them <span class="cf">in</span> a separate table.</span>
+<span id="cb5-45"><a href="#cb5-45"></a><span class="op">*</span><span class="er">/</span></span>
+<span id="cb5-46"><a href="#cb5-46"></a></span>
+<span id="cb5-47"><a href="#cb5-47"></a>CREATE TABLE <span class="kw">null_source_files</span> (</span>
+<span id="cb5-48"><a href="#cb5-48"></a>  name TEXT PRIMARY KEY</span>
+<span id="cb5-49"><a href="#cb5-49"></a>);</span>
+<span id="cb5-50"><a href="#cb5-50"></a></span>
+<span id="cb5-51"><a href="#cb5-51"></a>CREATE trigger update_source_files_after_null_ingest AFTER INSERT ON null_source_files</span>
+<span id="cb5-52"><a href="#cb5-52"></a>BEGIN</span>
+<span id="cb5-53"><a href="#cb5-53"></a>  INSERT INTO <span class="kw">source_files</span> (name)</span>
+<span id="cb5-54"><a href="#cb5-54"></a>  SELECT name FROM null_source_files EXCEPT SELECT name FROM source_files;</span>
+<span id="cb5-55"><a href="#cb5-55"></a>END;</span>
+<span id="cb5-56"><a href="#cb5-56"></a></span>
+<span id="cb5-57"><a href="#cb5-57"></a><span class="op">/</span><span class="er">*</span></span>
+<span id="cb5-58"><a href="#cb5-58"></a><span class="st">    </span>Also update source_files when the table is destroyed<span class="op">/</span>recreated with</span>
+<span id="cb5-59"><a href="#cb5-59"></a>    <span class="kw">update_stats</span>()</span>
+<span id="cb5-60"><a href="#cb5-60"></a><span class="op">*</span><span class="er">/</span></span>
+<span id="cb5-61"><a href="#cb5-61"></a></span>
+<span id="cb5-62"><a href="#cb5-62"></a>CREATE trigger add_null_ingests_to_source_files AFTER INSERT ON source_files</span>
+<span id="cb5-63"><a href="#cb5-63"></a>BEGIN</span>
+<span id="cb5-64"><a href="#cb5-64"></a>  INSERT INTO <span class="kw">source_files</span> (name)</span>
+<span id="cb5-65"><a href="#cb5-65"></a>  SELECT name FROM null_source_files EXCEPT SELECT name FROM source_files;</span>
+<span id="cb5-66"><a href="#cb5-66"></a>END;</span></code></pre></div>
 </div>
 </div>
 <div id="indices" class="section level1">
 <h1 class="hasAnchor">
-<a href="#indices" class="anchor"></a>Indices</h1>
+<a href="#indices" class="anchor" aria-hidden="true"></a>Indices</h1>
 <p>If you are running similar queries repeatedly, it might make sense to add indices for the events table. These can dramatically increase the speed of queries if setup correctly. They do take a while to create and take up extra storage space in the database file, though. They will also slow updating the data, and what I did in the past was to remove indices, update, and then re-add the indices.</p>
-<p>I found the general guide on indices at <a href="https://use-the-index-luke.com">Use the index, Luke!</a> to be helpful, as well as the <a href="https://www.sqlite.org/eqp.html"><code>EXPLAIN QUERY PLAN</code></a> command, which can be used to tell what, if any, indices are going to be used for a query.</p>
+<p>I found the general guide on indices at <a href="https://use-the-index-luke.com" class="external-link">Use the index, Luke!</a> to be helpful, as well as the <a href="https://www.sqlite.org/eqp.html" class="external-link"><code>EXPLAIN QUERY PLAN</code></a> command, which can be used to tell what, if any, indices are going to be used for a query.</p>
 </div>
 <div class="footnotes">
 <hr>
@@ -290,11 +288,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Andreas Beger.</p>
+  <p></p>
+<p>Developed by Andreas Beger.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.6.1.9001.</p>
 </div>
 
       </footer>
@@ -302,6 +302,8 @@
 
   
 
+
+  
 
   </body>
 </html>

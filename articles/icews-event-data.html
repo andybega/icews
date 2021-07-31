@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -67,8 +69,8 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/andybega/icews/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+  <a href="https://github.com/andybega/icews/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -82,16 +84,15 @@
 
       
 
-      </header><script src="icews-event-data_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="icews-event-data_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="icews-event-data_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+      </header><script src="icews-event-data_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>ICEWS event data</h1>
-                        <h4 class="author">Andreas Beger</h4>
+                        <h4 data-toc-skip class="author">Andreas Beger</h4>
             
-            <h4 class="date">2020-10-21</h4>
+            <h4 data-toc-skip class="date">2021-07-31</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/andybega/icews/blob/master/vignettes/icews-event-data.Rmd"><code>vignettes/icews-event-data.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/andybega/icews/blob/master/vignettes/icews-event-data.Rmd" class="external-link"><code>vignettes/icews-event-data.Rmd</code></a></small>
       <div class="hidden name"><code>icews-event-data.Rmd</code></div>
 
     </div>
@@ -103,27 +104,27 @@
 <p><em>One side effect is that several parts of this vignette incorporate results from the local data copy I have, but which is not included on GitHub or the package install. However, I have tried to make the code here as explicit and replicable as possible.</em></p>
 <p><em>The data used cover the beginning in 1995 to a last event date of 2020-09-28.</em></p>
 <!-- as.Date(as.character(query_icews("select max(event_date) from events;")), format = "%Y%m%d") -->
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="op">{</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://www.andybeger.com/icews/">"icews"</a></span><span class="op">)</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://dplyr.tidyverse.org">"dplyr"</a></span><span class="op">)</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://tidyr.tidyverse.org">"tidyr"</a></span><span class="op">)</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="http://stringr.tidyverse.org">"stringr"</a></span><span class="op">)</span>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="op">{</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://www.andybeger.com/icews/" class="external-link">"icews"</a></span><span class="op">)</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://dplyr.tidyverse.org" class="external-link">"dplyr"</a></span><span class="op">)</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://tidyr.tidyverse.org" class="external-link">"tidyr"</a></span><span class="op">)</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="http://stringr.tidyverse.org" class="external-link">"stringr"</a></span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
 <span class="co">#&gt; Warning in fun(libname, pkgname): The R dataverse client requires the DATAVERSE_SERVER environment</span>
 <span class="co">#&gt; variable to be set. See &lt;https://github.com/IQSS/dataverse-client-r&gt;.</span>
 <span class="co">#&gt; Please run:</span>
-<span class="co">#&gt; Sys.setenv(DATAVERSE_SERVER = "dataverse.harvard.edu")</span></pre></div>
+<span class="co">#&gt; Sys.setenv(DATAVERSE_SERVER = "dataverse.harvard.edu")</span></code></pre></div>
 <div id="things-to-look-out-for" class="section level2">
 <h2 class="hasAnchor">
-<a href="#things-to-look-out-for" class="anchor"></a>Things to look out for</h2>
+<a href="#things-to-look-out-for" class="anchor" aria-hidden="true"></a>Things to look out for</h2>
 <p>Below are a couple of gotchas that might lead to wrongly aggregated data.</p>
 <div id="event-id-is-not-unique" class="section level3">
 <h3 class="hasAnchor">
-<a href="#event-id-is-not-unique" class="anchor"></a>Event ID is not unique</h3>
+<a href="#event-id-is-not-unique" class="anchor" aria-hidden="true"></a>Event ID is not unique</h3>
 <p>“Event ID” is not a unique ID, but together with “Event Date” it does appear to be unique. The table below shows the number of times event ID occur in the data. If it was unique, this would always be only once, but sometimes it occurs twice.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"
 SELECT id_n, count(*) as instances
 FROM ( 
       SELECT event_id, count(*) as id_n 
@@ -131,7 +132,7 @@ FROM (
       GROUP BY event_id
      )
 GROUP BY id_n;
-"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span>format.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>big.mark <span class="op">=</span> <span class="st">','</span><span class="op">)</span><span class="op">)</span></pre></div>
+"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span>format.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>big.mark <span class="op">=</span> <span class="st">','</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="right">id_n</th>
@@ -149,8 +150,8 @@ GROUP BY id_n;
 </tbody>
 </table>
 <p>In all cases, the duplicate events have distinct event dates, and the combination of <code>[event_id, event_date]</code> is a unique identifier for each row.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"
 SELECT count(*) AS dupe_records, distinct_dates
 FROM (
   SELECT   event_id, Count(Distinct(event_date)) AS distinct_dates
@@ -158,8 +159,8 @@ FROM (
   GROUP BY event_id
   HAVING   Count(*) &gt; 1
 )
-GROUP BY distinct_dates;"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span>format.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>big.mark <span class="op">=</span> <span class="st">','</span><span class="op">)</span><span class="op">)</span></pre></div>
+GROUP BY distinct_dates;"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span>format.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>big.mark <span class="op">=</span> <span class="st">','</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="right">dupe_records</th>
@@ -171,8 +172,8 @@ GROUP BY distinct_dates;"</span><span class="op">)</span> <span class="op">%&gt;
 </tr></tbody>
 </table>
 <p>Below are 5 pairs of records that have duplicate event IDs. These are clearly separate events and differ in details beyond the event date.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"
 WITH dupes AS (
   SELECT distinct(event_id) as event_id
   FROM   events
@@ -183,8 +184,8 @@ WITH dupes AS (
 SELECT event_id, event_date, source_name, source_country, event_text,
        target_name, target_country
 FROM   events
-WHERE  events.event_id IN dupes;"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+WHERE  events.event_id IN dupes;"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="4%">
@@ -298,16 +299,16 @@ WHERE  events.event_id IN dupes;"</span><span class="op">)</span> <span class="o
 </tbody>
 </table>
 <p>This issue only affects data through 2013 and does not occur in more recent data.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"
 SELECT min(event_date), max(event_date)
 FROM (
   SELECT   event_date
   FROM     events
   GROUP BY event_id
   HAVING   Count(*) &gt; 1 
-);"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+);"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="right">min(event_date)</th>
@@ -319,16 +320,16 @@ FROM (
 </tr></tbody>
 </table>
 <p>Only one source file is responsible for the duplicate event IDs:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"
 SELECT distinct(source_file), Count(*) as N_records
 FROM (
   SELECT   source_file
   FROM     events
   GROUP BY event_id
   HAVING   Count(*) &gt; 1 
-);"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+);"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">source_file</th>
@@ -342,24 +343,24 @@ FROM (
 </div>
 <div id="each-actor-can-have-multiple-sectors-and-they-can-change-over-time" class="section level3">
 <h3 class="hasAnchor">
-<a href="#each-actor-can-have-multiple-sectors-and-they-can-change-over-time" class="anchor"></a>Each actor can have multiple sectors, and they can change over time</h3>
+<a href="#each-actor-can-have-multiple-sectors-and-they-can-change-over-time" class="anchor" aria-hidden="true"></a>Each actor can have multiple sectors, and they can change over time</h3>
 <p>For example, “10 Downing Street” occurs multiple times in this query because it is coded as belonging to multiple sectors, but</p>
 <ul>
 <li>those sets are not always the same,</li>
 <li>the order in which they appear in “source_sectors” is variable,</li>
 <li>and sometimes the value is quoted and sometimes not.</li>
 </ul>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="va">foo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">foo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"
 SELECT source_name, source_sectors, source_country, Count(*) AS n 
 FROM   events
 WHERE  source_name = '10 Downing Street'
 GROUP BY source_name, source_sectors, source_country"</span><span class="op">)</span>
 
-<span class="va">foo</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">10</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<span class="va">foo</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">10</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">source_name</th>
@@ -431,17 +432,17 @@ GROUP BY source_name, source_sectors, source_country"</span><span class="op">)</
 </tbody>
 </table>
 <p>If we resort the source sectors, it becomes apparent that there are only two distinct sets of source sectors:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="va">foo</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>source_sectors <span class="op">=</span> <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html">str_remove_all</a></span><span class="op">(</span><span class="va">source_sectors</span>, <span class="st">"\""</span><span class="op">)</span>,
-         record_id <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/separate_rows.html">separate_rows</a></span><span class="op">(</span><span class="va">source_sectors</span>, sep <span class="op">=</span> <span class="st">","</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">record_id</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>source_sectors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="va">source_sectors</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span>, 
-            n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">source_sectors</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">foo</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>source_sectors <span class="op">=</span> <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html" class="external-link">str_remove_all</a></span><span class="op">(</span><span class="va">source_sectors</span>, <span class="st">"\""</span><span class="op">)</span>,
+         record_id <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/separate_rows.html" class="external-link">separate_rows</a></span><span class="op">(</span><span class="va">source_sectors</span>, sep <span class="op">=</span> <span class="st">","</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">record_id</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>source_sectors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="va">source_sectors</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span>, 
+            n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">source_sectors</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="95%">
@@ -466,14 +467,14 @@ GROUP BY source_name, source_sectors, source_country"</span><span class="op">)</
 </div>
 <div id="cameo-codes-are-unique-but-have-a-nested-hierarchical-structure" class="section level3">
 <h3 class="hasAnchor">
-<a href="#cameo-codes-are-unique-but-have-a-nested-hierarchical-structure" class="anchor"></a>CAMEO codes are unique but have a nested hierarchical structure</h3>
+<a href="#cameo-codes-are-unique-but-have-a-nested-hierarchical-structure" class="anchor" aria-hidden="true"></a>CAMEO codes are unique but have a nested hierarchical structure</h3>
 <p>Each event only has one full CAMEO code, however the codes themselves reflect a hierarchical structure with three levels. At the top level (“level” 0 in the <code>cameo_codes</code> data included in the package) are 20 categories for types of interactions:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">cameo_codes</span><span class="op">)</span> 
-<span class="va">cameo_codes</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">level</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">cameo_code</span>, <span class="va">name</span>, <span class="va">level</span>, <span class="va">lvl0</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">cameo_codes</span><span class="op">)</span> 
+<span class="va">cameo_codes</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">level</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">cameo_code</span>, <span class="va">name</span>, <span class="va">level</span>, <span class="va">lvl0</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">cameo_code</th>
@@ -606,11 +607,11 @@ GROUP BY source_name, source_sectors, source_country"</span><span class="op">)</
 </table>
 <p>The “level” variable in <code>cameo_codes</code> refers to a CAMEO codes level in the hierarchy, ranging from 0 to 2, whereas “lvl0” refers to the “level” 0 top-level code, e.g. “01”, and “lvl1” refers to the intermediate-level code at “level” 1, e.g. “010”.</p>
 <p>Each top level code includes up to 2 further levels down, e.g. for the top level code “20”:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="va">cameo_codes</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">lvl0</span><span class="op">==</span><span class="fl">20</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">cameo_code</span>, <span class="va">name</span>, <span class="va">level</span>, <span class="va">lvl0</span>, <span class="va">lvl1</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">cameo_codes</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">lvl0</span><span class="op">==</span><span class="fl">20</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">cameo_code</span>, <span class="va">name</span>, <span class="va">level</span>, <span class="va">lvl0</span>, <span class="va">lvl1</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">cameo_code</th>
@@ -679,29 +680,29 @@ GROUP BY source_name, source_sectors, source_country"</span><span class="op">)</
 </tbody>
 </table>
 <p>This means that in practice some care needs to be taken to count all the correct events when aggregating to the top- or intermediate-level CAMEO codes. In SQL, one can do:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit">
-<span class="co"># Instead of:</span>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Instead of:</span>
 <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"SELECT count(*) FROM events WHERE cameo_code = '20';"</span><span class="op">)</span>
 <span class="co"># which will not return any records, do:</span>
 <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"SELECT count(*) FROM events WHERE Substr(cameo_code, 1, 2) = '20';"</span><span class="op">)</span>
-<span class="co"># returns ~3,000 records</span></pre></div>
+<span class="co"># returns ~3,000 records</span></code></pre></div>
 <p>Some records are also missing a CAMEO code (NULL in SQL, NA in R).</p>
 </div>
 </div>
 <div id="summary-statistics" class="section level2">
 <h2 class="hasAnchor">
-<a href="#summary-statistics" class="anchor"></a>Summary statistics</h2>
+<a href="#summary-statistics" class="anchor" aria-hidden="true"></a>Summary statistics</h2>
 <div id="total-number-of-records" class="section level3">
 <h3 class="hasAnchor">
-<a href="#total-number-of-records" class="anchor"></a>Total number of records</h3>
-<div class="sourceCode" id="cb12"><pre class="downlit">
-<span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"SELECT max(event_date) AS Last_Event_Date, 
+<a href="#total-number-of-records" class="anchor" aria-hidden="true"></a>Total number of records</h3>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"SELECT max(event_date) AS Last_Event_Date, 
                     Count(*) as Records 
-             FROM events;"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>Last_Event_Date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">Last_Event_Date</span><span class="op">)</span>, format <span class="op">=</span> <span class="st">"%Y%m%d"</span><span class="op">)</span>,
-         Today <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">Today</span>, <span class="va">Last_Event_Date</span>, <span class="va">Records</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span>format.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>big.mark <span class="op">=</span> <span class="st">','</span><span class="op">)</span><span class="op">)</span></pre></div>
+             FROM events;"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Last_Event_Date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">Last_Event_Date</span><span class="op">)</span>, format <span class="op">=</span> <span class="st">"%Y%m%d"</span><span class="op">)</span>,
+         Today <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">Today</span>, <span class="va">Last_Event_Date</span>, <span class="va">Records</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span>format.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>big.mark <span class="op">=</span> <span class="st">','</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">Today</th>
@@ -717,16 +718,16 @@ GROUP BY source_name, source_sectors, source_country"</span><span class="op">)</
 </div>
 <div id="distinct-locations" class="section level3">
 <h3 class="hasAnchor">
-<a href="#distinct-locations" class="anchor"></a>Distinct locations</h3>
+<a href="#distinct-locations" class="anchor" aria-hidden="true"></a>Distinct locations</h3>
 <p>The location information for the event (not actors) consists of country, province, district, city, latitude, longitude.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit">
-<span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_cols</a></span><span class="op">(</span>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_cols</a></span><span class="op">(</span>
   <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"select count(*) as n_unique_locations from (select distinct latitude, longitude, country, province, district, city from events);"</span><span class="op">)</span>,
   <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"select count(*) as n_unique_coords from (select distinct latitude, longitude from events);"</span><span class="op">)</span>,
   <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"select count(*) as n_unique_countries from (select distinct country from events);"</span><span class="op">)</span>
-<span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/gather.html">gather</a></span><span class="op">(</span><span class="va">Measure</span>, <span class="va">Value</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span>format.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>big.mark <span class="op">=</span> <span class="st">','</span><span class="op">)</span><span class="op">)</span></pre></div>
+<span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/gather.html" class="external-link">gather</a></span><span class="op">(</span><span class="va">Measure</span>, <span class="va">Value</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span>format.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>big.mark <span class="op">=</span> <span class="st">','</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">Measure</th>
@@ -763,11 +764,13 @@ GROUP BY source_name, source_sectors, source_country"</span><span class="op">)</
 
 
       <footer><div class="copyright">
-  <p>Developed by Andreas Beger.</p>
+  <p></p>
+<p>Developed by Andreas Beger.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.6.1.9001.</p>
 </div>
 
       </footer>
@@ -775,6 +778,8 @@ GROUP BY source_name, source_sectors, source_country"</span><span class="op">)</
 
   
 
+
+  
 
   </body>
 </html>

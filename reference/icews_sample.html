@@ -46,6 +46,8 @@
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -57,9 +59,15 @@
 
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -110,7 +118,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/andybega/icews/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -137,7 +145,7 @@
 3 June 2018.</p>
     </div>
 
-    <pre class="usage"><span class='va'>icews_sample</span></pre>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='va'>icews_sample</span></code></pre></div>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
@@ -148,31 +156,32 @@
     <p><a href='https://doi.org/10.7910/DVN/28075'>https://doi.org/10.7910/DVN/28075</a></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"icews_sample"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>icews_sample</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; tibble [4,993 × 22] (S3: tbl_df/tbl/data.frame)
-#&gt;  $ event_id       : int [1:4993] 32889836 32889837 32891290 32891065 32891064 32889838 32891059 32891060 32891062 32891061 ...
-#&gt;  $ event_date     : Date[1:4993], format: "2018-06-01" "2018-06-01" ...
-#&gt;  $ source_name    : chr [1:4993] "Foreign Affairs (Bangladesh)" "High Ranking Military Personnel (Vietnam)" "Ministry (Japan)" "Japan" ...
-#&gt;  $ source_sectors : chr [1:4993] "Executive,Foreign Ministry,Government" "Military,Government" "Government" NA ...
-#&gt;  $ source_country : chr [1:4993] "Bangladesh" "Vietnam" "Japan" "Japan" ...
-#&gt;  $ event_text     : chr [1:4993] "Consult" "Consult" "Consider policy option" "Express intent to engage in diplomatic cooperation (such as policy support)" ...
-#&gt;  $ cameo_code     : chr [1:4993] "040" "040" "014" "032" ...
-#&gt;  $ intensity      : num [1:4993] 1 1 0 4.5 4.5 0 3 4 2.5 4 ...
-#&gt;  $ target_name    : chr [1:4993] "High Ranking Military Personnel (Vietnam)" "Foreign Affairs (Bangladesh)" "Citizen (Japan)" "Vietnam" ...
-#&gt;  $ target_sectors : chr [1:4993] "Military,Government" "Executive,Foreign Ministry,Government" "General Population / Civilian / Social,Social" NA ...
-#&gt;  $ target_country : chr [1:4993] "Vietnam" "Bangladesh" "Japan" "Vietnam" ...
-#&gt;  $ story_id       : int [1:4993] 47400351 47400351 47400357 47400359 47400359 47400360 47400361 47400361 47400361 47400361 ...
-#&gt;  $ sentence_number: int [1:4993] 2 2 5 2 2 3 2 3 3 3 ...
-#&gt;  $ publisher      : chr [1:4993] "Vietnam News Agency Bulletin" "Vietnam News Agency Bulletin" "Mainichi Daily News" "Vietnam News Agency Bulletin" ...
-#&gt;  $ city           : chr [1:4993] "Hanoi" "Hanoi" "Osaka" NA ...
-#&gt;  $ district       : chr [1:4993] NA NA "Osaka-shi" NA ...
-#&gt;  $ province       : chr [1:4993] "Thanh Pho Ha Noi" "Thanh Pho Ha Noi" "Osaka-fu" NA ...
-#&gt;  $ country        : chr [1:4993] "Vietnam" "Vietnam" "Japan" "Japan" ...
-#&gt;  $ latitude       : num [1:4993] 21 21 34.7 35.6 21 ...
-#&gt;  $ longitude      : num [1:4993] 106 106 136 140 106 ...
-#&gt;  $ year           : int [1:4993] 2018 2018 2018 2018 2018 2018 2018 2018 2018 2018 ...
-#&gt;  $ yearmonth      : int [1:4993] 201806 201806 201806 201806 201806 201806 201806 201806 201806 201806 ...</div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"icews_sample"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>icews_sample</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> tibble [4,993 × 22] (S3: tbl_df/tbl/data.frame)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ event_id       : int [1:4993] 32889836 32889837 32891290 32891065 32891064 32889838 32891059 32891060 32891062 32891061 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ event_date     : Date[1:4993], format: "2018-06-01" "2018-06-01" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ source_name    : chr [1:4993] "Foreign Affairs (Bangladesh)" "High Ranking Military Personnel (Vietnam)" "Ministry (Japan)" "Japan" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ source_sectors : chr [1:4993] "Executive,Foreign Ministry,Government" "Military,Government" "Government" NA ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ source_country : chr [1:4993] "Bangladesh" "Vietnam" "Japan" "Japan" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ event_text     : chr [1:4993] "Consult" "Consult" "Consider policy option" "Express intent to engage in diplomatic cooperation (such as policy support)" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ cameo_code     : chr [1:4993] "040" "040" "014" "032" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ intensity      : num [1:4993] 1 1 0 4.5 4.5 0 3 4 2.5 4 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ target_name    : chr [1:4993] "High Ranking Military Personnel (Vietnam)" "Foreign Affairs (Bangladesh)" "Citizen (Japan)" "Vietnam" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ target_sectors : chr [1:4993] "Military,Government" "Executive,Foreign Ministry,Government" "General Population / Civilian / Social,Social" NA ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ target_country : chr [1:4993] "Vietnam" "Bangladesh" "Japan" "Vietnam" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ story_id       : int [1:4993] 47400351 47400351 47400357 47400359 47400359 47400360 47400361 47400361 47400361 47400361 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ sentence_number: int [1:4993] 2 2 5 2 2 3 2 3 3 3 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ publisher      : chr [1:4993] "Vietnam News Agency Bulletin" "Vietnam News Agency Bulletin" "Mainichi Daily News" "Vietnam News Agency Bulletin" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ city           : chr [1:4993] "Hanoi" "Hanoi" "Osaka" NA ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ district       : chr [1:4993] NA NA "Osaka-shi" NA ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ province       : chr [1:4993] "Thanh Pho Ha Noi" "Thanh Pho Ha Noi" "Osaka-fu" NA ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ country        : chr [1:4993] "Vietnam" "Vietnam" "Japan" "Japan" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ latitude       : num [1:4993] 21 21 34.7 35.6 21 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ longitude      : num [1:4993] 106 106 136 140 106 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ year           : int [1:4993] 2018 2018 2018 2018 2018 2018 2018 2018 2018 2018 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ yearmonth      : int [1:4993] 201806 201806 201806 201806 201806 201806 201806 201806 201806 201806 ...</span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -184,11 +193,11 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Andreas Beger.</p>
+  <p><p>Developed by Andreas Beger.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
 </div>
 
       </footer>
@@ -196,6 +205,8 @@
 
   
 
+
+  
 
   </body>
 </html>

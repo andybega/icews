@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Purge file downloads — purge_data_files • icews</title>
+<title>Dataverse API token — dataverse_api_token • icews</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Purge file downloads — purge_data_files" />
-<meta property="og:description" content="Removes the downloaded raw event TSV files" />
+<meta property="og:title" content="Dataverse API token — dataverse_api_token" />
+<meta property="og:description" content="Check that the Dataverse API token is set and if so show it" />
 
 
 
@@ -134,29 +134,31 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Purge file downloads</h1>
-    <small class="dont-index">Source: <a href='https://github.com/andybega/icews/blob/master/R/delete.R'><code>R/delete.R</code></a></small>
-    <div class="hidden name"><code>purge_data_files.Rd</code></div>
+    <h1>Dataverse API token</h1>
+    <small class="dont-index">Source: <a href='https://github.com/andybega/icews/blob/master/R/api-token.R'><code>R/api-token.R</code></a></small>
+    <div class="hidden name"><code>dataverse_api_token.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Removes the downloaded raw event TSV files</p>
+    <p>Check that the Dataverse API token is set and if so show it</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>purge_data_files</span><span class='op'>(</span>raw_file_dir <span class='op'>=</span> <span class='fu'><a href='find_raw.html'>find_raw</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></code></pre></div>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>dataverse_api_token</span><span class='op'>(</span><span class='op'>)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>raw_file_dir</th>
-      <td><p>Directory containing the raw event TSV files</p></td>
-    </tr>
-    </table>
 
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <div class='dont-index'><p><code><a href='purge_db.html'>purge_db()</a></code>, <code><a href='purge_db.html'>remove_db()</a></code>, <code><a href='burn_it_down.html'>burn_it_down()</a></code></p></div>
+    <p>The token. If the token is not set, an error message will be thrown.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>An API token is required for the R dataverse client to work. The
+token can be obtained by signing in to your Dataverse account and selecting
+"API token" from the dropdown menu. The token should then be used to set
+the DATAVERSE_KEY option, i.e. <code>Sys.setenv("DATAVERSE_KEY = '{api key}')</code>.
+I do this in my R profile file so it's automatically done for every R
+session (<code><a href='https://usethis.r-lib.org/reference/edit.html'>usethis::edit_r_profile()</a></code>).</p>
+<p><a href='https://guides.dataverse.org/en/latest/user/account.html#api-token'>https://guides.dataverse.org/en/latest/user/account.html#api-token</a></p>
+<p><a href='https://github.com/IQSS/dataverse-client-r#keys'>https://github.com/IQSS/dataverse-client-r#keys</a></p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

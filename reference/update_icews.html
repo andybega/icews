@@ -47,6 +47,8 @@ files." />
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -58,9 +60,15 @@ files." />
 
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -111,7 +119,7 @@ files." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/andybega/icews/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -139,13 +147,13 @@ the latest versions on DVN. If needed, create the database and download data
 files.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>update_icews</span><span class='op'>(</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>update_icews</span><span class='op'>(</span>
   dryrun <span class='op'>=</span> <span class='cn'>TRUE</span>,
   use_db <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"icews.use_db"</span><span class='op'>)</span>,
   keep_files <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"icews.keep_files"</span><span class='op'>)</span>,
   db_path <span class='op'>=</span> <span class='fu'><a href='find_raw.html'>find_db</a></span><span class='op'>(</span><span class='op'>)</span>,
   raw_file_dir <span class='op'>=</span> <span class='fu'><a href='find_raw.html'>find_raw</a></span><span class='op'>(</span><span class='op'>)</span>
-<span class='op'>)</span></pre>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -192,18 +200,18 @@ raw data files will be downloaded. This is equivalent to <code><a href='download
 <code><a href='download_data.html'>download_data()</a></code>, followed by <code><a href='sync_db_with_files.html'>sync_db_with_files()</a></code>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='co'># assuming this is the first time the package is used:</span>
-<span class='fu'><a href='setup_icews.html'>setup_icews</a></span><span class='op'>(</span><span class='st'>"path/to/icews_data"</span>, use_db <span class='op'>=</span> <span class='cn'>TRUE</span>, keep_files <span class='op'>=</span> <span class='cn'>TRUE</span>,
-            r_profile <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-<span class='co'># see the plan for the initial download</span>
-<span class='fu'>update_icews</span><span class='op'>(</span>dryrun <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-<span class='co'># do the initial download; this will take a while (1hr or so)</span>
-<span class='fu'>update_icews</span><span class='op'>(</span>dryrun <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
-<span class='co'># call it again in the future to check if updates are needed</span>
-<span class='op'>}</span>
-
-</div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'><span class='co'># assuming this is the first time the package is used:</span></span>
+<span class='r-in'><span class='fu'><a href='setup_icews.html'>setup_icews</a></span><span class='op'>(</span><span class='st'>"path/to/icews_data"</span>, use_db <span class='op'>=</span> <span class='cn'>TRUE</span>, keep_files <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
+<span class='r-in'>            r_profile <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'># see the plan for the initial download</span></span>
+<span class='r-in'><span class='fu'>update_icews</span><span class='op'>(</span>dryrun <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'># do the initial download; this will take a while (1hr or so)</span></span>
+<span class='r-in'><span class='fu'>update_icews</span><span class='op'>(</span>dryrun <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'># call it again in the future to check if updates are needed</span></span>
+<span class='r-in'><span class='op'>}</span></span>
+<span class='r-in'></span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -215,11 +223,11 @@ raw data files will be downloaded. This is equivalent to <code><a href='download
 
       <footer>
       <div class="copyright">
-  <p>Developed by Andreas Beger.</p>
+  <p><p>Developed by Andreas Beger.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
 </div>
 
       </footer>
@@ -227,6 +235,8 @@ raw data files will be downloaded. This is equivalent to <code><a href='download
 
   
 
+
+  
 
   </body>
 </html>

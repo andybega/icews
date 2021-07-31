@@ -17,6 +17,7 @@ reference:
       - setup_icews
       - get_icews_opts
       - unset_icews_opts
+      - dataverse_api_token
   - title: "Interacting with DVN"
     desc: >
       Working with DVN

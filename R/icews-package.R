@@ -48,15 +48,6 @@ globalVariables(c("cameo_codes", "goldstein_mappings"))
   if (is.null(getOption("icews.debug")))  {
     options("icews.debug" = FALSE)
   }
-
-  # Make sure the DATAVERSE_SERVER env variable is set
-  if (Sys.getenv("DATAVERSE_SERVER")!="dataverse.harvard.edu") {
-    msg <- paste0(c(
-      strwrap("The R dataverse client requires the DATAVERSE_SERVER environment variable to be set. See <https://github.com/IQSS/dataverse-client-r>. Please run:"),
-      "Sys.setenv(DATAVERSE_SERVER = \"dataverse.harvard.edu\")"
-    ), collapse = "\n")
-    packageStartupMessage(msg)
-  }
 }
 
 .onAttach <- function(...) {
@@ -67,6 +58,15 @@ globalVariables(c("cameo_codes", "goldstein_mappings"))
   # see #72
   msg <- check_dataverse_version()
   if (!isTRUE(msg)) packageStartupMessage(msg)
+
+  # Make sure the DATAVERSE_SERVER env variable is set
+  if (Sys.getenv("DATAVERSE_SERVER")!="dataverse.harvard.edu") {
+    msg <- paste0(c(
+      strwrap("The R dataverse client requires the DATAVERSE_SERVER environment variable to be set. See <https://github.com/IQSS/dataverse-client-r>. Please run:"),
+      "Sys.setenv(DATAVERSE_SERVER = \"dataverse.harvard.edu\")"
+    ), collapse = "\n")
+    packageStartupMessage(msg)
+  }
 }
 
 ## usethis namespace: start

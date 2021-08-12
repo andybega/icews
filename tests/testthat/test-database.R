@@ -3,7 +3,7 @@ test_that("check_db works", {
 
   db_path <- tempfile("test.sqlite3")
 
-  expect_true(grepl("Initializing database", capture.output(check_db_exists(db_path))))
+  expect_message(check_db_exists(db_path), "Did not find existing database; initialized database")
   expect_true(file.exists(db_path))
   expect_true(check_db_exists(db_path))
 

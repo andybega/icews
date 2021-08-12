@@ -9,9 +9,11 @@ Authors@R:
            email = "adbeger@gmail.com",
            comment = c(ORCID = "0000-0003-1883-3169"))
 Maintainer: Andreas Beger <adbeger@gmail.com>
-Description: Download the ICEWS event data from Dataverse and keep it synced
-    with the latest updates. Store the local data using either the raw 
-    tab-separated files (.tab), in a SQLite database, or both. 
+Description: Download the Integrated Crisis Early Warning System (ICEWS) event 
+    data from Dataverse and keep it synced with the latest updates. Store the 
+    local data using either the raw tab-separated files, in a SQLite database, 
+    or both. The ICEWS dataverse repos are <https://doi.org/10.7910/DVN/28075> 
+    and <https://doi.org/10.7910/DVN/QI2T9A>
 License: MIT + file LICENSE
 URL: https://www.andybeger.com/icews/,
     https://github.com/andybega/icews

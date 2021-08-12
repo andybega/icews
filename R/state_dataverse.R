@@ -37,14 +37,14 @@
 #'     "events.1995.20150313082510.tab"; see [normalize_label()]
 #'
 #' @examples
-#' \dontrun{
 #' # Remote (DVN) state
-#' get_dvn_state()
+#' # get_dvn_state()
+#' #
 #' # Local file state
-#' get_local_state()
+#' # get_local_state()
+#' #
 #' # Database state
-#' get_db_state()
-#' }
+#' # get_db_state()
 #'
 #' @md
 #' @export

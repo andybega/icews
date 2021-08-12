@@ -36,12 +36,15 @@
 #' # assuming this is the first time the package is used:
 #' setup_icews("path/to/icews_data", use_db = TRUE, keep_files = TRUE,
 #'             r_profile = TRUE)
-#' # see the plan for the initial download
-#' update_icews(dryrun = TRUE)
-#' # do the initial download; this will take a while (1hr or so)
-#' update_icews(dryrun = FALSE)
-#' # call it again in the future to check if updates are needed
 #' }
+#'
+#' # see the plan for the initial download
+#' # update_icews(dryrun = TRUE)
+#'
+#' # do the initial download; this will take a while (1hr or so)
+#' # update_icews(dryrun = FALSE)
+#'
+#' # call it again in the future to check if updates are needed
 #'
 #' @export
 #' @md

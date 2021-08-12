@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 This note describes the database internals. In addition to the main `events` table, there are other tables that impact how the updating process works. 
 
-```{r setup}
+```{r setup, eval=FALSE}
 library(icews)
 ```
 

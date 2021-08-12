@@ -56,13 +56,13 @@ local even sets have been superseded by a new version in dataverse, by
 using
 }
 \examples{
-\dontrun{
 # Remote (DVN) state
-get_dvn_state()
+# get_dvn_state()
+#
 # Local file state
-get_local_state()
+# get_local_state()
+#
 # Database state
-get_db_state()
-}
+# get_db_state()
 
 }

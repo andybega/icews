@@ -14,10 +14,8 @@
 #' @return Invisibly returns the "docs_dir" argument value.
 #'
 #' @examples
-#' \dontrun{
-#' docs_path <- download_docs(quiet = FALSE)
-#' dir(docs_path)
-#' }
+#' # docs_path <- download_docs(quiet = FALSE)
+#' # dir(docs_path)
 #'
 #' @export
 #' @md

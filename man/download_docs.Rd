@@ -24,9 +24,7 @@ files on dataverse. There is no update functionality, i.e. existing files
 will always be silently overwritten.
 }
 \examples{
-\dontrun{
-docs_path <- download_docs(quiet = FALSE)
-dir(docs_path)
-}
+# docs_path <- download_docs(quiet = FALSE)
+# dir(docs_path)
 
 }

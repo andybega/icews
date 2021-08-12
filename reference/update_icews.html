@@ -152,7 +152,8 @@ files.</p>
   use_db <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"icews.use_db"</span><span class='op'>)</span>,
   keep_files <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"icews.keep_files"</span><span class='op'>)</span>,
   db_path <span class='op'>=</span> <span class='fu'><a href='find_raw.html'>find_db</a></span><span class='op'>(</span><span class='op'>)</span>,
-  raw_file_dir <span class='op'>=</span> <span class='fu'><a href='find_raw.html'>find_raw</a></span><span class='op'>(</span><span class='op'>)</span>
+  raw_file_dir <span class='op'>=</span> <span class='fu'><a href='find_raw.html'>find_raw</a></span><span class='op'>(</span><span class='op'>)</span>,
+  quiet <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -177,6 +178,10 @@ files.</p>
     <tr>
       <th>raw_file_dir</th>
       <td><p>Directory containing the raw event TSV files.</p></td>
+    </tr>
+    <tr>
+      <th>quiet</th>
+      <td><p>Don't print progress messages</p></td>
     </tr>
     </table>
 

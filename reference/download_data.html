@@ -143,9 +143,19 @@
     <p>Download the ICEWS event data from Dataverse</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>download_data</span><span class='op'>(</span>to_dir <span class='op'>=</span> <span class='fu'><a href='find_raw.html'>find_raw</a></span><span class='op'>(</span><span class='op'>)</span>, update <span class='op'>=</span> <span class='cn'>TRUE</span>, dryrun <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>download_data</span><span class='op'>(</span>
+  to_dir <span class='op'>=</span> <span class='fu'><a href='find_raw.html'>find_raw</a></span><span class='op'>(</span><span class='op'>)</span>,
+  update <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  dryrun <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  quiet <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span>
 
-<span class='fu'>download_icews</span><span class='op'>(</span>to_dir <span class='op'>=</span> <span class='fu'><a href='find_raw.html'>find_raw</a></span><span class='op'>(</span><span class='op'>)</span>, update <span class='op'>=</span> <span class='cn'>TRUE</span>, dryrun <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></code></pre></div>
+<span class='fu'>download_icews</span><span class='op'>(</span>
+  to_dir <span class='op'>=</span> <span class='fu'><a href='find_raw.html'>find_raw</a></span><span class='op'>(</span><span class='op'>)</span>,
+  update <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  dryrun <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  quiet <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -164,6 +174,10 @@ but leave the old version in place. There thus will be duplicate event sets.</p>
       <th>dryrun</th>
       <td><p>Conducts a dry run listing proposed changes, without actually
 downloading or deleting anything.</p></td>
+    </tr>
+    <tr>
+      <th>quiet</th>
+      <td><p>Don't print progress messages</p></td>
     </tr>
     </table>
 

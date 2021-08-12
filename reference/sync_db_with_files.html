@@ -146,7 +146,8 @@
     <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>sync_db_with_files</span><span class='op'>(</span>
   raw_file_dir <span class='op'>=</span> <span class='fu'><a href='find_raw.html'>find_raw</a></span><span class='op'>(</span><span class='op'>)</span>,
   db_path <span class='op'>=</span> <span class='fu'><a href='find_raw.html'>find_db</a></span><span class='op'>(</span><span class='op'>)</span>,
-  dryrun <span class='op'>=</span> <span class='cn'>FALSE</span>
+  dryrun <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  quiet <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -163,6 +164,10 @@
     <tr>
       <th>dryrun</th>
       <td><p>List changes to be performed without taking any action.</p></td>
+    </tr>
+    <tr>
+      <th>quiet</th>
+      <td><p>Don't print progress messages</p></td>
     </tr>
     </table>
 

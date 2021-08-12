@@ -8,6 +8,7 @@
 #'   but leave the old version in place. There thus will be duplicate event sets.
 #' @param dryrun Conducts a dry run listing proposed changes, without actually
 #'   downloading or deleting anything.
+#' @template quiet
 #'
 #' @details
 #' `download_data()` will check both ICEWS dataverse repos (both the weekly and
@@ -21,9 +22,10 @@
 #' @export
 #' @import dataverse
 #' @import dplyr
-download_data <- function(to_dir = find_raw(), update = TRUE, dryrun = FALSE) {
+download_data <- function(to_dir = find_raw(), update = TRUE, dryrun = FALSE,
+                          quiet = FALSE) {
 
-  cat("Checking dataverse\n")
+  if (!quiet) cat("Checking dataverse\n")  # nocov
   plan <- plan_file_changes(to_dir)
 
   if (!isTRUE(update)) {
@@ -34,13 +36,13 @@ download_data <- function(to_dir = find_raw(), update = TRUE, dryrun = FALSE) {
   }
 
   if (isTRUE(dryrun)) {
-    print(plan)
+    if (!quiet) print(plan)  # nocov
     return(invisible(plan))
   }
 
-  execute_plan(plan, raw_file_dir = to_dir, db_path = NULL)  # nocov
+  execute_plan(plan, raw_file_dir = to_dir, db_path = NULL, quiet)  # nocov
 
-  cat("File download/sync done\n")  # nocov
+  if (!quiet) cat("File download/sync done\n")  # nocov
   invisible(TRUE)  # nocov
 }
 
@@ -49,7 +51,8 @@ download_data <- function(to_dir = find_raw(), update = TRUE, dryrun = FALSE) {
 #' @details
 #' Use `download_data()` instead of `download_icews()`
 #' @export
-download_icews <- function(to_dir = find_raw(), update = TRUE, dryrun = FALSE) {
+download_icews <- function(to_dir = find_raw(), update = TRUE, dryrun = FALSE,
+                           quiet = FALSE) {
   lifecycle::deprecate_soft("0.2.0", "download_icews()", "download_data()")
-  download_data(to_dir, update, dryrun)
+  download_data(to_dir, update, dryrun, quiet)
 }

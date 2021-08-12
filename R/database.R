@@ -52,7 +52,7 @@ check_db_exists <- function(db_path) {
   if (file.exists(db_path)) {
     return(TRUE)
   }
-  cat(sprintf("Initializing database at '%s'", db_path))
+  message(sprintf("Did not find existing database; initialized database at '%s'", db_path))
   create_db(db_path)
   invisible(TRUE)
 }
@@ -219,10 +219,11 @@ remove_db <- function(db_path, directory = FALSE) {
 #' @param db_path Path to SQLite database file
 #' @param raw_file_dir Directory containing the raw event TSV files.
 #' @param dryrun List changes to be performed without taking any action.
+#' @template quiet
 #'
 #' @export
 sync_db_with_files <- function(raw_file_dir = find_raw(), db_path = find_db(),
-                               dryrun = FALSE) {
+                               dryrun = FALSE, quiet = FALSE) {
 
   plan <- plan_database_sync(db_path, raw_file_dir)
 
@@ -232,7 +233,7 @@ sync_db_with_files <- function(raw_file_dir = find_raw(), db_path = find_db(),
   }
 
   check_db_exists(db_path)
-  execute_plan(plan, raw_file_dir = raw_file_dir, db_path = db_path)
+  execute_plan(plan, raw_file_dir = raw_file_dir, db_path = db_path, quiet)
 
   cat("File and/or database update done\n")
   invisible(TRUE)

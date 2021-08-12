@@ -333,13 +333,13 @@ plan_database_changes <- function(db_path      = find_db(),
 }
 
 #' @keywords internal
-execute_plan <- function(plan, raw_file_dir, db_path) {
+execute_plan <- function(plan, raw_file_dir, db_path, quiet = FALSE) {
 
   need_action <- plan[plan$action!="none", ]
 
   # Exit if no actions are needed
   if (nrow(need_action)==0) {
-    cat("No changes required\n")
+    if (!quiet) cat("No changes required\n")
     return(invisible(TRUE))
   }
 
@@ -355,7 +355,7 @@ execute_plan <- function(plan, raw_file_dir, db_path) {
     task <- need_action[i, ]
 
     if (task$action=="download") {
-      cat(sprintf("Downloading '%s'\n", task$dvn_file_label))
+      if (!quiet) cat(sprintf("Downloading '%s'\n", task$dvn_file_label))
       f <- download_file(file = task$dvn_file_label, to_dir = raw_file_dir,
                          repo = task$dvn_repo, file_id = task$dvn_file_id,
                          new_name = task$file_name)
@@ -363,25 +363,25 @@ execute_plan <- function(plan, raw_file_dir, db_path) {
     }
 
     if (task$action=="remove") {
-      cat(sprintf("Removing '%s'\n", task$file_name))
+      if (!quiet) cat(sprintf("Removing '%s'\n", task$file_name))
       remove_file(file.path(raw_file_dir, task$file_name))
       next
     }
 
     if (task$action=="delete") {
-      cat(sprintf("Deleting DB records from '%s'\n", task$file_name))
+      if (!quiet) cat(sprintf("Deleting DB records from '%s'\n", task$file_name))
       delete_events(task$file_name, db_path)
       next
     }
 
     if (task$action=="ingest_from_file") {
-      cat(sprintf("Ingesting records from '%s'\n", task$file_name))
+      if (!quiet) cat(sprintf("Ingesting records from '%s'\n", task$file_name))
       ingest_from_file(file.path(raw_file_dir, task$file_name), db_path)
       next
     }
 
     if (task$action=="ingest_from_memory") {
-      cat(sprintf("Ingesting records from '%s'\n", task$file_name))
+      if (!quiet) cat(sprintf("Ingesting records from '%s'\n", task$file_name))
       ingest_from_memory(task$file_name, db_path)
       next
     }
@@ -398,10 +398,10 @@ execute_plan <- function(plan, raw_file_dir, db_path) {
     vacuum <- TRUE
   }
   if (any(vacuum, optimize)) {
-    cat("Cleaning up and optimizing database, this might take a while\n")
+    if (!quiet) cat("Cleaning up and optimizing database, this might take a while\n")
     optimize_db(db_path, vacuum = vacuum, optimize = optimize)
   }
 
-  cat("\nComplete\n")
+  if (!quiet) cat("\nComplete\n")
   invisible(TRUE)
 }

@@ -5,9 +5,19 @@
 \alias{download_icews}
 \title{Download ICEWS data files}
 \usage{
-download_data(to_dir = find_raw(), update = TRUE, dryrun = FALSE)
+download_data(
+  to_dir = find_raw(),
+  update = TRUE,
+  dryrun = FALSE,
+  quiet = FALSE
+)
 
-download_icews(to_dir = find_raw(), update = TRUE, dryrun = FALSE)
+download_icews(
+  to_dir = find_raw(),
+  update = TRUE,
+  dryrun = FALSE,
+  quiet = FALSE
+)
 }
 \arguments{
 \item{to_dir}{Path to directory where data files will be downloaded to.}
@@ -18,6 +28,8 @@ but leave the old version in place. There thus will be duplicate event sets.}
 
 \item{dryrun}{Conducts a dry run listing proposed changes, without actually
 downloading or deleting anything.}
+
+\item{quiet}{Don't print progress messages}
 }
 \description{
 Download the ICEWS event data from Dataverse

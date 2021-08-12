@@ -7,7 +7,8 @@
 sync_db_with_files(
   raw_file_dir = find_raw(),
   db_path = find_db(),
-  dryrun = FALSE
+  dryrun = FALSE,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -16,6 +17,8 @@ sync_db_with_files(
 \item{db_path}{Path to SQLite database file}
 
 \item{dryrun}{List changes to be performed without taking any action.}
+
+\item{quiet}{Don't print progress messages}
 }
 \description{
 Synchronize DB with any local files found, without downloading new files.

@@ -9,7 +9,8 @@ update_icews(
   use_db = getOption("icews.use_db"),
   keep_files = getOption("icews.keep_files"),
   db_path = find_db(),
-  raw_file_dir = find_raw()
+  raw_file_dir = find_raw(),
+  quiet = FALSE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ update_icews(
 \item{db_path}{Path to SQLite database file}
 
 \item{raw_file_dir}{Directory containing the raw event TSV files.}
+
+\item{quiet}{Don't print progress messages}
 }
 \description{
 Maintain a current set of ICEWS events in the local database that match

@@ -9,6 +9,7 @@
 #' @param keep_files If using a database, retain raw data TSV files?
 #' @param db_path Path to SQLite database file
 #' @param raw_file_dir Directory containing the raw event TSV files.
+#' @template quiet
 #'
 #' @details The behavior of `update_icews` depends on the ICEWS option values,
 #' as set via `setup_icews`, or alternatively manually specified function
@@ -51,7 +52,8 @@
 update_icews <- function(dryrun = TRUE,
                          use_db     = getOption("icews.use_db"),
                          keep_files = getOption("icews.keep_files"),
-                         db_path = find_db(), raw_file_dir = find_raw()) {
+                         db_path = find_db(), raw_file_dir = find_raw(),
+                         quiet = FALSE) {
 
   # Check input
   # dryrun
@@ -91,12 +93,12 @@ update_icews <- function(dryrun = TRUE,
   }
 
   if (isTRUE(dryrun)) {
-    print(plan)
+    if (!quiet) print(plan)
     return(invisible(plan))
   }
 
-  execute_plan(plan, raw_file_dir = raw_file_dir, db_path = db_path)
+  execute_plan(plan, raw_file_dir = raw_file_dir, db_path = db_path, quiet = quiet)
 
-  cat("File and/or database update done\n")
+  if (!quiet) cat("File and/or database update done\n")
   invisible(plan)
 }

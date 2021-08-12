@@ -55,7 +55,7 @@ globalVariables(c("cameo_codes", "goldstein_mappings"))
       strwrap("The R dataverse client requires the DATAVERSE_SERVER environment variable to be set. See <https://github.com/IQSS/dataverse-client-r>. Please run:"),
       "Sys.setenv(DATAVERSE_SERVER = \"dataverse.harvard.edu\")"
     ), collapse = "\n")
-    warning(msg)
+    packageStartupMessage(msg)
   }
 }
 

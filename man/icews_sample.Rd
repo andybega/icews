@@ -8,7 +8,7 @@
 An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 4993 rows and 22 columns.
 }
 \source{
-\url{https://doi.org/10.7910/DVN/28075}
+\doi{10.7910/DVN/28075}
 }
 \usage{
 icews_sample

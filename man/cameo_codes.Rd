@@ -27,7 +27,7 @@ in their own category, as these usually make up the bulk of events.}
 \source{
 \url{http://eventdata.parusanalytics.com/data.dir/cameo.html}
 
-\url{https://doi.org/10.7910/DVN/28075}
+\doi{10.7910/DVN/28075}
 }
 \usage{
 cameo_codes

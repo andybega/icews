@@ -39,13 +39,11 @@ more information.
 \references{
 Boschee, Elizabeth; Lautenschlager, Jennifer; O'Brien, Sean;
 Shellman, Steve; Starz, James; Ward, Michael, 2015, ``ICEWS Coded
-Event Data'', \url{https://doi.org/10.7910/DVN/28075},
-Harvard Dataverse.
+Event Data'', \doi{10.7910/DVN/28075}, Harvard Dataverse.
 
 Boschee, Elizabeth; Lautenschlager, Jennifer; O'Brien, Sean; Shellman,
 Steve; Starz, James, 2018, ``ICEWS Weekly Event Data'',
-\url{https://doi.org/10.7910/DVN/QI2T9A},
-Harvard Dataverse.
+\doi{10.7910/DVN/QI2T9A}, Harvard Dataverse.
 }
 \seealso{
 Useful links:

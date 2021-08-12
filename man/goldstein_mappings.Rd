@@ -10,7 +10,7 @@ An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) w
 \source{
 \url{http://eventdata.parusanalytics.com/data.dir/cameo.html}
 
-\url{https://doi.org/10.7910/DVN/28075}
+\doi{10.7910/DVN/28075}
 }
 \usage{
 goldstein_mappings

@@ -99,15 +99,7 @@
     
 <p>This note describes the database internals. In addition to the main <code>events</code> table, there are other tables that impact how the updating process works.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.andybeger.com/icews/" class="external-link">icews</a></span><span class="op">)</span>
-<span class="co">#&gt; Warning in fun(libname, pkgname): The R dataverse client requires the DATAVERSE_SERVER environment</span>
-<span class="co">#&gt; variable to be set. See &lt;https://github.com/IQSS/dataverse-client-r&gt;.</span>
-<span class="co">#&gt; Please run:</span>
-<span class="co">#&gt; Sys.setenv(DATAVERSE_SERVER = "dataverse.harvard.edu")</span>
-<span class="co">#&gt; Options not set, consider running 'setup_icews()'</span>
-<span class="co">#&gt; data_dir: NULL</span>
-<span class="co">#&gt; use_db: NULL</span>
-<span class="co">#&gt; keep_files: NULL</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.andybeger.com/icews/" class="external-link">icews</a></span><span class="op">)</span></code></pre></div>
 <p>SQLite has a special <code>sqlite_master</code> table that describes the schema. This can be queried to find out what objects are present in the database, e.g.:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"select * from sqlite_master;"</span><span class="op">)</span></code></pre></div>

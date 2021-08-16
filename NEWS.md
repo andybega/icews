@@ -1,5 +1,5 @@
 
-# icews 1.0.0
+# icews 1.0.1
 
 This is the first version released to CRAN. 
 

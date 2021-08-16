@@ -1,6 +1,6 @@
 ## Test environments
 
-- local R installation (macOS), R 4.0.3
+- local R installation (macOS), R 4.1.1
 - win-builder (release)
 - win-builder (devel)
 
@@ -22,20 +22,39 @@ On R-Hub:
 
 0 errors | 0 warnings | 1 note
 
-- This is a new submission.
+
+This is a new submission; 2nd attempt, first was last October and see below for the comments.
 
 
+## Comments on original submission (2020-10-21)
+
+> Please always explain all acronyms in the description text.
+
+Done
+
+> Please provide a link to the used webservices to the description field of your DESCRIPTION file in the form
+> <http:...> or <https:...>
+> with angle brackets for auto-linking and no space after 'http:' and
+> 'https:'.
+
+Done
+
+> Please put functions which download data in \donttest{}.
+
+Instead of \donttest{}, I have commented out the relevant lines. They should never be run, neither for the example nor R check. 
+
+> You write information messages to the console that cannot be easily suppressed.
+> It is more R like to generate objects that can be used to extract the information a user is interested in, and then print() that object.
+> Instead of print()/cat() rather use message()/warning()  or if(verbose)cat(..) (or maybe stop()) if you really have to write text to the console.
+> (except for print, summary, interactive functions)
+
+I have added 'quiet' arguments to several functions, excluding interactive functions and print methods. 
 
 
-On R-hub Windows there is 1 ERROR:
+## Misc. R check issues
 
-> Package which is only available in source form, and may need compilation of C/C++/Fortran: 'utf8'
-> These will not be installed. 
+With R-devel on winbuilder (R Under development (unstable) (2021-08-13 r80752)) there are recurring errors during the package tests. They all seem to be related to an error somewhere in tibble. 
 
-It does work without issues on win-builder and GitHub Actions Windows.
+This only happens with winbuilder, the Windows builds with GitHub Actions and R-Hub pass only with the 'New submission' NOTE. 
 
-On R-hub, Ubuntu has a PREPERROR related to 'xml2' / 'libxml2-dev':
 
-> #> Package libxml-2.0 was not found in the pkg-config search path.
-
-It's declared as a system requirement and seems to be installed by the worker. Not sure what the problem is, but the icews package does build and pass R check on GitHub Actions Ubuntu. 

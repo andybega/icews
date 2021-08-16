@@ -6,6 +6,8 @@ devtools::check_win_devel()
 devtools::check_win_release()
 ch <- rhub::check_for_cran()
 
+devtools::check(remote = TRUE, manual = TRUE)
+
 # monitor progress
 list_package_checks()
 

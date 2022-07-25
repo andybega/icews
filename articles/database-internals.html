@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">icews</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -90,7 +90,7 @@
       <h1 data-toc-skip>Database internals</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/andybega/icews/blob/master/vignettes/database-internals.Rmd" class="external-link"><code>vignettes/database-internals.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/andybega/icews/blob/HEAD/vignettes/database-internals.Rmd" class="external-link"><code>vignettes/database-internals.Rmd</code></a></small>
       <div class="hidden name"><code>database-internals.Rmd</code></div>
 
     </div>
@@ -99,10 +99,10 @@
     
 <p>This note describes the database internals. In addition to the main <code>events</code> table, there are other tables that impact how the updating process works.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.andybeger.com/icews/" class="external-link">icews</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.andybeger.com/icews/" class="external-link">icews</a></span><span class="op">)</span></span></code></pre></div>
 <p>SQLite has a special <code>sqlite_master</code> table that describes the schema. This can be queried to find out what objects are present in the database, e.g.:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"select * from sqlite_master;"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"select * from sqlite_master;"</span><span class="op">)</span></span></code></pre></div>
 <p>With the default setup, four tables should be present:</p>
 <ul>
 <li>
@@ -113,13 +113,13 @@
 <code>source_files</code> and <code>null_source_files</code>: these tables are related to the raw data files (.tab) that have been ingested into the database. If a raw source file only contains duplicate events<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>, no events are ingested into the database and the <code>events</code> table contains no reference to this file. To avoid an attempt to re-download and re-ingest the file at a future update, it is in this case instead added to the <code>null_sources_files</code> table, which is taken into account when resolving the various states (dataverse, database, files).</li>
 </ul>
 <p>Note that no indices are created by default for the <code>events</code> table. Usually it makes sense to add some to speed up common queries. For example, I have at some points locally added indices for country, year, and yearmonth.</p>
-<div id="create-table-statements" class="section level1">
-<h1 class="hasAnchor">
-<a href="#create-table-statements" class="anchor" aria-hidden="true"></a>Create table statements</h1>
+<div class="section level2">
+<h2 id="create-table-statements">Create table statements<a class="anchor" aria-label="anchor" href="#create-table-statements"></a>
+</h2>
 <p>The package installation includes SQL scripts that create these tables. These can be accessed an printed from R like below. (One can also get these from SQLite with something like <code>cat(query_icews("select sql from sqlite_master where name = 'events';")$sql)</code>.)</p>
-<div id="events" class="section level2">
-<h2 class="hasAnchor">
-<a href="#events" class="anchor" aria-hidden="true"></a>Events</h2>
+<div class="section level3">
+<h3 id="events">Events<a class="anchor" aria-label="anchor" href="#events"></a>
+</h3>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">cat</span>(<span class="kw">readLines</span>(<span class="kw">system.file</span>(<span class="st">"sql/events.sql"</span>, <span class="dt">package =</span> <span class="st">"icews"</span>)), <span class="dt">sep =</span> <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
 <span id="cb3-2"><a href="#cb3-2"></a>CREATE TABLE IF NOT EXISTS <span class="kw">events</span> (</span>
 <span id="cb3-3"><a href="#cb3-3"></a>  event_id INTEGER NOT <span class="ot">NULL</span>,</span>
@@ -148,9 +148,9 @@
 <span id="cb3-26"><a href="#cb3-26"></a>  PRIMARY <span class="kw">KEY</span> (event_id, event_date)</span>
 <span id="cb3-27"><a href="#cb3-27"></a>);</span></code></pre></div>
 </div>
-<div id="stats-table" class="section level2">
-<h2 class="hasAnchor">
-<a href="#stats-table" class="anchor" aria-hidden="true"></a>Stats table</h2>
+<div class="section level3">
+<h3 id="stats-table">Stats table<a class="anchor" aria-label="anchor" href="#stats-table"></a>
+</h3>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">cat</span>(<span class="kw">readLines</span>(<span class="kw">system.file</span>(<span class="st">"sql/stats.sql"</span>, <span class="dt">package =</span> <span class="st">"icews"</span>)), <span class="dt">sep =</span> <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
 <span id="cb4-2"><a href="#cb4-2"></a><span class="op">/</span><span class="er">*</span></span>
 <span id="cb4-3"><a href="#cb4-3"></a><span class="st">   </span>This sets up a stats table, <span class="cf">for</span> now containing only the number of records <span class="cf">in</span></span>
@@ -184,9 +184,9 @@
 <span id="cb4-31"><a href="#cb4-31"></a>END;</span>
 <span id="cb4-32"><a href="#cb4-32"></a><span class="op">*</span><span class="er">/</span></span></code></pre></div>
 </div>
-<div id="source-and-null-source-file-tables" class="section level2">
-<h2 class="hasAnchor">
-<a href="#source-and-null-source-file-tables" class="anchor" aria-hidden="true"></a>Source and null source file tables</h2>
+<div class="section level3">
+<h3 id="source-and-null-source-file-tables">Source and null source file tables<a class="anchor" aria-label="anchor" href="#source-and-null-source-file-tables"></a>
+</h3>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">cat</span>(<span class="kw">readLines</span>(<span class="kw">system.file</span>(<span class="st">"sql/source_files.sql"</span>, <span class="dt">package =</span> <span class="st">"icews"</span>)), <span class="dt">sep =</span> <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
 <span id="cb5-2"><a href="#cb5-2"></a><span class="op">/</span><span class="er">*</span></span>
 <span id="cb5-3"><a href="#cb5-3"></a><span class="st">   </span>Create a table containing the currently ingested source_files, and update</span>
@@ -255,9 +255,9 @@
 <span id="cb5-66"><a href="#cb5-66"></a>END;</span></code></pre></div>
 </div>
 </div>
-<div id="indices" class="section level1">
-<h1 class="hasAnchor">
-<a href="#indices" class="anchor" aria-hidden="true"></a>Indices</h1>
+<div class="section level2">
+<h2 id="indices">Indices<a class="anchor" aria-label="anchor" href="#indices"></a>
+</h2>
 <p>If you are running similar queries repeatedly, it might make sense to add indices for the events table. These can dramatically increase the speed of queries if setup correctly. They do take a while to create and take up extra storage space in the database file, though. They will also slow updating the data, and what I did in the past was to remove indices, update, and then re-add the indices.</p>
 <p>I found the general guide on indices at <a href="https://use-the-index-luke.com" class="external-link">Use the index, Luke!</a> to be helpful, as well as the <a href="https://www.sqlite.org/eqp.html" class="external-link"><code>EXPLAIN QUERY PLAN</code></a> command, which can be used to tell what, if any, indices are going to be used for a query.</p>
 </div>
@@ -286,7 +286,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.6.1.9001.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer>

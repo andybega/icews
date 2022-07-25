@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">icews</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -90,9 +90,9 @@
       <h1 data-toc-skip>Speed comparison database versus file-based</h1>
                         <h4 data-toc-skip class="author">Andreas Beger</h4>
             
-            <h4 data-toc-skip class="date">2021-08-16</h4>
+            <h4 data-toc-skip class="date">2022-07-25</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/andybega/icews/blob/master/vignettes/speed-comparison-database-versus-file-based.Rmd" class="external-link"><code>vignettes/speed-comparison-database-versus-file-based.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/andybega/icews/blob/HEAD/vignettes/speed-comparison-database-versus-file-based.Rmd" class="external-link"><code>vignettes/speed-comparison-database-versus-file-based.Rmd</code></a></small>
       <div class="hidden name"><code>speed-comparison-database-versus-file-based.Rmd</code></div>
 
     </div>
@@ -102,83 +102,108 @@
 <p>This vignette has some timings for database versus in memory calculations using the entire ICEWS event data. Generally, in-memory calculations are much faster than calculations via SQL, but they come at the cost of loading several GB into memory, which on my laptop takes about 2 minutes.</p>
 <p><em>This vignette depends on the ICEWS event data I have locally on the laptop I’m using to compile it. The results are manually copied into the Rmd file, since evaluating the chunks at re-build is not possible on a server that doesn’t have the local data present.</em></p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.andybeger.com/icews/" class="external-link">icews</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/collectivemedia/tictoc" class="external-link">tictoc</a></span><span class="op">)</span></code></pre></div>
-<div id="read-into-memory" class="section level1">
-<h1 class="hasAnchor">
-<a href="#read-into-memory" class="anchor" aria-hidden="true"></a>Read into memory</h1>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.andybeger.com/icews/" class="external-link">icews</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/collectivemedia/tictoc" class="external-link">tictoc</a></span><span class="op">)</span></span></code></pre></div>
+<div class="section level2">
+<h2 id="read-into-memory">Read into memory<a class="anchor" aria-label="anchor" href="#read-into-memory"></a>
+</h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="op">)</span>
-<span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_icews.html">read_icews</a></span><span class="op">(</span><span class="fu"><a href="../reference/find_raw.html">find_db</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">events</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size</a></span><span class="op">(</span><span class="va">events</span><span class="op">)</span>, <span class="st">"Gb"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>#&gt; [1] 18594331
-#&gt; "3 GB"
-#&gt; 282.18 sec elapsed</code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_icews.html">read_icews</a></span><span class="op">(</span><span class="fu"><a href="../reference/find_raw.html">find_db</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">events</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size</a></span><span class="op">(</span><span class="va">events</span><span class="op">)</span>, <span class="st">"Gb"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; [1] 18594331</span></span>
+<span><span class="co">#&gt; "3 GB"</span></span>
+<span><span class="co">#&gt; 282.18 sec elapsed</span></span></code></pre>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="op">)</span>
-<span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_icews.html">read_icews</a></span><span class="op">(</span><span class="fu"><a href="../reference/find_raw.html">find_raw</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">events</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size</a></span><span class="op">(</span><span class="va">events</span><span class="op">)</span>, <span class="st">"Gb"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>#&gt; [1] 18594374
-#&gt; [1] "2.8 Gb"
-#&gt; 191.052 sec elapsed</code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_icews.html">read_icews</a></span><span class="op">(</span><span class="fu"><a href="../reference/find_raw.html">find_raw</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">events</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size</a></span><span class="op">(</span><span class="va">events</span><span class="op">)</span>, <span class="st">"Gb"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; [1] 18594374</span></span>
+<span><span class="co">#&gt; [1] "2.8 Gb"</span></span>
+<span><span class="co">#&gt; 191.052 sec elapsed</span></span></code></pre>
 <p>The data from SQLite are slightly bigger because there is an extra column indicating the source file from which a set of events came. The command above directly reads from the raw source files, without recording which file an event came from.</p>
 </div>
-<div id="country-year-event-counts" class="section level1">
-<h1 class="hasAnchor">
-<a href="#country-year-event-counts" class="anchor" aria-hidden="true"></a>Country-year event counts</h1>
+<div class="section level2">
+<h2 id="country-year-event-counts">Country-year event counts<a class="anchor" aria-label="anchor" href="#country-year-event-counts"></a>
+</h2>
 <p>The in-memory calculation is much faster than in the database, although longer if one counts the overhead of reading the data into memory as well.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="op">)</span>
-<span class="va">cy_total_mem</span> <span class="op">&lt;-</span> <span class="va">events</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">country</span>, <span class="va">year</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>events <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>#&gt; 2.294 sec elapsed</code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">cy_total_mem</span> <span class="op">&lt;-</span> <span class="va">events</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">country</span>, <span class="va">year</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>events <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; 2.294 sec elapsed</span></span></code></pre>
 <p>And here by querying the database:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="op">)</span>
-<span class="va">cy_total_db</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span>
-  <span class="st">"SELECT count(*) AS total FROM events GROUP BY country, year;"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>#&gt; 67.247 sec elapsed</code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">cy_total_db</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span></span>
+<span>  <span class="st">"SELECT count(*) AS total FROM events GROUP BY country, year;"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; 67.247 sec elapsed</span></span></code></pre>
 <p>Grouping first by year, then country:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="op">)</span>
-<span class="va">cy_total_db</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span>
-  <span class="st">"SELECT count() AS total FROM events GROUP BY year, country;"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>#&gt; 65.662 sec elapsed</code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">cy_total_db</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span></span>
+<span>  <span class="st">"SELECT count() AS total FROM events GROUP BY year, country;"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; 65.662 sec elapsed</span></span></code></pre>
 <p>This is an equivalent SQL query but using <strong>dplyr</strong>’s behind the scenes construction:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="op">)</span>
-<span class="va">cy_total_db</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="fu"><a href="../reference/connect.html">connect</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"events"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">country</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>events <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>#&gt; 67.812 sec elapsed</code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">cy_total_db</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="fu"><a href="../reference/connect.html">connect</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"events"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">country</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>events <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; 67.812 sec elapsed</span></span></code></pre>
 </div>
-<div id="column-cardinality" class="section level1">
-<h1 class="hasAnchor">
-<a href="#column-cardinality" class="anchor" aria-hidden="true"></a>Column cardinality</h1>
+<div class="section level2">
+<h2 id="column-cardinality">Column cardinality<a class="anchor" aria-label="anchor" href="#column-cardinality"></a>
+</h2>
 <p>Usually SQL indices work better on columns that have high cardinality.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">col_vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">[1177 chars quoted with '"']</span><span class="op">)</span> 
-
-<span class="va">col_vals</span> <span class="op">&lt;-</span> <span class="va">col_vals</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span><span class="va">rows</span><span class="op">:</span><span class="va">source_file</span>, 
-                      names_to <span class="op">=</span> <span class="st">"Column"</span>, 
-                      values_to <span class="op">=</span> <span class="st">"Unique_values"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">Unique_values</span>, <span class="va">Column</span><span class="op">)</span> 
-
-<span class="va">col_vals</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">col_vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_icews.html">query_icews</a></span><span class="op">(</span><span class="st">"</span></span>
+<span><span class="st">select count(*) as rows,</span></span>
+<span><span class="st">       count(distinct(event_id)) as event_id,</span></span>
+<span><span class="st">       count(distinct(event_date)) as event_date,</span></span>
+<span><span class="st">       count(distinct(source_name)) as source_name,</span></span>
+<span><span class="st">       count(distinct(source_sectors)) as source_sectors,</span></span>
+<span><span class="st">       count(distinct(source_country)) as source_country,</span></span>
+<span><span class="st">       count(distinct(event_text)) as event_text,</span></span>
+<span><span class="st">       count(distinct(cameo_code)) as cameo_code,</span></span>
+<span><span class="st">       count(distinct(intensity)) as intensity,</span></span>
+<span><span class="st">       count(distinct(target_name)) as target_name,</span></span>
+<span><span class="st">       count(distinct(target_sectors)) as target_sectors,</span></span>
+<span><span class="st">       count(distinct(target_country)) as target_country,</span></span>
+<span><span class="st">       count(distinct(story_id)) as story_id,</span></span>
+<span><span class="st">       count(distinct(sentence_number)) as sentence_number,</span></span>
+<span><span class="st">       count(distinct(publisher)) as publisher,</span></span>
+<span><span class="st">       count(distinct(city)) as city,</span></span>
+<span><span class="st">       count(distinct(district)) as district,</span></span>
+<span><span class="st">       count(distinct(province)) as province,</span></span>
+<span><span class="st">       count(distinct(country)) as country,</span></span>
+<span><span class="st">       count(distinct(latitude)) as latitude,</span></span>
+<span><span class="st">       count(distinct(longitude)) as longitude,</span></span>
+<span><span class="st">       count(distinct(year)) as year,</span></span>
+<span><span class="st">       count(distinct(yearmonth)) as yearmonth,</span></span>
+<span><span class="st">       count(distinct(source_file)) as source_file</span></span>
+<span><span class="st">from events;"</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="va">col_vals</span> <span class="op">&lt;-</span> <span class="va">col_vals</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span><span class="va">rows</span><span class="op">:</span><span class="va">source_file</span>, </span>
+<span>                      names_to <span class="op">=</span> <span class="st">"Column"</span>, </span>
+<span>                      values_to <span class="op">=</span> <span class="st">"Unique_values"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">Unique_values</span>, <span class="va">Column</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="va">col_vals</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">Column</th>
@@ -304,7 +329,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.6.1.9001.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer>

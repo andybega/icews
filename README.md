@@ -4,8 +4,7 @@
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/icews)](https://cran.r-project.org/package=icews)
-[![R build
-status](https://github.com/andybega/icews/workflows/R-CMD-check/badge.svg)](https://github.com/andybega/icews/actions)
+[![R-CMD-check](https://github.com/andybega/icews/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/andybega/icews/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/andybega/icews/branch/master/graph/badge.svg)](https://codecov.io/gh/andybega/icews?branch=master)
 

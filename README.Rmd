@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 # icews
 
 [![CRAN status](https://www.r-pkg.org/badges/version/icews)](https://cran.r-project.org/package=icews)
-[![R build status](https://github.com/andybega/icews/workflows/R-CMD-check/badge.svg)](https://github.com/andybega/icews/actions)
+[![R-CMD-check](https://github.com/andybega/icews/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/andybega/icews/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/andybega/icews/branch/master/graph/badge.svg)](https://codecov.io/gh/andybega/icews?branch=master)
 
 Get the ICEWS event data from the Harvard Dataverse repos at [https://doi.org/10.7910/DVN/28075](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/28075) (historic data) and [https://doi.org/10.7910/DVN/QI2T9A](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/QI2T9A) (weekly updates).

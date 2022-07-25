@@ -84,7 +84,7 @@ get_dvn_state <- function(icews_doi = get_doi(), server = Sys.getenv("DATAVERSE_
 #'       + `content`: objects of class "dataverse_dataset", returned by
 #'         [dataverse::get_dataset()].
 #'
-#' @export
+#' @keywords internal
 get_dvn_manifest <- function(icews_doi = get_doi(), server = Sys.getenv("DATAVERSE_SERVER")) {
   dvn_files  <- tryCatch(
     tibble(repo = c("historic", "weekly"),

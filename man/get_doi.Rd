@@ -6,6 +6,9 @@
 \usage{
 get_doi()
 }
+\value{
+A list containing the historic and weekly DOIs.
+}
 \description{
 Contains the Harvard Dataverse DOIs for ICEWS
 }

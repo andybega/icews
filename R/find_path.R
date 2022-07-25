@@ -32,6 +32,8 @@ find_path <- function(x, ...) {
 #' @param ... additional elements that will be combined with the base path
 #'   using [base::file.path()]
 #'
+#' @return A length 1 character vector containing the relevant path.
+#'
 #' @examples
 #' \dontrun{
 #' find_raw()

@@ -2,6 +2,8 @@
 #'
 #' Contains the Harvard Dataverse DOIs for ICEWS
 #'
+#' @return A list containing the historic and weekly DOIs.
+#'
 #' @examples
 #' get_doi()
 #'

@@ -16,6 +16,9 @@ find_docs(...)
 \item{...}{additional elements that will be combined with the base path
 using \code{\link[base:file.path]{base::file.path()}}}
 }
+\value{
+A length 1 character vector containing the relevant path.
+}
 \description{
 If the options have been set (see \code{\link[=setup_icews]{setup_icews()}}), \code{find_raw} will return
 the path to the raw data file directory, \code{find_db} the database file path,

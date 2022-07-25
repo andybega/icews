@@ -10,7 +10,8 @@ update_icews(
   keep_files = getOption("icews.keep_files"),
   db_path = find_db(),
   raw_file_dir = find_raw(),
-  quiet = FALSE
+  quiet = FALSE,
+  plan = NULL
 )
 }
 \arguments{
@@ -25,6 +26,9 @@ update_icews(
 \item{raw_file_dir}{Directory containing the raw event TSV files.}
 
 \item{quiet}{Don't print progress messages}
+
+\item{plan}{Shortcut to avoid talking to dataverse twice, see examples
+below.}
 }
 \description{
 Maintain a current set of ICEWS events in the local database that match
@@ -65,6 +69,11 @@ setup_icews("path/to/icews_data", use_db = TRUE, keep_files = TRUE,
 
 # do the initial download; this will take a while (1hr or so)
 # update_icews(dryrun = FALSE)
+
+# talking to dataverse takes takes up some time and doing it twice
+# can be avoided by doing:
+plan <- update_icews(dryrun = TRUE)
+update_icews(dryrun = FALSE, plan = plan)
 
 # call it again in the future to check if updates are needed
 

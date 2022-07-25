@@ -30,3 +30,4 @@ but also documentation and metadata files.
 \description{
 Get a listing of files on dataverse
 }
+\keyword{internal}

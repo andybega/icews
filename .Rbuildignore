@@ -16,3 +16,4 @@ devel
 ^\.github$
 ^cran-comments\.md$
 ^release-prep\.md$
+^CRAN-RELEASE$

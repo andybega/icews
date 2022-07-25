@@ -10,6 +10,8 @@
 #' @param db_path Path to SQLite database file
 #' @param raw_file_dir Directory containing the raw event TSV files.
 #' @template quiet
+#' @param plan Shortcut to avoid talking to dataverse twice, see examples
+#'   below.
 #'
 #' @details The behavior of `update_icews` depends on the ICEWS option values,
 #' as set via `setup_icews`, or alternatively manually specified function
@@ -45,6 +47,11 @@
 #' # do the initial download; this will take a while (1hr or so)
 #' # update_icews(dryrun = FALSE)
 #'
+#' # talking to dataverse takes takes up some time and doing it twice
+#' # can be avoided by doing:
+#' plan <- update_icews(dryrun = TRUE)
+#' update_icews(dryrun = FALSE, plan = plan)
+#'
 #' # call it again in the future to check if updates are needed
 #'
 #' @export
@@ -53,7 +60,8 @@ update_icews <- function(dryrun = TRUE,
                          use_db     = getOption("icews.use_db"),
                          keep_files = getOption("icews.keep_files"),
                          db_path = find_db(), raw_file_dir = find_raw(),
-                         quiet = FALSE) {
+                         quiet = FALSE,
+                         plan = NULL) {
 
   # Check input
   # dryrun
@@ -82,14 +90,15 @@ update_icews <- function(dryrun = TRUE,
     dir.create(raw_file_dir)
   }
 
-
   # Determine action plan based on DB and file options
-  if (!use_db) {
-    plan <- plan_file_changes(raw_file_dir)
-  } else {
-    # use a database
-    check_db_exists(db_path)
-    plan <- plan_database_changes(db_path, raw_file_dir, keep_files, use_local = TRUE)
+  if (is.null(plan)) {
+    if (!use_db) {
+      plan <- plan_file_changes(raw_file_dir)
+    } else {
+      # use a database
+      check_db_exists(db_path)
+      plan <- plan_database_changes(db_path, raw_file_dir, keep_files, use_local = TRUE)
+    }
   }
 
   if (isTRUE(dryrun)) {

@@ -71,6 +71,13 @@ write_data_to_db <- function(events, file, db_path = find_db()) {
   con = connect(db_path)
   on.exit(DBI::dbDisconnect(con))
 
+  # Check for completely duplicated rows (#80)
+  dup <- duplicated(events)
+  if (any(dup)) {
+    message("Detected and removing duplicate rows (this is probably an issue in the dataverse source data file)")
+    events <- events[!dup, ]
+  }
+
   # Add year and yearmonth since these will be useful for getting counts over time
   events$year      <- as.integer(format(events$event_date, "%Y"))
   events$yearmonth <- as.integer(format(events$event_date, "%Y%m"))

@@ -12,7 +12,10 @@ is_data_file <- function(x) {
   good1 <- grepl("^[Ee]{1}vents\\.[0-9]{4}\\.[0-9a-z]+\\.(tab|zip|tab.zip)$", basename(x))
   good2 <- is_weekly_file(x)
 
-  good1 | good2
+  # add exception for January 2022 file (#80)
+  good3 <- basename(x)=="202201-icews-events.tab"
+
+  good1 | good2 | good3
 }
 
 #' Identify dataset contained in file

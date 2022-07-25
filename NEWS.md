@@ -1,5 +1,5 @@
 
-# icews 1.0.1
+# icews 1.0
 
 This is the first version released to CRAN. 
 
@@ -11,12 +11,13 @@ The ICEWS project ceased updates in late 2019, but resumed again in May 2020. Ho
 
 ## Enhancements
 
-- The path finders (`find_raw()`, `find_docs()`, and `find_db()`) now also take
-and optional argument that is combined with the base path returned using `base::file.path()`. This makes it easier to get the full path for files within the data directories. 
+- The path finders (`find_raw()`, `find_docs()`, and `find_db()`) now also take and optional argument that is combined with the base path returned using `base::file.path()`. This makes it easier to get the full path for files within the data directories. 
+- The `update_icews()` function gains a "plan" argument that can be used to speed up the update process, i.e. `plan <- update_icews(dryrun = TRUE); update_icews(dryrun = FALSE, plan = plan)` will reuse the previous plan and avoid talking to dataverse twice. 
 
 ## Minor fixes, etc. 
 
 - Fix bugs in the non-standard 2017 events file; non-standard file name ("Events.2017.20200602.tab.zip") and dates formatted like "12/1/2017" (#57).
+- Move to testthat 3rd edition. This required replacing the deprecated `testthat::with_mock()` with solutions from the {mockr} and {mockery} packages, which have as a result been added to Suggests. (#76)
 
 ## Fixes, etc. for the old daily repo structure
 
@@ -26,7 +27,6 @@ Some of the earlier commits in 2019, when the updates were still daily, fixed va
 - Fix ingest file to DB problem with duplicate events (#46). A regex in `write_data_to_db` did not recognize a data file ending with "-1.tab" as a daily data file, and thus skipped the duplicate events check that is done for daily data files only.
 - Fix missing source files in DB state (#47). Source files that all duplicate events, i.e. no events that will end up in the "events" table, are saved in "null_source_files". This was not being used to update the main "source_files" table on which the state is based on. 
 - Fix an issue in `dr_icews()` that would erroneously indicate the need to sync local files and database. This was due to the internal changes in v0.2.0. 
-
 
 # icews 0.2.0 (2019-02-12)
 

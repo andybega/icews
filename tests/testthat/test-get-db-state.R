@@ -1,4 +1,4 @@
-context("get_db_state")
+
 
 test_that("list_source_files works", {
   p <- setup_mock_db(populate = TRUE)

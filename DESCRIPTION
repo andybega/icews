@@ -38,9 +38,11 @@ Suggests:
     covr,
     ggplot2,
     knitr,
+    mockery,
+    mockr,
     rmarkdown,
     stringr,
-    testthat,
+    testthat (>= 3.0.0),
     tictoc,
     tidyr,
     usethis
@@ -51,3 +53,4 @@ LazyData: true
 RoxygenNote: 7.1.2
 Roxygen: list(markdown = TRUE)
 RdMacros: lifecycle
+Config/testthat/edition: 3

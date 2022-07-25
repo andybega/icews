@@ -1,6 +1,4 @@
 
-context("Misc tests")
-
 
 test_that("option setter works", {
   opts <- get_icews_opts()
@@ -10,7 +8,7 @@ test_that("option setter works", {
   expect_null(get_icews_opts()$data_dir)
 
   set_icews_opts(old_opts)
-  expect_equal(opts, old_opts, get_icews_opts())
+  expect_equal(opts, old_opts)
 })
 
 test_that("state functions respect path arguments", {
@@ -55,8 +53,6 @@ test_that("execute_sql works", {
   expect_error(execute_sql("events.sql", ":memory:"), NA)
 })
 
-
-context("data helpers")
 
 test_that("gw code mapping works", {
   df <- dplyr::tibble(

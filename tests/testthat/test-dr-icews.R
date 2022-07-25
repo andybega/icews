@@ -1,4 +1,4 @@
-context("dr_icews")
+
 
 test_that("dr_icews works", {
   expect_error(capture.output(dr_icews(db_path = "", raw_file_dir = "")), NA)

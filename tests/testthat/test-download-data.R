@@ -1,4 +1,5 @@
 
+
 test_that("download_data works", {
 
   raw_file_dir <- file.path(tempdir(), "raw")
@@ -9,9 +10,11 @@ test_that("download_data works", {
 
   # with update
   expect_error(
-    foo <- capture.output(plan <- with_mock(
+    foo <- capture.output(mockr::with_mock(
       get_dvn_manifest = function() readRDS(ff),
-      download_data(dryrun = TRUE, to_dir = raw_file_dir, update = TRUE)
+      {
+        plan <- download_data(dryrun = TRUE, to_dir = raw_file_dir, update = TRUE)
+      }
     )),
     NA
   )
@@ -27,9 +30,11 @@ test_that("download_data without update in place works", {
   ff = system.file("testdata", "dvn_manifest.rds", package = "icews")
 
   expect_error(
-    foo <- capture.output(plan <- with_mock(
+    foo <- capture.output(plan <- mockr::with_mock(
       get_dvn_manifest = function() readRDS(ff),
-      download_data(dryrun = TRUE, to_dir = raw_file_dir, update = FALSE)
+      {
+        download_data(dryrun = TRUE, to_dir = raw_file_dir, update = FALSE)
+      }
     )),
     NA
   )
@@ -46,15 +51,16 @@ test_that("expect deprecate warning for download_icews", {
   rlang::with_options(lifecycle_verbosity = "warning", {
     expect_warning(
 
-      plan <- with_mock(
-        `icews::check_dataverse_version` = function() invisible(TRUE),  # dataverse version issue, see #72
-        `icews::get_dvn_manifest` = function() readRDS(ff),
-        capture.output(
-          download_icews(dryrun = TRUE, to_dir = raw_file_dir, update = TRUE)
-        )
+      plan <- mockr::with_mock(
+        check_dataverse_version = function() invisible(TRUE),  # dataverse version issue, see #72
+        get_dvn_manifest = function() readRDS(ff),
+        {
+          capture.output(
+            download_icews(dryrun = TRUE, to_dir = raw_file_dir, update = TRUE)
+          )
+        }
       ),
       "deprecated"
     )
   })
-
 })

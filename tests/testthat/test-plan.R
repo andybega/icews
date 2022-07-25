@@ -39,9 +39,11 @@ test_that("plan_file_changes works", {
   ff = system.file("testdata", "dvn_manifest.rds", package = "icews")
 
   expect_error(
-    plan <- with_mock(
+    plan <- mockr::with_mock(
       get_dvn_manifest = function() readRDS(ff),
-      plan_file_changes(p$raw_file_dir)
+      {
+        plan_file_changes(p$raw_file_dir)
+      }
     ),
     NA
   )
@@ -55,10 +57,12 @@ test_that("plan_database_changes works", {
   ff = system.file("testdata", "dvn_manifest.rds", package = "icews")
 
   expect_error(
-    plan <- with_mock(
+    plan <- mockr::with_mock(
       get_dvn_manifest = function() readRDS(ff),
-      plan_database_changes(p$db_path, p$raw_file_dir, keep_files = FALSE,
-                            use_local = TRUE)
+      {
+        plan_database_changes(p$db_path, p$raw_file_dir, keep_files = FALSE,
+                              use_local = TRUE)
+      }
     ),
     NA
   )

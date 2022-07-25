@@ -48,7 +48,7 @@ query_icews <- function(query, db_path = find_db()) {
 #'
 #' @param db_path Path to SQLite database file
 #' @keywords internal
-check_db_exists <- function(db_path) {
+check_db_exists <- function(db_path, quiet = FALSE) {
   if (file.exists(db_path)) {
     return(TRUE)
   }

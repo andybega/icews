@@ -49,8 +49,8 @@
 #'
 #' # talking to dataverse takes takes up some time and doing it twice
 #' # can be avoided by doing:
-#' plan <- update_icews(dryrun = TRUE)
-#' update_icews(dryrun = FALSE, plan = plan)
+#' # plan <- update_icews(dryrun = TRUE)
+#' # update_icews(dryrun = FALSE, plan = plan)
 #'
 #' # call it again in the future to check if updates are needed
 #'

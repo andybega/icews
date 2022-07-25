@@ -70,7 +70,7 @@ setup_icews <- function(data_dir, use_db = TRUE, keep_files = FALSE, r_profile =
     usethis::edit_r_profile()
   }
   cat("Path options are set\n")
-  invisible(get_icews_op)
+  invisible(get_icews_opts())
 }
 
 #' Set ICEWS option values

@@ -1,4 +1,3 @@
-context("read_events_tsv")
 
 test_that("read_events_tsv works", {
 

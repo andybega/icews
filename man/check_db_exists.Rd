@@ -4,7 +4,7 @@
 \alias{check_db_exists}
 \title{Check and if needed setup database}
 \usage{
-check_db_exists(db_path)
+check_db_exists(db_path, quiet = FALSE)
 }
 \arguments{
 \item{db_path}{Path to SQLite database file}

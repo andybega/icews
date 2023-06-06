@@ -20,6 +20,8 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/andybega/icews/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/andybega/icews/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/andybega/icews/branch/master/graph/badge.svg)](https://codecov.io/gh/andybega/icews?branch=master)
 
+_Note: the ICEWS data were discontinued on 11 April 2023. You can still use this package to download the data from dataverse however._
+
 Get the ICEWS event data from the Harvard Dataverse repos at [https://doi.org/10.7910/DVN/28075](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/28075) (historic data) and [https://doi.org/10.7910/DVN/QI2T9A](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/QI2T9A) (weekly updates).
 
 The icews package provides these major features:
@@ -28,10 +30,6 @@ The icews package provides these major features:
 - use raw data files (tab-separated variables, .tsv) or a database (SQLite3) or both as the storage backend
 - set options so that in future R sessions icews knows where your data lives
 - icews keeps the local data in sync with the latest versions on Dataverse
-
-*Note about stability:*
-
-*This package is young. The core functionality of the package involves downloading and keeping track of potentially 10+GB of files and data. I have not found a good way to test that thoroughly. There are probably bugs and errors that pop up on a fresh run without any downloaded data already in place. Please file bug reports or email me (adbeger@gmail.com)!*
 
 ## Installation
 

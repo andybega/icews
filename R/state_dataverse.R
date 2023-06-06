@@ -90,7 +90,9 @@ get_dvn_manifest <- function(icews_doi = get_doi(), server = Sys.getenv("DATAVER
     tibble(repo = c("historic", "weekly"),
            content = list(
              dataverse::get_dataset(icews_doi$historic, server = server),
-             dataverse::get_dataset(icews_doi$weekly, server = server)
+             # Fix for ICEWS end of life (no more weekly repo)
+             #dataverse::get_dataset(icews_doi$weekly, server = server)
+             list(files = data.frame())
            )),
     error = function(e) {
       stop("Something went wrong in 'dataverse' or the Dataverse API. Check that the API token is valid (?dataverse_api_token) and try again. Original error message:\n", e$message)

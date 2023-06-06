@@ -1,7 +1,7 @@
 Type: Package
 Package: icews
 Title: Get the ICEWS Event Data
-Version: 1.0.2
+Version: 1.0.3
 Authors@R: 
     person(given = "Andreas",
            family = "Beger",

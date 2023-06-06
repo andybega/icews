@@ -1,7 +1,10 @@
+# icews 1.0.3
+
+The ICEWS data were discontinued on 11 April 2023. This final version of the package has a fix to allow it to continue working (the weekly dataverse repo was removed and all data are now in what used to be the yearly file repo).
 
 # icews 1.0
 
-This is the first version released to CRAN. 
+This is the first version released to CRAN. Well, several failed attempts at least. 
 
 ## Resumption of ICEWS updates with weekly data drops
 
@@ -16,7 +19,8 @@ The ICEWS project ceased updates in late 2019, but resumed again in May 2020. Ho
 
 ## Minor fixes, etc. 
 
-- Fix bugs in the non-standard 2017 events file; non-standard file name ("Events.2017.20200602.tab.zip") and dates formatted like "12/1/2017" (#57).
+- Fix a July 2022 update error due to a non-standard file for the January 2022 data. (#80)
+- Fix bugs in the non-standard 2017 events file; non-standard file name ("Events.2017.20200602.tab.zip") and dates formatted like "12/1/2017". (#57)
 - Move to testthat 3rd edition. This required replacing the deprecated `testthat::with_mock()` with solutions from the {mockr} and {mockery} packages, which have as a result been added to Suggests. (#76)
 
 ## Fixes, etc. for the old daily repo structure

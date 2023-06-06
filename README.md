@@ -8,6 +8,9 @@ status](https://www.r-pkg.org/badges/version/icews)](https://cran.r-project.org/
 [![Codecov test
 coverage](https://codecov.io/gh/andybega/icews/branch/master/graph/badge.svg)](https://codecov.io/gh/andybega/icews?branch=master)
 
+*Note: the ICEWS data were discontinued on 11 April 2023. You can still
+use this package to download the data from dataverse however.*
+
 Get the ICEWS event data from the Harvard Dataverse repos at
 [https://doi.org/10.7910/DVN/28075](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/28075)
 (historic data) and
@@ -16,22 +19,13 @@ Get the ICEWS event data from the Harvard Dataverse repos at
 
 The icews package provides these major features:
 
--   get the ICEWS event data without having to deal with Dataverse
--   use raw data files (tab-separated variables, .tsv) or a database
-    (SQLite3) or both as the storage backend
--   set options so that in future R sessions icews knows where your data
-    lives
--   icews keeps the local data in sync with the latest versions on
-    Dataverse
-
-*Note about stability:*
-
-*This package is young. The core functionality of the package involves
-downloading and keeping track of potentially 10+GB of files and data. I
-have not found a good way to test that thoroughly. There are probably
-bugs and errors that pop up on a fresh run without any downloaded data
-already in place. Please file bug reports or email me
-(<adbeger@gmail.com>)!*
+- get the ICEWS event data without having to deal with Dataverse
+- use raw data files (tab-separated variables, .tsv) or a database
+  (SQLite3) or both as the storage backend
+- set options so that in future R sessions icews knows where your data
+  lives
+- icews keeps the local data in sync with the latest versions on
+  Dataverse
 
 ## Installation
 
@@ -125,7 +119,7 @@ Remove   'events.1996.20140313082528.tab'
 
 The events come in (zipped) tab-separated files. To load all of these
 into memory in a big combined data frame with about 16 million rows
-(\~2.5Gb):
+(~2.5Gb):
 
 ``` r
 events <- read_icews("~/Downloads/icews")
@@ -209,7 +203,7 @@ str(cameo_codes)
 #>  $ lvl1          : int  NA 10 11 12 13 14 15 16 17 18 ...
 #>  $ description   : chr  NA "All public statements expressed verbally or in action not otherwise specified." "Explicitly decline or refuse to comment on a situation." "Express pessimism, negative outlook." ...
 #>  $ usage_notes   : chr  NA "This residual category is not coded except when distinctions among 011 to 017 cannot be made. Note that statements are typicall "This event form is a verbal act. The target could be who the source actor declines to make a comment to or about." "This event form is a verbal act. Only statements with explicit pessimistic components should be coded as 012; otherwise, defaul ...
-#>  $ example       : chr  NA "U.S. military chief General Colin Powell said on Wednesday NATO would need to remain strong." "NATO on Monday declined to comment on an estimate that Yugoslav army and special police troops in Kosovo were losing 90 to 100  "Former West Germany Chancellor Willy Brandt said in a radio interview broadcast today he was skeptical over Moscow\u0082\xc4\xf ...
+#>  $ example       : chr  NA "U.S. military chief General Colin Powell said on Wednesday NATO would need to remain strong." "NATO on Monday declined to comment on an estimate that Yugoslav army and special police troops in Kosovo were losing 90 to 100  "Former West Germany Chancellor Willy Brandt said in a radio interview broadcast today he was skeptical over Moscow\x82\xc4\xf4s ...
 #>  $ order         : int  1 2 3 4 5 6 7 8 9 10 ...
 #>  $ quad_category : chr  "verbal cooperation" "verbal cooperation" "verbal cooperation" "verbal cooperation" ...
 #>  $ penta_category: chr  "statement" "statement" "statement" "statement" ...
